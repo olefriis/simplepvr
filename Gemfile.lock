@@ -1,0 +1,12 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    rufus-scheduler (2.0.17)
+      tzinfo (>= 0.3.23)
+    tzinfo (0.3.33)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rufus-scheduler
