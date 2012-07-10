@@ -1,19 +1,17 @@
 require 'fileutils'
 
 class Recorder
-  def initialize(show_name, frequency, program_id)
-    @show_name, @frequency, @program_id = show_name, frequency, program_id
-
-    @device_id, @tuner_number = '12106FA4', 0
+  def initialize(show_name, device_id, frequency, program_id)
+    @show_name, @device_id, @frequency, @program_id = show_name, device_id, frequency, program_id
   end
   
   def start!
     directory = "recordings/#{@show_name}"
     create_fresh_directory directory
 
-    system "hdhomerun_config #{@device_id} set /tuner#{@tuner_number}/channel auto:#{@frequency}"
-    system "hdhomerun_config #{@device_id} set /tuner#{@tuner_number}/program #{@program_id}"
-    @pid = spawn "hdhomerun_config #{@device_id} save /tuner#{@tuner_number} #{directory}/stream.ts", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
+    system "hdhomerun_config #{@device_id} set /tuner0/channel auto:#{@frequency}"
+    system "hdhomerun_config #{@device_id} set /tuner0/program #{@program_id}"
+    @pid = spawn "hdhomerun_config #{@device_id} save /tuner0 #{directory}/stream.ts", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
     
     puts "Started recording #{@show_name}"
   end
