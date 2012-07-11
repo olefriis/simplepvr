@@ -59,3 +59,18 @@ Then: Parse XMLTV files, expose a simple web GUI for scheduling recordings.
 
 But then: Well, I don't know... I'm not sure we should take this much further. Let this be a nice,
 hackable library, not too big for people to read and understand.
+
+Development
+===========
+Run the specs like this:
+
+        rspec spec/*
+
+There's a semi-manual test of the actual recording, since I'm not sure how to check automatically that
+we can record a stream from a HDHomeRun box. Run it with
+
+        bundle exec ruby recorder_test.rb
+
+After running this, a new recording should be present in "recordings/test/stream.ts", with 5 seconds of
+recording from the channel specified in the test (you need to alter the test file to your tuner and
+your available channels).
