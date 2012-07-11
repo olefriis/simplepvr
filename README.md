@@ -38,7 +38,7 @@ How to use
 ==========
 Edit schedule.rb. It will look like this:
 
-        require 'simplepvr'
+        require File.dirname(__FILE__) + '/lib/simplepvr'
 		
 		schedule do
 		  record 'DR K', 'Borgias', 'Tue Jul 10 20:46:00 +0200 2012', 60.minutes
@@ -49,6 +49,13 @@ which will record two shows of 60 and 20 minutes' duration on the channels 'DR K
 specifying your shows, start up the system:
 
         bundle exec ruby schedule.rb
+
+The system will wait until the specified start times, and will then start the recordings. The recordings are
+placed in the "recordings/" folder, named after the show ("Borgias" and "Sports news" in the example above).
+Inside this folder are two files:
+
+* stream.ts: The actual stream. Let VLC or another media player show these for you.
+* hdhomerun_save.log: The output from the actual recording command.
 
 Future?
 =======
