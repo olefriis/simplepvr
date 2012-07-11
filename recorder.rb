@@ -1,8 +1,11 @@
 require 'fileutils'
+require File.dirname(__FILE__) + '/lib/device_finder'
 
 class Recorder
-  def initialize(show_name, device_id, frequency, program_id)
-    @show_name, @device_id, @frequency, @program_id = show_name, device_id, frequency, program_id
+  def initialize(show_name, frequency, program_id)
+    @show_name, @frequency, @program_id = show_name, frequency, program_id
+    
+    @device_id = DeviceFinder.find
   end
   
   def start!
