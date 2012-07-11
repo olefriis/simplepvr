@@ -5,57 +5,59 @@ tuners.
 
 Why?
 ====
-MythTV stopped working for me in the 0.25 release. And even though MythTV has loads of merits, I just
-have no idea what to do when it stops working - I have no control whatsoever.
+MythTV stopped working for me and my HDHomeRun box in the 0.25 release. And even though MythTV has loads
+of merits, I just have no idea what to do when it stops working - I am not in control of my media center.
+
+During the last couple of years, I have spent a substantial amount of time on bugs that suddenly appeared
+in MythTV and suddenly went away. I really don't like using systems which break like this.
 
 So I wanted to create a really simple PVR in Ruby, making it possible for others to hack away and have
 fun while recording TV shows for the rest of the family.
 
-Installation?
-=============
+It's based on the HDHomeRun command-line utility, which means it's:
+
+* built on something that's officially supported by SiliconDust (the makers of HDHomeRun).
+* really simple.
+* limited to supporting HDHomeRun tuners.
+
+Installation
+============
+First of all, you need a computer and an HDHomeRun tuner box. On your computer, you need to have the
+"hdhomerun_config" tool on the path.
+
 You need Ruby 1.9.2 (or newer - 1.9.0 or newer is probably enough). Dump this source somewhere, and run
 
         gem install bundler
         bundle install
-        bundle exec ruby schedule.rb
 
-Status?
-=======
-Right now, it's too simple for anybody but myself to use. You need to alter the schedule.rb file:
+Then you should do a channel scan on your HDHomeRun device:
 
-        require 'rufus/scheduler'
-		require './recorder'
+        hdhomerun_config <device id> scan /tuner0 channels.txt
 
-		scheduler = Rufus::Scheduler.start_new
-
-		scheduler.at 'Tue Jul 10 20:46:00 +0200 2012' do
-		  recorder = Recorder.new('borgias', 282000000, 1098)
-		  recorder.start!
-		  sleep 5*60
-		  recorder.stop!
-		end
-
-		scheduler.join
-		
-This will record a show with the name "borgias" at 20:46 July the 10th 2012, on the given frequency,
-and with the given channel ID. Oh, and it records 60 minutes (the 5*60 part).
-
-This is ugly... the short-term ambition is to end up with this:
+How to use
+==========
+Edit schedule.rb. It will look like this:
 
         require 'simplepvr'
 		
 		schedule do
-		  record 'DR K', 'Tue Jul 10 20:46:00 +0200 2012', 60.minutes
-		  record 'TV 2', 'Wed Jul 11 12:15:00 +0200 2012', 20.minutes
+		  record 'DR K', 'Borgias', 'Tue Jul 10 20:46:00 +0200 2012', 60.minutes
+		  record 'TV 2', 'Sports news', 'Wed Jul 11 12:15:00 +0200 2012', 20.minutes
 		end
-		
-to record two shows of 60 and 20 minutes' duration on the channels 'DR K' and 'TV 2', respectively.
+
+which will record two shows of 60 and 20 minutes' duration on the channels 'DR K' and 'TV 2', respectively. After
+specifying your shows, start up the system:
+
+        bundle exec ruby schedule.rb
 
 Future?
 =======
-First: Perform channel scan, clean up the interface.
+First: Perform channel scan on first start.
 
-Then: Parse XMLTV files, expose a simple web GUI for scheduling recordings.
+...then: Parse XMLTV files, expose a simple web GUI for scheduling recordings. Utilize more than one tuner
+in the HDHomeRun box.
+
+...all while: Cleaning up the code, making it more readable. I surely will accept pull requests!
 
 But then: Well, I don't know... I'm not sure we should take this much further. Let this be a nice,
 hackable library, not too big for people to read and understand.
@@ -64,12 +66,12 @@ Development
 ===========
 Run the specs like this:
 
-        rspec spec/*
+        bundle exec rspec spec/*_spec.rb
 
 There's a semi-manual test of the actual recording, since I'm not sure how to check automatically that
 we can record a stream from a HDHomeRun box. Run it with
 
-        bundle exec ruby recorder_test.rb
+        bundle exec ruby spec/recorder_test.rb
 
 After running this, a new recording should be present in "recordings/test/stream.ts", with 5 seconds of
 recording from the channel specified in the test (you need to alter the test file to your tuner and

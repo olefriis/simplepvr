@@ -4,10 +4,7 @@ require File.dirname(__FILE__) + '/../lib/device_finder'
 describe DeviceFinder do
   before do
     @pipe = double('pipe')
-
-    @io = double('io')
-    stub_const('IO', @io)
-    @io.should_receive(:popen).with('hdhomerun_config discover').and_yield(@pipe)
+    IO.should_receive(:popen).with('hdhomerun_config discover').and_yield(@pipe)
   end
   
   it 'can find a device when present' do

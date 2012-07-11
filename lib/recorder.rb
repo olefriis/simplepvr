@@ -1,5 +1,5 @@
 require 'fileutils'
-require File.dirname(__FILE__) + '/lib/device_finder'
+require File.dirname(__FILE__) + '/device_finder'
 
 class Recorder
   def initialize(show_name, frequency, program_id)

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/recorder'
+require './lib/recorder'
 
 recorder = Recorder.new('test', 282000000, 1098)
 recorder.start!
