@@ -29,7 +29,7 @@ Right now, it's too simple for anybody but myself to use. You need to alter the 
 		scheduler = Rufus::Scheduler.start_new
 
 		scheduler.at 'Tue Jul 10 20:46:00 +0200 2012' do
-		  recorder = Recorder.new('borgias', '12106FA4', 282000000, 1098)
+		  recorder = Recorder.new('borgias', 282000000, 1098)
 		  recorder.start!
 		  sleep 5*60
 		  recorder.stop!
@@ -37,8 +37,8 @@ Right now, it's too simple for anybody but myself to use. You need to alter the 
 
 		scheduler.join
 		
-This will record a show with the name "borgias" at 20:46 July the 10th 2012, on the specifiec HDHomeRun
-device, the given frequency, and with the given channel ID. Oh, and it records 60 minutes (the 5*60 part).
+This will record a show with the name "borgias" at 20:46 July the 10th 2012, on the given frequency,
+and with the given channel ID. Oh, and it records 60 minutes (the 5*60 part).
 
 This is ugly... the short-term ambition is to end up with this:
 
@@ -53,7 +53,7 @@ to record two shows of 60 and 20 minutes' duration on the channels 'DR K' and 'T
 
 Future?
 =======
-First: Auto-detect tuners, perform channel scan, clean up the interface.
+First: Perform channel scan, clean up the interface.
 
 Then: Parse XMLTV files, expose a simple web GUI for scheduling recordings.
 
