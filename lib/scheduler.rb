@@ -21,6 +21,8 @@ class Scheduler
     elsif parsed_start_time < now
       PvrLogger.info("Show #{show_name} is in progress - adjusting duration")
       duration -= (now - parsed_start_time)
+    else
+      PvrLogger.info("Scheduling #{show_name} for #{parsed_start_time}")
     end
 
     frequency, id = @channel_information.information_for(channel)
