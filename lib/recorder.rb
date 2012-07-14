@@ -9,18 +9,15 @@ class Recorder
   end
   
   def start!
-    directory = "recordings/#{@show_name}"
-    create_fresh_directory directory
+    create_fresh_directory "recordings/#{@show_name}"
 
-    system "hdhomerun_config #{@device_id} set /tuner0/channel auto:#{@frequency}"
-    system "hdhomerun_config #{@device_id} set /tuner0/program #{@program_id}"
-    @pid = spawn "hdhomerun_config #{@device_id} save /tuner0 #{directory}/stream.ts", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
+    start_recording
     
     puts "Started recording #{@show_name}"
   end
   
   def stop!
-    Process.kill('INT', @pid)
+    kill_recorder_process
     
     puts "Stopped recording #{@show_name}"
   end
@@ -31,5 +28,27 @@ class Recorder
       FileUtils.remove_dir directory_name
     end
     FileUtils.makedirs directory_name
+  end
+  
+  def start_recording
+    set_tuner_to_correct_frequency
+    set_tuner_to_correct_program
+    spawn_recorder_process
+  end
+  
+  def set_tuner_to_correct_frequency
+    system "hdhomerun_config #{@device_id} set /tuner0/channel auto:#{@frequency}"
+  end
+  
+  def set_tuner_to_correct_program
+    system "hdhomerun_config #{@device_id} set /tuner0/program #{@program_id}"
+  end
+  
+  def spawn_recorder_process
+    @pid = spawn "hdhomerun_config #{@device_id} save /tuner0 #{directory}/stream.ts", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
+  end
+  
+  def kill_recorder_process
+    Process.kill('INT', @pid)
   end
 end
