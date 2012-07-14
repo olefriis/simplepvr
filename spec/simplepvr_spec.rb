@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../lib/simplepvr'
 describe 'SimplePVR' do
   before do
     @scheduler = double('Scheduler')
-    Scheduler.should_receive(:new).and_return(@scheduler)
+    Scheduler.stub(:new => @scheduler)
   end
   
   it 'initializes the system' do

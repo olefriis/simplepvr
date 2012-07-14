@@ -3,13 +3,17 @@ require File.dirname(__FILE__) + '/../lib/scheduler'
 
 describe Scheduler do
   before do
-    ChannelInformation.should_receive(:new).and_return(@channel_information = double('ChannelInformation'))
+    @channel_information = double('ChannelInformation')
+    @channel_information.stub(:information_for).with('DR K').and_return([282000000, 1098])
+    ChannelInformation.stub(:new => @channel_information)
+
+    Time.stub(:now => Time.local(2012, 7, 14, 19, 30))
     
     @rufus_scheduler = double('RufusScheduler')
+    Rufus::Scheduler.stub(:start_new => @rufus_scheduler)
   end
   
   it 'starts a new Rufus scheduler and waits' do
-    Rufus::Scheduler.should_receive(:start_new).and_return(@rufus_scheduler)
     @rufus_scheduler.should_receive(:join)
     
     scheduler = Scheduler.new
@@ -17,9 +21,9 @@ describe Scheduler do
   end
   
   it 'will create schedules with recordings of correct duration' do
-    Rufus::Scheduler.should_receive(:start_new).and_return(@rufus_scheduler)
-    @channel_information.should_receive(:information_for).with('DR K').and_return([282000000, 1098])
-    @rufus_scheduler.should_receive(:at).with('Tue Jul 10 20:46:00 +0200 2012').and_yield
+    start_time = Time.local(2012, 7, 15, 20, 15, 30) # Jul 15, 2012, 20:15:30
+    
+    @rufus_scheduler.should_receive(:at).with(start_time).and_yield
     Recorder.should_receive(:new).with('Borgia', 282000000, 1098).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
     @recorder.should_receive(:stop!)
@@ -27,7 +31,40 @@ describe Scheduler do
     
     scheduler = Scheduler.new
     scheduler.should_receive(:sleep).with(60.minutes)
-    scheduler.add('DR K', 'Borgia', 'Tue Jul 10 20:46:00 +0200 2012', 60.minutes)
+    scheduler.add('DR K', 'Borgia', 'Jul 15 2012 20:15:30', 60.minutes)
     scheduler.run!
+  end
+  
+  it 'skips recordings that have passed' do
+    @rufus_scheduler.should_receive(:join)
+    
+    scheduler = Scheduler.new
+    scheduler.add('DR K', 'Borgia', 'Jul 13 2012 20:15:30', 60.minutes)
+    scheduler.run!
+  end
+  
+  it 'starts recordings that are in progress, and knows the proper end time' do
+    start_time = Time.local(2012, 7, 14, 19, 15) # Jul 14, 2012, 19:15:00
+    
+    @rufus_scheduler.should_receive(:at).with(start_time).and_yield
+    Recorder.should_receive(:new).with('Borgia', 282000000, 1098).and_return(@recorder = double('Recorder'))
+    @recorder.should_receive(:start!)
+    @recorder.should_receive(:stop!)
+    @rufus_scheduler.should_receive(:join)
+    
+    scheduler = Scheduler.new
+    scheduler.should_receive(:sleep).with(45.minutes)
+    scheduler.add('DR K', 'Borgia', 'Jul 14 2012 19:15:00', 60.minutes)
+    scheduler.run!
+  end
+  
+  it 'complains if given date with wrong syntax' do
+    scheduler = Scheduler.new
+    expect { scheduler.add('DR K', 'Borgia', 'invalid time', 60.minutes) }.to raise_error "Invalid time 'invalid time'"
+  end
+  
+  it 'complains if given unknown month' do
+    scheduler = Scheduler.new
+    expect { scheduler.add('DR K', 'Borgia', 'Abc 13 2012 20:15:30', 60.minutes) }.to raise_error "Unknown month 'Abc'"
   end
 end
