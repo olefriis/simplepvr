@@ -50,35 +50,61 @@ The system will wait until the specified start times, and will then start the re
 the system, it will do a channel scan and put the results in channels.txt. This is not needed later, but of course
 you can force a channel scan by deleting channels.txt and restarting the system.
 
-The recordings are placed in the "recordings/" folder, named after the show ("Borgias" and "Sports news" in the
-example above), and then inside numbered directories. Inside these folders are two files:
+The recordings are placed like this:
+
+* recordings/
+  * Borgias/
+     * 1/
+     * 2/
+  * Sports news/
+     * 1/
+     * 2/
+     * 3/
+  * ...
+
+Inside the numbered directories are two files:
 
 * stream.ts: The actual stream. Let VLC or another media player show these for you.
 * hdhomerun_save.log: The output from the actual recording command.
 
 Future?
 =======
-Make an API (REST interface?) to alter the schedule, so that the schedules can be manipulated by e.g. a
-fancy web GUI which can handle XMLTV etc.
+Small things first
+------------------
+* Ignore passed recording schedules when starting up the system. Currently, the jobs sent to the Rufus
+  scheduler are started immediately if they lie in the past.
+* Richer API for setting schedules, e.g. being able to record a specific show every Thursday at 9 o'clock.
 
-Utilize more than one tuner in the HDHomeRun box.
+Then...
+-------
+* "Gemify" the stuff, so installation becomes a breeze.
+* Make an API (REST interface?) to alter the schedule, so that the schedules can be manipulated by e.g. a
+  fancy web GUI which can handle XMLTV etc.
+* Utilize more than one tuner in the HDHomeRun box.
+* Read XMLTV files and do some nice recording stuff with that.
 
-...all while: Cleaning up the code, making it more readable. I surely will accept pull requests!
+...all while cleaning up the code, making it more readable. I surely will accept pull requests!
 
-But then: Well, I don't know... I'm not sure we should take this much further. Let this be a nice,
-hackable library, not too big for people to read and understand.
+But then...
+-----------
+Well, I don't know... I'm not sure we should take this much further. Let this be a nice, hackable library,
+not too big for people to read and understand.
+
+I'd love to make a Web GUI on top of this library (it must be possible to do some fancy HTML5 stuff for
+showing TV schedules, setting up recordings, and watching recordings), but that should really happen as
+a separate project. You are free to beat me to this!
 
 Development
 ===========
 Run the specs like this:
 
-        bundle exec rspec spec/*_spec.rb
+        rspec
 
 There's a semi-manual test of the actual recording, since I'm not sure how to check automatically that
 we can record a stream from a HDHomeRun box. Run it with
 
-        bundle exec ruby spec/recorder_test.rb
+        ruby spec/recorder_test.rb
 
-After running this, a new recording should be present in "recordings/test/stream.ts", with 5 seconds of
-recording from the channel specified in the test (you need to alter the test file to your tuner and
-your available channels).
+After running this, a new recording should be present in "recordings/test/(sequence number)/stream.ts",
+with 5 seconds of recording from the channel specified in the test (you need to alter the test file to
+your tuner and your available channels).
