@@ -51,7 +51,7 @@ the system, it will do a channel scan and put the results in channels.txt. This 
 you can force a channel scan by deleting channels.txt and restarting the system.
 
 The recordings are placed in the "recordings/" folder, named after the show ("Borgias" and "Sports news" in the
-example above). Inside this folder are two files:
+example above), and then inside numbered directories. Inside these folders are two files:
 
 * stream.ts: The actual stream. Let VLC or another media player show these for you.
 * hdhomerun_save.log: The output from the actual recording command.

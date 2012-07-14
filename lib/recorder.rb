@@ -1,5 +1,6 @@
 require 'fileutils'
 require File.dirname(__FILE__) + '/device_finder'
+require File.dirname(__FILE__) + '/directory_creator'
 require File.dirname(__FILE__) + '/pvr_logger'
 
 class Recorder
@@ -10,12 +11,11 @@ class Recorder
   end
   
   def start!
-    directory = "recordings/#{@show_name}"
-    create_fresh_directory directory
+    directory = DirectoryCreator.create_for_show(@show_name)
 
     start_recording_in directory
     
-    PvrLogger.info "Started recording #{@show_name}"
+    PvrLogger.info "Started recording #{@show_name} in #{directory}"
   end
   
   def stop!
