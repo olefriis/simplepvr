@@ -1,7 +1,8 @@
 What?
 =====
-A really, really simple PVR (Personal Video Recorder) system which only supports the HDHomeRun network
-tuners.
+A really, really simple PVR (Personal Video Recorder) system which only supports the
+[HDHomeRun network tuners](http://www.silicondust.com/). It's written in Ruby and is highly hackable. If
+you don't want to hack it, but just want a solid PVR system, no worries: It's dead-simple to use.
 
 Why?
 ====
@@ -46,11 +47,12 @@ specifying your shows, start up the system:
 
         bundle exec ruby schedule.rb
 
-The system will wait until the specified start times, and will then start the recordings. First time you start up
-the system, it will do a channel scan and put the results in channels.txt. This is not needed later, but of course
-you can force a channel scan by deleting channels.txt and restarting the system.
+The system will wait for the specified start times, and will then start the recordings. First time you start up
+the system, it will do a channel scan and put the results in channels.txt. This is not needed later, but if your
+TV provider moves the channels around, you can force a channel scan by deleting channels.txt and restarting the
+system.
 
-The recordings are placed like this:
+The recordings are laid out like this:
 
 * recordings/
   * Borgias/
@@ -88,7 +90,7 @@ But then...
 Well, I don't know... I'm not sure we should take this much further. Let this be a nice, hackable library,
 not too big for people to read and understand.
 
-I'd love to make a Web GUI on top of this library (it must be possible to do some fancy HTML5 stuff for
+I'd love to make a web GUI on top of this library (it must be possible to do some fancy HTML5 stuff for
 showing TV schedules, setting up recordings, and watching recordings), but that should really happen as
 a separate project. You are free to beat me to this!
 
