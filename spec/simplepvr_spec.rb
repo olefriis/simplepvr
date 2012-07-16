@@ -1,5 +1,4 @@
-require 'rspec'
-require File.dirname(__FILE__) + '/../lib/simplepvr'
+require 'simplepvr'
 
 describe 'SimplePVR' do
   before do

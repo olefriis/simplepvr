@@ -1,5 +1,4 @@
-require 'rspec'
-require File.dirname(__FILE__) + '/../lib/channel_information'
+require 'channel_information'
 
 describe ChannelInformation do
   before do

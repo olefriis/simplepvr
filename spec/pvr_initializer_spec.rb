@@ -1,5 +1,4 @@
-require 'rspec'
-require File.dirname(__FILE__) + '/../lib/pvr_initializer'
+require 'pvr_initializer'
 
 describe PvrInitializer do
   it 'runs a channel scan if channels.txt is missing' do

@@ -1,5 +1,4 @@
-require 'rspec'
-require File.dirname(__FILE__) + '/../lib/scheduler'
+require 'scheduler'
 
 describe Scheduler do
   before do
