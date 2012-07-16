@@ -16,13 +16,13 @@ describe 'SimplePVR' do
   
   it 'sets up schedules' do
     PvrInitializer.should_receive(:setup)
-    @scheduler.should_receive(:add).with('DR K', 'Borgias', 'Tue Jul 10 20:46:00 +0200 2012', 60.minutes)
-    @scheduler.should_receive(:add).with('TV 2', 'Sports news', 'Wed Jul 11 12:15:00 +0200 2012', 20.minutes)
+    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:'Tue Jul 10 20:46:00 +0200 2012', for:60.minutes)
+    @scheduler.should_receive(:add).with('Sports news', from:'TV 2', at:'Wed Jul 11 12:15:00 +0200 2012', for:20.minutes)
     @scheduler.should_receive(:run!)
     
     schedule do
-      record 'DR K', 'Borgias', 'Tue Jul 10 20:46:00 +0200 2012', 60.minutes
-      record 'TV 2', 'Sports news', 'Wed Jul 11 12:15:00 +0200 2012', 20.minutes
+      record 'Borgias', from:'DR K', at:'Tue Jul 10 20:46:00 +0200 2012', for:60.minutes
+      record 'Sports news', from:'TV 2', at:'Wed Jul 11 12:15:00 +0200 2012', for:20.minutes
     end
   end
 end

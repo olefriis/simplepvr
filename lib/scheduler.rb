@@ -11,7 +11,9 @@ class Scheduler
     @channel_information = ChannelInformation.new
   end
   
-  def add(channel, show_name, start_time, duration)
+  def add(show_name, options)
+    channel, start_time, duration = options[:from], options[:at], options[:for]
+
     now = Time.now
     parsed_start_time = parse_time(start_time)
 

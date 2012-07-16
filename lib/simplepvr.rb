@@ -19,8 +19,8 @@ class SimplePvr
     @scheduler = Scheduler.new
   end
   
-  def record(channel, show_name, start_time, duration)
-    @scheduler.add(channel, show_name, start_time, duration)
+  def record(show_name, options)
+    @scheduler.add(show_name, options)
   end
   
   def finish

@@ -31,7 +31,7 @@ describe Scheduler do
     
     scheduler = Scheduler.new
     scheduler.should_receive(:sleep).with(60.minutes)
-    scheduler.add('DR K', 'Borgia', 'Jul 15 2012 20:15:30', 60.minutes)
+    scheduler.add('Borgia', from:'DR K', at:'Jul 15 2012 20:15:30', for:60.minutes)
     scheduler.run!
   end
   
@@ -39,7 +39,7 @@ describe Scheduler do
     @rufus_scheduler.should_receive(:join)
     
     scheduler = Scheduler.new
-    scheduler.add('DR K', 'Borgia', 'Jul 13 2012 20:15:30', 60.minutes)
+    scheduler.add('Borgia', from:'DR K', at:'Jul 13 2012 20:15:30', for:60.minutes)
     scheduler.run!
   end
   
@@ -54,17 +54,17 @@ describe Scheduler do
     
     scheduler = Scheduler.new
     scheduler.should_receive(:sleep).with(45.minutes)
-    scheduler.add('DR K', 'Borgia', 'Jul 14 2012 19:15:00', 60.minutes)
+    scheduler.add('Borgia', from:'DR K', at:'Jul 14 2012 19:15:00', for:60.minutes)
     scheduler.run!
   end
   
   it 'complains if given date with wrong syntax' do
     scheduler = Scheduler.new
-    expect { scheduler.add('DR K', 'Borgia', 'invalid time', 60.minutes) }.to raise_error "Invalid time 'invalid time'"
+    expect { scheduler.add('Borgia', from:'DR K', at:'invalid time', for:60.minutes) }.to raise_error "Invalid time 'invalid time'"
   end
   
   it 'complains if given unknown month' do
     scheduler = Scheduler.new
-    expect { scheduler.add('DR K', 'Borgia', 'Abc 13 2012 20:15:30', 60.minutes) }.to raise_error "Unknown month 'Abc'"
+    expect { scheduler.add('Borgia', from:'DR K', at:'Abc 13 2012 20:15:30', for:60.minutes) }.to raise_error "Unknown month 'Abc'"
   end
 end
