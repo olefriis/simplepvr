@@ -75,10 +75,6 @@ Small things first
 ------------------
 * Richer API for setting schedules, e.g. being able to record a specific show every Thursday at 9 o'clock.
 
-Bugs to fix
------------
-* Doesn't cope with spaces in show names.
-
 Then...
 -------
 * "Gemify" the stuff, so installation becomes a breeze.

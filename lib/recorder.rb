@@ -47,7 +47,7 @@ class Recorder
   end
   
   def spawn_recorder_process_in(directory)
-    @pid = spawn "hdhomerun_config #{@device_id} save /tuner0 #{directory}/stream.ts", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
+    @pid = spawn "hdhomerun_config #{@device_id} save /tuner0 \"#{directory}/stream.ts\"", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
   end
   
   def kill_recorder_process
