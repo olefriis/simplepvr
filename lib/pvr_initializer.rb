@@ -1,10 +1,7 @@
-require File.dirname(__FILE__) + '/device_finder'
+require File.dirname(__FILE__) + '/hd_home_run'
 
 class PvrInitializer
   def self.setup
-    unless File.exists?('channels.txt')
-      device_id = DeviceFinder.find
-      system "hdhomerun_config #{device_id} scan /tuner0 channels.txt"
-    end
+    HDHomeRun.new.scan_for_channels unless File.exists?('channels.txt')
   end
 end

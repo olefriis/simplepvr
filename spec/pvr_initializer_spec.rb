@@ -4,8 +4,9 @@ require File.dirname(__FILE__) + '/../lib/pvr_initializer'
 describe PvrInitializer do
   it 'runs a channel scan if channels.txt is missing' do
     File.should_receive(:exists?).with('channels.txt').and_return(false)
-    DeviceFinder.should_receive(:find).and_return('ABCDEF01')
-    PvrInitializer.should_receive(:system).with('hdhomerun_config ABCDEF01 scan /tuner0 channels.txt')
+    hd_home_run = double('HDHomeRun')
+    hd_home_run.should_receive(:scan_for_channels)
+    HDHomeRun.stub(:new => hd_home_run)
     
     PvrInitializer.setup
   end
