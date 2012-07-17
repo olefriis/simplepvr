@@ -69,6 +69,30 @@ Inside the numbered directories are two files:
 * stream.ts: The actual stream. Let VLC or another media player show these for you.
 * hdhomerun_save.log: The output from the actual recording command.
 
+XMLTV
+=====
+If you have an XMLTV file, you're in luck: You can read that into the system and set up schedules like this:
+
+        schedule do
+          record 'Borgias', from:'DR K'
+		end
+
+...and all shows withe the name 'Borgias' from 'DR K' will be found and scheduled. The recording will start 2
+minutes before the scheduled programme and end 5 minutes later, just in case the programme doesn't start at the
+exact planned time.
+
+To use this feature, first you must specify in a YAML file how the channel IDs in your xmltv file relates to the
+channel names that the HDHomeRun has found for you. Create a file called e.g. "channel_mappings.yaml":
+
+        www.ontv.dk/tv/1: DR 1
+		www.ontv.dk/tv/2: DR 2
+
+Then read your XMLTV file and this mappings file:
+
+        bundle exec ruby read_xmltv.rb programmes.xmltv channel_mappings.yaml
+
+...and wait a little. Then start up the system as normal, and you're done.
+
 Future?
 =======
 Small things first
@@ -81,7 +105,6 @@ Then...
 * Make an API (REST interface?) to alter the schedule, so that the schedules can be manipulated by e.g. a
   fancy web GUI which can handle XMLTV etc.
 * Utilize more than one tuner in the HDHomeRun box.
-* Read XMLTV files and do some nice recording stuff with that.
 
 ...all while cleaning up the code, making it more readable. I surely will accept pull requests!
 

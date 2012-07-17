@@ -43,6 +43,8 @@ module SimplePvr
   
     private
     def parse_time(time)
+      return time if time.is_a?(Time)
+
       raise Exception, "Invalid time '#{time}'" unless time =~ /^(.*) (\d*) (\d*) (\d*):(\d*):(\d*)$/
       month, day, year, hour, minute, second = $1, $2, $3, $4, $5, $6
 

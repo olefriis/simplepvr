@@ -1,3 +1,6 @@
 .bundle
 /channels.txt
+/channel_mapping.yaml
+/programmes.xmltv
 /recordings
+*.sqlite
