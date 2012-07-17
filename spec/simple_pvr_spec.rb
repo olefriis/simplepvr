@@ -1,6 +1,6 @@
-require 'simplepvr'
+require 'simple_pvr'
 
-describe 'SimplePVR' do
+describe 'SimplePvr' do
   before do
     @scheduler = double('Scheduler')
     Scheduler.stub(:new => @scheduler)

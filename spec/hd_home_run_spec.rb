@@ -1,4 +1,4 @@
-require 'hd_home_run'
+require 'simple_pvr/hd_home_run'
 
 describe HDHomeRun do
   before do

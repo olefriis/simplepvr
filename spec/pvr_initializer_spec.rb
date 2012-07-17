@@ -1,4 +1,4 @@
-require 'pvr_initializer'
+require 'simple_pvr/pvr_initializer'
 
 describe PvrInitializer do
   it 'runs a channel scan if channels.txt is missing' do

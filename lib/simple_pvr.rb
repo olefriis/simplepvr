@@ -1,6 +1,6 @@
 require 'active_support/core_ext/numeric/time' # So we can say 60.minutes
-require File.dirname(__FILE__) + '/pvr_initializer'
-require File.dirname(__FILE__) + '/scheduler'
+require File.dirname(__FILE__) + '/simple_pvr/pvr_initializer'
+require File.dirname(__FILE__) + '/simple_pvr/scheduler'
 
 #
 # Simple DSL to set up schedules

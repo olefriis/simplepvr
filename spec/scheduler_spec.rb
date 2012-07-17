@@ -1,4 +1,4 @@
-require 'scheduler'
+require 'simple_pvr/scheduler'
 
 describe Scheduler do
   before do

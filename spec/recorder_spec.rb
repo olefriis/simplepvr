@@ -1,4 +1,4 @@
-require 'recorder'
+require 'simple_pvr/recorder'
 
 describe Recorder do
   before do

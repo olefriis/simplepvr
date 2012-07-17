@@ -1,4 +1,4 @@
-require 'channel_information'
+require 'simple_pvr/channel_information'
 
 describe ChannelInformation do
   before do
