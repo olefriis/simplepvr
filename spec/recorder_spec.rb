@@ -1,11 +1,11 @@
 require 'simple_pvr/recorder'
 
-describe Recorder do
+describe SimplePvr::Recorder do
   before do
     @hd_home_run = double('HDHomeRun')
-    HDHomeRun.stub(:new => @hd_home_run)
+    SimplePvr::HDHomeRun.stub(:new => @hd_home_run)
     
-    @recorder = Recorder.new('Star Trek', 282000000, 1098)
+    @recorder = SimplePvr::Recorder.new('Star Trek', 282000000, 1098)
   end
   
   context 'when finding recording directories' do

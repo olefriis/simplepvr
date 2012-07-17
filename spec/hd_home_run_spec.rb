@@ -1,6 +1,6 @@
 require 'simple_pvr/hd_home_run'
 
-describe HDHomeRun do
+describe SimplePvr::HDHomeRun do
   before do
     @pipe = double('pipe')
     IO.should_receive(:popen).with('hdhomerun_config discover').and_yield(@pipe)
@@ -10,20 +10,20 @@ describe HDHomeRun do
     it 'discovers a device when present' do
       @pipe.stub(:read => 'hdhomerun device ABCDEF01 found at 10.0.0.4')
 
-      HDHomeRun.new.device_id.should == 'ABCDEF01'
+      SimplePvr::HDHomeRun.new.device_id.should == 'ABCDEF01'
     end
   
     it 'raises an exception when no device is present' do
       @pipe.stub(:read => 'no devices found')
 
-      expect { HDHomeRun.new }.to raise_error(Exception, 'No device found: no devices found')
+      expect { SimplePvr::HDHomeRun.new }.to raise_error(Exception, 'No device found: no devices found')
     end
   end
   
   context 'when initialized' do
     before do
       @pipe.stub(:read => 'hdhomerun device ABCDEF01 found at 10.0.0.4')
-      @hd_home_run = HDHomeRun.new
+      @hd_home_run = SimplePvr::HDHomeRun.new
     end
   
     it 'can do a channel scan' do

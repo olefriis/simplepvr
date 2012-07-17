@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/lib/simplepvr'
+require File.dirname(__FILE__) + '/lib/simple_pvr'
 
 schedule do
   record 'Borgias', from:'DR K', at:'Jul 10 2012 20:46:00', for:60.minutes

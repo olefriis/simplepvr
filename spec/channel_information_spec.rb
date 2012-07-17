@@ -1,8 +1,8 @@
 require 'simple_pvr/channel_information'
 
-describe ChannelInformation do
+describe SimplePvr::ChannelInformation do
   before do
-    @channel_information = ChannelInformation.new(File.dirname(__FILE__) + '/resources/channels.txt')
+    @channel_information = SimplePvr::ChannelInformation.new(File.dirname(__FILE__) + '/resources/channels.txt')
   end
   
   it 'knows the frequency and channel ID of the channels in the file read' do

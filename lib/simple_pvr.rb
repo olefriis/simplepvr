@@ -7,23 +7,25 @@ require File.dirname(__FILE__) + '/simple_pvr/scheduler'
 #
 
 def schedule(&block)
-  PvrInitializer.setup
+  SimplePvr::PvrInitializer.setup
   
-  pvr = SimplePvr.new
+  pvr = SimplePvr::SimplePvr.new
   pvr.instance_eval &block
   pvr.finish
 end
 
-class SimplePvr
-  def initialize
-    @scheduler = Scheduler.new
-  end
+module SimplePvr
+  class SimplePvr
+    def initialize
+      @scheduler = Scheduler.new
+    end
   
-  def record(show_name, options)
-    @scheduler.add(show_name, options)
-  end
+    def record(show_name, options)
+      @scheduler.add(show_name, options)
+    end
   
-  def finish
-    @scheduler.run!
+    def finish
+      @scheduler.run!
+    end
   end
 end
