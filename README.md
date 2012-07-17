@@ -103,7 +103,7 @@ Run the specs like this:
 There's a semi-manual test of the actual recording, since I'm not sure how to check automatically that
 we can record a stream from a HDHomeRun box. Run it with
 
-        ruby spec/recorder_test.rb
+        ruby spec/simple_pvr/recorder_test.rb
 
 After running this, a new recording should be present in "recordings/test/(sequence number)/stream.ts",
 with 5 seconds of recording from the channel specified in the test (you need to alter the test file to
