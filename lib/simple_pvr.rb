@@ -56,7 +56,7 @@ module SimplePvr
     
     def schedule_programmes(show_name, programmes)
       programmes.each do |programme|
-        start_time = programme.start_time.to_time - 2.minutes
+        start_time = programme.start_time - 2.minutes
         duration = programme.duration + 7.minutes
         @scheduler.add(show_name, from:programme.channel, at:start_time, for:duration)
       end

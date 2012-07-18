@@ -25,23 +25,6 @@ describe SimplePvr::Dao do
     @dao.number_of_programmes.should == 0
   end
   
-  it 'can find all programmes on a certain day for a certain channel' do
-    @dao.clear_programmes
-    
-    @dao.add_programme('DR 1', 'Second', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    @dao.add_programme('DR 1', 'First', 'Subtitle', 'Description', Time.local(2012, 7, 17, 10, 30), 40.minutes)
-    @dao.add_programme('DR 1', 'Third', 'Subtitle', 'Description', Time.local(2012, 7, 17, 21, 30), 50.minutes)
-    @dao.add_programme('DR 1', 'Day before', 'Subtitle', 'Description', Time.local(2012, 7, 16, 21, 30), 50.minutes)
-    @dao.add_programme('DR 1', 'Day after', 'Subtitle', 'Description', Time.local(2012, 7, 18, 21, 30), 50.minutes)
-    @dao.add_programme('DR 2', 'Wrong channel', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    
-    programmes = @dao.programmes_for_channel_on_date('DR 1', Date.civil(2012, 7, 17))
-    programmes.length.should == 3
-    programmes[0].title.should == 'First'
-    programmes[1].title.should == 'Second'
-    programmes[2].title.should == 'Third'
-  end
-  
   it 'can find all programmes with a certain title' do
     @dao.clear_programmes
 

@@ -10,7 +10,7 @@ module SimplePvr
     property :title, String, index: true
     property :subtitle, String
     property :description, Text
-    property :start_time, DateTime
+    property :start_time, Time
     property :duration, Integer
   end
   
@@ -18,8 +18,7 @@ module SimplePvr
   
   class Dao
     def initialize(database_file_name = nil)
-      database_file_name ||= File.dirname(__FILE__) + '/../../database.sqlite' # Not a good idea!
-      puts "Initializing #{database_file_name}"
+      database_file_name ||= File.dirname(__FILE__) + '/../../database.sqlite' # TODO: Not a good idea!
       DataMapper.setup(:default, "sqlite://#{database_file_name}")
       DataMapper.auto_upgrade!
     end
@@ -44,10 +43,6 @@ module SimplePvr
     
     def programmes_on_channel_with_title(channel, title)
       Programme.all(:channel => channel, :title => title, :order => :start_time)
-    end
-    
-    def programmes_for_channel_on_date(channel, date)
-      Programme.all(:channel => channel, :start_time => (date..date+1), :order => :start_time)
     end
     
     def number_of_programmes
