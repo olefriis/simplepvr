@@ -26,6 +26,8 @@ describe SimplePvr::Dao do
   end
   
   it 'can find all programmes on a certain day for a certain channel' do
+    @dao.clear_programmes
+    
     @dao.add_programme('DR 1', 'Second', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
     @dao.add_programme('DR 1', 'First', 'Subtitle', 'Description', Time.local(2012, 7, 17, 10, 30), 40.minutes)
     @dao.add_programme('DR 1', 'Third', 'Subtitle', 'Description', Time.local(2012, 7, 17, 21, 30), 50.minutes)
@@ -39,8 +41,29 @@ describe SimplePvr::Dao do
     programmes[1].title.should == 'Second'
     programmes[2].title.should == 'Third'
   end
+  
+  it 'can find all programmes with a certain title' do
+    @dao.clear_programmes
 
-  it 'can find all programmes of a certain name for a specific channel' do
+    @dao.add_programme('DR 2', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    @dao.add_programme('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+    @dao.add_programme('DR 1', 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+
+    programmes = @dao.programmes_with_title('Interesting')
+    programmes.length.should == 2
+
+    programmes[0].channel.should == 'DR 1'
+    programmes[0].title.should == 'Interesting'
+    programmes[0].subtitle.should == 'First'
+
+    programmes[1].channel.should == 'DR 2'
+    programmes[1].title.should == 'Interesting'
+    programmes[1].subtitle.should == 'Second'
+  end
+
+  it 'can find all programmes with a certain title for a specific channel' do
+    @dao.clear_programmes
+    
     @dao.add_programme('DR 1', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
     @dao.add_programme('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
     @dao.add_programme('DR 2', 'Interesting', '...but on wrong channel...', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)

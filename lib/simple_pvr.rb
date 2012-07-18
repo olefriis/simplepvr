@@ -21,11 +21,13 @@ module SimplePvr
       @scheduler = Scheduler.new
     end
   
-    def record(show_name, options)
-      if options[:at].nil?
-        find_programmes(show_name, options)
+    def record(show_name, options={})
+      if options[:at].nil? && options[:from].nil?
+        record_programmes_with_title(show_name)
+      elsif options[:at].nil?
+        record_programmes_with_title_on_channel(show_name, options)
       else
-        @scheduler.add(show_name, options)
+        record_from_timestamp_and_duration(show_name, options)
       end
     end
     
@@ -34,13 +36,29 @@ module SimplePvr
     end
     
     private
-    def find_programmes(show_name, options)
+    def record_programmes_with_title(show_name)
+      @dao ||= Dao.new
+      schedule_programmes(show_name, @dao.programmes_with_title(show_name))
+    end
+    
+    def record_programmes_with_title_on_channel(show_name, options)
       channel = options[:from]
       @dao ||= Dao.new
-      @dao.programmes_on_channel_with_title(channel, show_name).each do |programme|
-        start_time = programme.start_time.to_time - 2.minutes.to_i
-        duration = programme.duration + 7.minutes.to_i
-        @scheduler.add(show_name, from:channel, at:start_time, for:duration)
+      schedule_programmes(show_name, @dao.programmes_on_channel_with_title(channel, show_name))
+    end
+    
+    def record_from_timestamp_and_duration(show_name, options)
+      if options[:for].nil?
+        raise Exception, "No duration specified for recording of '#{show_name}' from '#{options[:from]}' at '#{options[:at]}'"
+      end
+      @scheduler.add(show_name, options)
+    end
+    
+    def schedule_programmes(show_name, programmes)
+      programmes.each do |programme|
+        start_time = programme.start_time.to_time - 2.minutes
+        duration = programme.duration + 7.minutes
+        @scheduler.add(show_name, from:programme.channel, at:start_time, for:duration)
       end
     end
   end

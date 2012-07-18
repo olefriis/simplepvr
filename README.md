@@ -79,7 +79,11 @@ If you have an XMLTV file, you're in luck: You can read that into the system and
 
 ...and all shows withe the name 'Borgias' from 'DR K' will be found and scheduled. The recording will start 2
 minutes before the scheduled programme and end 5 minutes later, just in case the programme doesn't start at the
-exact planned time.
+exact planned time. If you don't care about which channel the show is on, you can just specify the show title:
+
+        schedule do
+          record 'Borgias'
+        end
 
 To use this feature, first you must specify in a YAML file how the channel IDs in your xmltv file relates to the
 channel names that the HDHomeRun has found for you. Create a file called e.g. "channel_mappings.yaml":
