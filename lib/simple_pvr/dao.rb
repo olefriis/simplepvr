@@ -18,7 +18,7 @@ module SimplePvr
   
   class Dao
     def initialize(database_file_name = nil)
-      database_file_name ||= File.dirname(__FILE__) + '/../../database.sqlite' # TODO: Not a good idea!
+      database_file_name ||= Dir.pwd + '/database.sqlite'
       DataMapper.setup(:default, "sqlite://#{database_file_name}")
       DataMapper.auto_upgrade!
     end
