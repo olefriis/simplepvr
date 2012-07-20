@@ -68,10 +68,7 @@ GEM
     rspec-expectations (2.11.1)
       diff-lcs (~> 1.1.3)
     rspec-mocks (2.11.1)
-    rufus-scheduler (2.0.17)
-      tzinfo (>= 0.3.23)
     stringex (1.3.3)
-    tzinfo (0.3.33)
     uuidtools (2.1.3)
 
 PLATFORMS
@@ -82,4 +79,3 @@ DEPENDENCIES
   data_mapper
   dm-sqlite-adapter
   rspec
-  rufus-scheduler

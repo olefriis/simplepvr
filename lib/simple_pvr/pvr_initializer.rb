@@ -17,5 +17,10 @@ module SimplePvr
     def self.hd_home_run
       @hd_home_run
     end
+    
+    def self.sleep_forever
+      forever = 6000.days
+      sleep forever
+    end
   end
 end

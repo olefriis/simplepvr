@@ -13,13 +13,15 @@ def schedule(&block)
   pvr = SimplePvr::SimplePvr.new
   pvr.instance_eval &block
   pvr.finish
+
+  SimplePvr::PvrInitializer.sleep_forever
 end
 
 module SimplePvr
   class SimplePvr
     def initialize
-      @scheduler = Scheduler.new
       @dao = PvrInitializer.dao
+      @recordings = []
     end
   
     def record(show_name, options={})
@@ -33,7 +35,8 @@ module SimplePvr
     end
     
     def finish
-      @scheduler.run!
+      scheduler = Scheduler.new
+      scheduler.recordings = @recordings
     end
     
     private
@@ -50,15 +53,20 @@ module SimplePvr
       if options[:for].nil?
         raise Exception, "No duration specified for recording of '#{show_name}' from '#{options[:from]}' at '#{options[:at]}'"
       end
-      @scheduler.add(show_name, options)
+
+      add_recording(options[:from], show_name, options[:at], options[:for])
     end
     
     def schedule_programmes(show_name, programmes)
       programmes.each do |programme|
         start_time = programme.start_time - 2.minutes
         duration = programme.duration + 7.minutes
-        @scheduler.add(show_name, from:programme.channel.name, at:start_time, for:duration)
+        add_recording(programme.channel.name, show_name, start_time, duration)
       end
+    end
+    
+    def add_recording(channel, show_name, start_time, duration)
+      @recordings << Recording.new(channel, show_name, start_time, duration)
     end
   end
 end

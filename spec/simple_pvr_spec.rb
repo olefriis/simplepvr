@@ -11,20 +11,24 @@ describe 'SimplePvr' do
     @dao = double('Dao')
     SimplePvr::PvrInitializer.stub(:dao => @dao)
     SimplePvr::PvrInitializer.stub(:setup)
+    SimplePvr::PvrInitializer.stub(:sleep_forever)
   end
   
-  it 'initializes the system' do
+  it 'initializes the system and sleeps forever' do
     SimplePvr::PvrInitializer.should_receive(:setup)
-    @scheduler.should_receive(:run!)
+    @scheduler.should_receive(:recordings=).with([])
+    SimplePvr::PvrInitializer.stub(:sleep_forever)
     
     schedule {}
   end
   
   it 'can set up simple schedules' do
+    recordings = [
+      SimplePvr::Recording.new('DR K', 'Borgias', Time.local(2012, 7, 10, 20, 46), 60.minutes),
+      SimplePvr::Recording.new('TV 2', 'Sports news', Time.local(2012, 7, 11, 12, 15), 20.minutes)
+    ]
     SimplePvr::PvrInitializer.should_receive(:setup)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 46), for:60.minutes)
-    @scheduler.should_receive(:add).with('Sports news', from:'TV 2', at:Time.local(2012, 7, 11, 12, 15), for:20.minutes)
-    @scheduler.should_receive(:run!)
+    @scheduler.should_receive(:recordings=).with(recordings)
     
     schedule do
       record 'Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 46), for:60.minutes
@@ -42,15 +46,16 @@ describe 'SimplePvr' do
   end
   
   it 'can set up schedules from channel and program title' do
+    recordings = [
+      SimplePvr::Recording.new('DR K', 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes),
+      SimplePvr::Recording.new('DR K','Borgias',  Time.local(2012, 7, 17, 20, 48), 67.minutes)
+    ]
     @dao.stub(:programmes_on_channel_with_title).with('DR K', 'Borgias').and_return([
       MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR K'), Time.local(2012, 7, 10, 20, 50), 60.minutes),
       MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR K'), Time.local(2012, 7, 17, 20, 50), 60.minutes)
     ])
-    
     SimplePvr::PvrInitializer.should_receive(:setup)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 48), for:67.minutes)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 17, 20, 48), for:67.minutes)
-    @scheduler.should_receive(:run!)
+    @scheduler.should_receive(:recordings=).with(recordings)
 
     schedule do
       record 'Borgias', from:'DR K'
@@ -58,15 +63,16 @@ describe 'SimplePvr' do
   end
   
   it 'can set up schedules from program title only' do
+    recordings = [
+      SimplePvr::Recording.new('DR 1', 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes),
+      SimplePvr::Recording.new('DR K', 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes)
+    ]
     @dao.stub(:programmes_with_title).with('Borgias').and_return([
       MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR 1'), Time.local(2012, 7, 10, 20, 50), 60.minutes),
       MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR K'), Time.local(2012, 7, 17, 20, 50), 60.minutes)
     ])
-    
     SimplePvr::PvrInitializer.should_receive(:setup)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR 1', at:Time.local(2012, 7, 10, 20, 48), for:67.minutes)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 17, 20, 48), for:67.minutes)
-    @scheduler.should_receive(:run!)
+    @scheduler.should_receive(:recordings=).with(recordings)
 
     schedule do
       record 'Borgias'

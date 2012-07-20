@@ -1,5 +1,4 @@
 source "http://rubygems.org"
-gem 'rufus-scheduler'
 gem 'activesupport'
 
 gem 'data_mapper'
