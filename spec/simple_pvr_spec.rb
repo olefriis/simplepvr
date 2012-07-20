@@ -48,8 +48,8 @@ describe 'SimplePvr' do
     ])
     
     SimplePvr::PvrInitializer.should_receive(:setup)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 50) - 2.minutes, for:67.minutes)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 17, 20, 50) - 2.minutes, for:67.minutes)
+    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 48), for:67.minutes)
+    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 17, 20, 48), for:67.minutes)
     @scheduler.should_receive(:run!)
 
     schedule do
