@@ -2,6 +2,7 @@ require 'simple_pvr'
 
 describe 'SimplePvr' do
   MockProgrammeForSimplePvr = Struct.new(:channel, :start_time, :duration)
+  MockChannelForSimplePvr = Struct.new(:name)
   
   before do
     @scheduler = double('Scheduler')
@@ -9,6 +10,7 @@ describe 'SimplePvr' do
     
     @dao = double('Dao')
     SimplePvr::PvrInitializer.stub(:dao => @dao)
+    SimplePvr::PvrInitializer.stub(:setup)
   end
   
   it 'initializes the system' do
@@ -40,8 +42,8 @@ describe 'SimplePvr' do
   
   it 'can set up schedules from channel and program title' do
     @dao.stub(:programmes_on_channel_with_title).with('DR K', 'Borgias').and_return([
-      MockProgrammeForSimplePvr.new('DR K', Time.local(2012, 7, 10, 20, 50), 60.minutes),
-      MockProgrammeForSimplePvr.new('DR K', Time.local(2012, 7, 17, 20, 50), 60.minutes)
+      MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR K'), Time.local(2012, 7, 10, 20, 50), 60.minutes),
+      MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR K'), Time.local(2012, 7, 17, 20, 50), 60.minutes)
     ])
     
     SimplePvr::PvrInitializer.should_receive(:setup)
@@ -56,8 +58,8 @@ describe 'SimplePvr' do
   
   it 'can set up schedules from program title only' do
     @dao.stub(:programmes_with_title).with('Borgias').and_return([
-      MockProgrammeForSimplePvr.new('DR 1', Time.local(2012, 7, 10, 20, 50), 60.minutes),
-      MockProgrammeForSimplePvr.new('DR K', Time.local(2012, 7, 17, 20, 50), 60.minutes)
+      MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR 1'), Time.local(2012, 7, 10, 20, 50), 60.minutes),
+      MockProgrammeForSimplePvr.new(MockChannelForSimplePvr.new('DR K'), Time.local(2012, 7, 17, 20, 50), 60.minutes)
     ])
     
     SimplePvr::PvrInitializer.should_receive(:setup)

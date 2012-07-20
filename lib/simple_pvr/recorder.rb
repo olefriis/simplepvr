@@ -4,15 +4,15 @@ require File.dirname(__FILE__) + '/pvr_logger'
 
 module SimplePvr
   class Recorder
-    def initialize(show_name, frequency, program_id)
-      @show_name, @frequency, @program_id = show_name, frequency, program_id
+    def initialize(show_name, channel)
+      @show_name, @channel = show_name, channel
       
       @hd_home_run = PvrInitializer.hd_home_run
     end
   
     def start!
       directory = create_for_show(@show_name)
-      @hd_home_run.start_recording(@frequency, @program_id, directory)
+      @hd_home_run.start_recording(@channel.frequency, @channel.channel_id, directory)
     
       PvrLogger.info "Started recording #{@show_name} in #{directory}"
     end

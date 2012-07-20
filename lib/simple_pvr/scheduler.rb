@@ -1,7 +1,7 @@
 require 'rufus/scheduler'
-require File.dirname(__FILE__) + '/channel_information'
 require File.dirname(__FILE__) + '/recorder'
 require File.dirname(__FILE__) + '/pvr_logger'
+require File.dirname(__FILE__) + '/pvr_initializer'
 
 module SimplePvr
   class Scheduler
@@ -9,7 +9,7 @@ module SimplePvr
   
     def initialize
       @scheduler = Rufus::Scheduler.start_new
-      @channel_information = ChannelInformation.new
+      @dao = PvrInitializer.dao
     end
   
     def add(show_name, options)
@@ -28,9 +28,9 @@ module SimplePvr
         PvrLogger.info("Scheduling #{show_name} for #{parsed_start_time}")
       end
 
-      frequency, id = @channel_information.information_for(channel)
+      channel = @dao.channel_with_name(channel)
       @scheduler.at parsed_start_time do
-        recorder = Recorder.new(show_name, frequency, id)
+        recorder = Recorder.new(show_name, channel)
         recorder.start!
         sleep duration
         recorder.stop!

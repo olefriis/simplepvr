@@ -1,6 +1,7 @@
 module SimplePvr
   #
-  # Encapsulates all the HDHomeRun-specific functionality.
+  # Encapsulates all the HDHomeRun-specific functionality. Do not initialize HDHomeRun objects yourself,
+  # but get the current instance through PvrInitializer.
   #
   class HDHomeRun
     attr_reader :device_id

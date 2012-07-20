@@ -5,7 +5,8 @@ describe SimplePvr::Recorder do
     @hd_home_run = double('HDHomeRun')
     SimplePvr::PvrInitializer.stub(:hd_home_run => @hd_home_run)
     
-    @recorder = SimplePvr::Recorder.new('Star Trek', 282000000, 1098)
+    @channel = double('Channel', frequency:282000000, channel_id:1098)
+    @recorder = SimplePvr::Recorder.new('Star Trek', @channel)
   end
   
   context 'when finding recording directories' do

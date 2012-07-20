@@ -1,3 +1,4 @@
+require File.dirname(__FILE__) + '/dao'
 require File.dirname(__FILE__) + '/hd_home_run'
 
 module SimplePvr
@@ -6,7 +7,7 @@ module SimplePvr
       @dao = Dao.new
       @hd_home_run = HDHomeRun.new(@dao)
 
-      @hd_home_run.scan_for_channels unless File.exists?('channels.txt')
+      @hd_home_run.scan_for_channels if @dao.number_of_channels == 0
     end
     
     def self.dao

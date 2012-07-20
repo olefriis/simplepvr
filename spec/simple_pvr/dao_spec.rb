@@ -12,55 +12,103 @@ describe SimplePvr::Dao do
     @dao = SimplePvr::Dao.new(@database_file_name)
   end
   
-  it 'can insert programmes' do
-    3.times { @dao.add_programme('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+  context 'when handling channels' do
+    it 'can insert channels' do
+      3.times {|i| @dao.add_channel("Channel #{i}", 23000000, 1098) }
     
-    @dao.number_of_programmes.should == 3
-  end
+      @dao.number_of_channels.should == 3
+    end
+  
+    it 'can clear channels' do
+      3.times {|i| @dao.add_channel("Channel #{i}", 23000000, 1098) }
+      @dao.clear_channels
+    
+      @dao.number_of_channels.should == 0
+    end
+    
+    it 'can find channels' do
+      @dao.add_channel('Known channel', 23000000, 1098)
+      
+      channel = @dao.channel_with_name('Known channel')
+      channel.name.should == 'Known channel'
+      channel.frequency.should == 23000000
+      channel.channel_id.should == 1098
+    end
 
-  it 'can clear all programmes' do
-    3.times { @dao.add_programme('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
-    @dao.clear_programmes
-    
-    @dao.number_of_programmes.should == 0
+    it 'complains when asked for non-existing channel' do
+      expect { @dao.channel_with_name('unknown') }.to raise_error 'Unknown channel: unknown'
+    end
   end
   
-  it 'can find all programmes with a certain title' do
-    @dao.clear_programmes
-
-    @dao.add_programme('DR 2', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    @dao.add_programme('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    @dao.add_programme('DR 1', 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-
-    programmes = @dao.programmes_with_title('Interesting')
-    programmes.length.should == 2
-
-    programmes[0].channel.should == 'DR 1'
-    programmes[0].title.should == 'Interesting'
-    programmes[0].subtitle.should == 'First'
-
-    programmes[1].channel.should == 'DR 2'
-    programmes[1].title.should == 'Interesting'
-    programmes[1].subtitle.should == 'Second'
-  end
-
-  it 'can find all programmes with a certain title for a specific channel' do
-    @dao.clear_programmes
+  context 'when handling programmes' do
+    before do
+      @dao.add_channel('DR 1', 23000000, 1098)
+      @dao.add_channel('DR 2', 24000000, 1099)
+    end
     
-    @dao.add_programme('DR 1', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    @dao.add_programme('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    @dao.add_programme('DR 2', 'Interesting', '...but on wrong channel...', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    @dao.add_programme('DR 1', 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    it 'can insert programmes' do
+      3.times { @dao.add_programme('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
     
-    programmes = @dao.programmes_on_channel_with_title('DR 1', 'Interesting')
-    programmes.length.should == 2
+      @dao.number_of_programmes.should == 3
+    end
+    
+    it 'cannot insert programmes for unknown channels' do
+      expect {
+        @dao.add_programme('Unknown', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+      }.to raise_error 'Unknown channel: Unknown'
+    end
 
-    programmes[0].channel.should == 'DR 1'
-    programmes[0].title.should == 'Interesting'
-    programmes[0].subtitle.should == 'First'
+    it 'can clear all programmes' do
+      3.times { @dao.add_programme('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+      @dao.clear_programmes
+    
+      @dao.number_of_programmes.should == 0
+    end
+  
+    it 'clears all programmes when clearing channels' do
+      3.times { @dao.add_programme('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+      @dao.clear_channels
+  
+      @dao.number_of_programmes.should == 0
+    end
+  
+    it 'can find all programmes with a certain title' do
+      @dao.clear_programmes
 
-    programmes[1].channel.should == 'DR 1'
-    programmes[1].title.should == 'Interesting'
-    programmes[1].subtitle.should == 'Second'
+      @dao.add_programme('DR 2', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+      @dao.add_programme('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+      @dao.add_programme('DR 1', 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+
+      programmes = @dao.programmes_with_title('Interesting')
+      programmes.length.should == 2
+
+      programmes[0].channel.name.should == 'DR 1'
+      programmes[0].title.should == 'Interesting'
+      programmes[0].subtitle.should == 'First'
+
+      programmes[1].channel.name.should == 'DR 2'
+      programmes[1].title.should == 'Interesting'
+      programmes[1].subtitle.should == 'Second'
+    end
+
+    it 'can find all programmes with a certain title for a specific channel' do
+      @dao.clear_programmes
+    
+      @dao.add_programme('DR 1', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+      @dao.add_programme('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+      @dao.add_programme('DR 2', 'Interesting', '...but on wrong channel...', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+      @dao.add_programme('DR 1', 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    
+      programmes = @dao.programmes_on_channel_with_title('DR 1', 'Interesting')
+      programmes.length.should == 2
+
+      programmes[0].channel.name.should == 'DR 1'
+      programmes[0].title.should == 'Interesting'
+      programmes[0].subtitle.should == 'First'
+
+      programmes[1].channel.name.should == 'DR 1'
+      programmes[1].title.should == 'Interesting'
+      programmes[1].subtitle.should == 'Second'
+    end
   end
 end

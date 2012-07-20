@@ -2,9 +2,11 @@ require 'simple_pvr/scheduler'
 
 describe SimplePvr::Scheduler do
   before do
-    @channel_information = double('ChannelInformation')
-    @channel_information.stub(:information_for).with('DR K').and_return([282000000, 1098])
-    SimplePvr::ChannelInformation.stub(:new => @channel_information)
+    @channel = double('ChannelInformation', frequency: 282000000, channel_id: 1098)
+    
+    @dao = double('Dao')
+    @dao.stub(:channel_with_name).with('DR K').and_return(@channel)
+    SimplePvr::PvrInitializer.stub(:dao => @dao)
 
     Time.stub(:now => Time.local(2012, 7, 14, 19, 30))
     
@@ -23,7 +25,7 @@ describe SimplePvr::Scheduler do
     start_time = Time.local(2012, 7, 15, 20, 15, 30) # Jul 15, 2012, 20:15:30
     
     @rufus_scheduler.should_receive(:at).with(start_time).and_yield
-    SimplePvr::Recorder.should_receive(:new).with('Borgia', 282000000, 1098).and_return(@recorder = double('Recorder'))
+    SimplePvr::Recorder.should_receive(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
     @recorder.should_receive(:stop!)
     @rufus_scheduler.should_receive(:join)
@@ -46,7 +48,7 @@ describe SimplePvr::Scheduler do
     start_time = Time.local(2012, 7, 14, 19, 15) # Jul 14, 2012, 19:15:00
     
     @rufus_scheduler.should_receive(:at).with(start_time).and_yield
-    SimplePvr::Recorder.should_receive(:new).with('Borgia', 282000000, 1098).and_return(@recorder = double('Recorder'))
+    SimplePvr::Recorder.should_receive(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
     @recorder.should_receive(:stop!)
     @rufus_scheduler.should_receive(:join)
