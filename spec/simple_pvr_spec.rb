@@ -8,7 +8,7 @@ describe 'SimplePvr' do
     SimplePvr::Scheduler.stub(:new => @scheduler)
     
     @dao = double('Dao')
-    SimplePvr::Dao.stub(:new => @dao)
+    SimplePvr::PvrInitializer.stub(:dao => @dao)
   end
   
   it 'initializes the system' do

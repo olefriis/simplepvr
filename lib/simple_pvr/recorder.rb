@@ -6,8 +6,8 @@ module SimplePvr
   class Recorder
     def initialize(show_name, frequency, program_id)
       @show_name, @frequency, @program_id = show_name, frequency, program_id
-    
-      @hd_home_run = HDHomeRun.new
+      
+      @hd_home_run = PvrInitializer.hd_home_run
     end
   
     def start!

@@ -19,6 +19,7 @@ module SimplePvr
   class SimplePvr
     def initialize
       @scheduler = Scheduler.new
+      @dao = PvrInitializer.dao
     end
   
     def record(show_name, options={})
@@ -37,13 +38,11 @@ module SimplePvr
     
     private
     def record_programmes_with_title(show_name)
-      @dao ||= Dao.new
       schedule_programmes(show_name, @dao.programmes_with_title(show_name))
     end
     
     def record_programmes_with_title_on_channel(show_name, options)
       channel = options[:from]
-      @dao ||= Dao.new
       schedule_programmes(show_name, @dao.programmes_on_channel_with_title(channel, show_name))
     end
     

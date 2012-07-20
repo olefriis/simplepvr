@@ -3,19 +3,9 @@ LOCK: none (ss=80 snq=0 seq=0)
 SCANNING: 282000000 (eu-cable:282)
 LOCK: a8qam256-6900 (ss=79 snq=74 seq=100)
 TSID: 0x0007
-PROGRAM 1090: 20 Folketinget
 PROGRAM 1098: 17 DR K
-PROGRAM 1099: 100 DR Ramasjang
 PROGRAM 1165: 110 DR HD
-PROGRAM 1232: 16 DR 2
-PROGRAM 1247: 19 DR Synstolkning
-PROGRAM 1251: 18 DR Update
 SCANNING: 276000000 (eu-cable:276)
 LOCK: none (ss=81 snq=0 seq=0)
 SCANNING: 275000000 (eu-cable:275)
 LOCK: none (ss=80 snq=0 seq=0)
-SCANNING: 274000000 (eu-cable:274)
-LOCK: a8qam256-6900 (ss=79 snq=63 seq=100)
-TSID: 0x05E3
-PROGRAM 8000: 0
-SCANNING: 268000000 (eu-cable:268)

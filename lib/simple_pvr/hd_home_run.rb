@@ -5,12 +5,16 @@ module SimplePvr
   class HDHomeRun
     attr_reader :device_id
   
-    def initialize
+    def initialize(dao)
+      @dao = dao
       @device_id = discover
     end
   
     def scan_for_channels
-      system "hdhomerun_config #{@device_id} scan /tuner0 channels.txt"
+      file_name = 'channels.txt'
+      scan_channels_with_tuner(file_name)
+      @dao.clear_channels
+      read_channels_file(file_name)
     end
   
     def start_recording(frequency, program_id, directory)
@@ -30,6 +34,26 @@ module SimplePvr
         return $1 if output =~ /^hdhomerun device (.*) found at .*$/
       
         raise Exception, "No device found: #{output}"
+      end
+    end
+
+    def scan_channels_with_tuner(file_name)
+      system "hdhomerun_config #{@device_id} scan /tuner0 #{file_name}"
+    end
+    
+    def read_channels_file(file_name)
+      channel_frequency = nil
+
+      File.open(file_name, 'r') do |file|
+        file.each_line do |line|
+          if line =~ /^SCANNING: (\d*) .*$/
+            channel_frequency = $1.to_i
+          elsif line =~ /^PROGRAM (\d*): \d* (.*)$/
+            channel_id = $1.to_i
+            channel_name = $2.strip
+            @dao.add_channel(channel_name, channel_frequency, channel_id)
+          end
+        end
       end
     end
 

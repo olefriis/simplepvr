@@ -3,7 +3,7 @@ require 'simple_pvr/recorder'
 describe SimplePvr::Recorder do
   before do
     @hd_home_run = double('HDHomeRun')
-    SimplePvr::HDHomeRun.stub(:new => @hd_home_run)
+    SimplePvr::PvrInitializer.stub(:hd_home_run => @hd_home_run)
     
     @recorder = SimplePvr::Recorder.new('Star Trek', 282000000, 1098)
   end

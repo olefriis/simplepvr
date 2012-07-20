@@ -2,6 +2,15 @@ require 'data_mapper'
 require 'dm-migrations'
 
 module SimplePvr
+  class Channel
+    include DataMapper::Resource
+    
+    property :id, Serial
+    property :name, String
+    property :frequency, Integer
+    property :channel_id, Integer
+  end
+  
   class Programme
     include DataMapper::Resource
     
