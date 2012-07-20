@@ -38,8 +38,8 @@ Edit schedule.rb. It will look like this:
         require File.dirname(__FILE__) + '/lib/simplepvr'
 		
 		schedule do
-		  record 'Borgias', from:'DR K', at:'Jul 10 2012 20:46:00', for:60.minutes
-		  record 'Sports news', from:'TV 2 | Danmark', at:'Jul 11 2012 12:15:00', for:20.minutes
+		  record 'Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 46), for:60.minutes
+		  record 'Sports news', from:'TV 2 | Danmark', at:Time.local(2012, 7, 11, 12, 15), for:20.minutes
 		end
 
 which will record two shows of 60 and 20 minutes' duration on the channels 'DR K' and 'TV 2', respectively. After

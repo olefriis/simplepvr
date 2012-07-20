@@ -22,22 +22,23 @@ describe 'SimplePvr' do
   
   it 'can set up simple schedules' do
     SimplePvr::PvrInitializer.should_receive(:setup)
-    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:'Jul 10 2012 20:46:00', for:60.minutes)
-    @scheduler.should_receive(:add).with('Sports news', from:'TV 2', at:'Jul 11 2012 12:15:00', for:20.minutes)
+    @scheduler.should_receive(:add).with('Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 46), for:60.minutes)
+    @scheduler.should_receive(:add).with('Sports news', from:'TV 2', at:Time.local(2012, 7, 11, 12, 15), for:20.minutes)
     @scheduler.should_receive(:run!)
     
     schedule do
-      record 'Borgias', from:'DR K', at:'Jul 10 2012 20:46:00', for:60.minutes
-      record 'Sports news', from:'TV 2', at:'Jul 11 2012 12:15:00', for:20.minutes
+      record 'Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 46), for:60.minutes
+      record 'Sports news', from:'TV 2', at:Time.local(2012, 7, 11, 12, 15), for:20.minutes
     end
   end
   
   it 'complains when setting up simple schedules without duration' do
+    start_time = Time.local(2012, 7, 10, 20, 46)
     expect {
       schedule do
-        record 'Borgias', from:'DR K', at:'Jul 10 2012 20:46:00'
+        record 'Borgias', from:'DR K', at:start_time
       end
-    }.to raise_error "No duration specified for recording of 'Borgias' from 'DR K' at 'Jul 10 2012 20:46:00'"
+    }.to raise_error "No duration specified for recording of 'Borgias' from 'DR K' at '#{start_time}'"
   end
   
   it 'can set up schedules from channel and program title' do

@@ -32,7 +32,7 @@ describe SimplePvr::Scheduler do
     
     scheduler = SimplePvr::Scheduler.new
     scheduler.should_receive(:sleep).with(60.minutes)
-    scheduler.add('Borgia', from:'DR K', at:'Jul 15 2012 20:15:30', for:60.minutes)
+    scheduler.add('Borgia', from:'DR K', at:start_time, for:60.minutes)
     scheduler.run!
   end
   
@@ -40,7 +40,7 @@ describe SimplePvr::Scheduler do
     @rufus_scheduler.should_receive(:join)
     
     scheduler = SimplePvr::Scheduler.new
-    scheduler.add('Borgia', from:'DR K', at:'Jul 13 2012 20:15:30', for:60.minutes)
+    scheduler.add('Borgia', from:'DR K', at:Time.local(2012, 7, 13, 20, 15, 30), for:60.minutes)
     scheduler.run!
   end
   
@@ -55,17 +55,7 @@ describe SimplePvr::Scheduler do
     
     scheduler = SimplePvr::Scheduler.new
     scheduler.should_receive(:sleep).with(45.minutes)
-    scheduler.add('Borgia', from:'DR K', at:'Jul 14 2012 19:15:00', for:60.minutes)
+    scheduler.add('Borgia', from:'DR K', at:start_time, for:60.minutes)
     scheduler.run!
-  end
-  
-  it 'complains if given date with wrong syntax' do
-    scheduler = SimplePvr::Scheduler.new
-    expect { scheduler.add('Borgia', from:'DR K', at:'invalid time', for:60.minutes) }.to raise_error "Invalid time 'invalid time'"
-  end
-  
-  it 'complains if given unknown month' do
-    scheduler = SimplePvr::Scheduler.new
-    expect { scheduler.add('Borgia', from:'DR K', at:'Abc 13 2012 20:15:30', for:60.minutes) }.to raise_error "Unknown month 'Abc'"
   end
 end
