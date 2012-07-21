@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/pvr_logger'
+
 module SimplePvr
   #
   # Encapsulates all the HDHomeRun-specific functionality. Do not initialize HDHomeRun objects yourself,
@@ -22,9 +24,11 @@ module SimplePvr
       set_tuner_to_frequency frequency
       set_tuner_to_program program_id
       @pid = spawn_recorder_process_in directory
+      PvrLogger.info("Process ID for recording: #{@pid}")
     end
   
     def stop_recording
+      PvrLogger.info("Stopping process #{@pid}")
       send_control_c_to_process @pid
     end
   
