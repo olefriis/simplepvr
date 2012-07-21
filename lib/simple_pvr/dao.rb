@@ -20,7 +20,7 @@ module SimplePvr
     property :title, String, index: true
     property :subtitle, String
     property :description, Text
-    property :start_time, Time
+    property :start_time, DateTime
     property :duration, Integer
     
     belongs_to :channel

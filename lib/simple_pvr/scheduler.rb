@@ -76,7 +76,7 @@ module SimplePvr
     end
     
     def start_new_recording
-      @current_recording = @coming_recordings.pop
+      @current_recording = @coming_recordings.delete_at(0)
       channel = @dao.channel_with_name(@current_recording.channel)
       @recorder = Recorder.new(@current_recording.show_name, channel)
       @recorder.start!

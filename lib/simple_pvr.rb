@@ -37,6 +37,7 @@ module SimplePvr
     def finish
       scheduler = Scheduler.new
       scheduler.recordings = @recordings
+      scheduler.start
     end
     
     private
@@ -59,13 +60,14 @@ module SimplePvr
     
     def schedule_programmes(show_name, programmes)
       programmes.each do |programme|
-        start_time = programme.start_time - 2.minutes
+        start_time = programme.start_time.to_time - 2.minutes
         duration = programme.duration + 7.minutes
         add_recording(programme.channel.name, show_name, start_time, duration)
       end
     end
     
     def add_recording(channel, show_name, start_time, duration)
+      puts "Adding #{channel}, #{show_name}, #{start_time}, #{duration}"
       @recordings << Recording.new(channel, show_name, start_time, duration)
     end
   end

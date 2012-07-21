@@ -17,6 +17,7 @@ describe 'SimplePvr' do
   it 'initializes the system and sleeps forever' do
     SimplePvr::PvrInitializer.should_receive(:setup)
     @scheduler.should_receive(:recordings=).with([])
+    @scheduler.should_receive(:start)
     SimplePvr::PvrInitializer.stub(:sleep_forever)
     
     schedule {}
@@ -29,6 +30,7 @@ describe 'SimplePvr' do
     ]
     SimplePvr::PvrInitializer.should_receive(:setup)
     @scheduler.should_receive(:recordings=).with(recordings)
+    @scheduler.should_receive(:start)
     
     schedule do
       record 'Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 46), for:60.minutes
@@ -56,6 +58,7 @@ describe 'SimplePvr' do
     ])
     SimplePvr::PvrInitializer.should_receive(:setup)
     @scheduler.should_receive(:recordings=).with(recordings)
+    @scheduler.should_receive(:start)
 
     schedule do
       record 'Borgias', from:'DR K'
@@ -73,6 +76,7 @@ describe 'SimplePvr' do
     ])
     SimplePvr::PvrInitializer.should_receive(:setup)
     @scheduler.should_receive(:recordings=).with(recordings)
+    @scheduler.should_receive(:start)
 
     schedule do
       record 'Borgias'
