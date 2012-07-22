@@ -109,7 +109,6 @@ Future?
 Small things first
 ------------------
 * XMLTV reading is very, very slow. Maybe we should use Nokogiri for XML parsing?
-* hdhomerun_config processes are not properly stopped on Ubuntu. I wonder why, and I don't really know what to do.
 
 Then...
 -------
@@ -117,6 +116,8 @@ Then...
 * Make an API (REST interface?) to alter the schedule, so that the schedules can be manipulated by e.g. a
   fancy web GUI which can handle XMLTV etc.
 * Utilize more than one tuner in the HDHomeRun box.
+* Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
+  like a simpler solution, but haven't found anything that works both on OS X and Linux.
 
 ...all while cleaning up the code, making it more readable. I surely will accept pull requests!
 

@@ -11,6 +11,7 @@ module SimplePvr
     def initialize(dao)
       @dao = dao
       @device_id = discover
+      FileUtils.rm(tuner_control_file) if File.exists?(tuner_control_file)
     end
   
     def scan_for_channels
@@ -30,6 +31,7 @@ module SimplePvr
     def stop_recording
       PvrLogger.info("Stopping process #{@pid}")
       send_control_c_to_process @pid
+      reset_tuner_frequency
     end
   
     private
@@ -71,13 +73,22 @@ module SimplePvr
     end
   
     def spawn_recorder_process_in(directory)
-      spawn "hdhomerun_config #{@device_id} save /tuner0 \"#{directory}/stream.ts\"", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
+      FileUtils.touch(tuner_control_file)
+      spawn File.dirname(__FILE__) + "/hdhomerun_save.sh #{@device_id} 0 \"#{directory}/stream.ts\" \"#{directory}/hdhomerun_save.log\" \"#{tuner_control_file}\""
+      #spawn "hdhomerun_config #{@device_id} save /tuner0 \"#{directory}/stream.ts\"", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
+    end
+    
+    def reset_tuner_frequency
+      system "hdhomerun_config #{@device_id} set /tuner0/channel none"
     end
   
     def send_control_c_to_process(pid)
-      # Doesn't work properly on Ubuntu?
-      Process.kill(:SIGINT, pid)
-      Process.wait(@pid)
+      FileUtils.rm(tuner_control_file)
+      Process.wait(pid)
+    end
+    
+    def tuner_control_file
+      File.dirname(__FILE__) + "/tuner0.lock"
     end
   end
 end

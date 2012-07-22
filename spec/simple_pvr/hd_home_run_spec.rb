@@ -5,6 +5,7 @@ describe SimplePvr::HDHomeRun do
     @dao = double('dao')
     @pipe = double('pipe')
     IO.should_receive(:popen).with('hdhomerun_config discover').and_yield(@pipe)
+    FileUtils.stub(:exists? => false)
   end
 
   context 'when initializing' do
@@ -25,6 +26,7 @@ describe SimplePvr::HDHomeRun do
     before do
       @pipe.stub(:read => 'hdhomerun device ABCDEF01 found at 10.0.0.4')
       @hd_home_run = SimplePvr::HDHomeRun.new(@dao)
+      @hd_home_run.stub(:tuner_control_file => 'tuner0.lock')
       @file = File.open(File.dirname(__FILE__) + '/../resources/channels.txt', 'r')
     end
     
@@ -45,7 +47,8 @@ describe SimplePvr::HDHomeRun do
     it 'can start recording' do
       @hd_home_run.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner0/channel auto:282000000")
       @hd_home_run.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner0/program 1098")
-      @hd_home_run.should_receive(:spawn).with("hdhomerun_config ABCDEF01 save /tuner0 \"test directory/stream.ts\"", [:out, :err]=>["test directory/hdhomerun_save.log", "w"])
+      @hd_home_run.should_receive(:spawn) #... with a lot of arguments ...
+      FileUtils.should_receive(:touch).with('tuner0.lock')
       
       @hd_home_run.start_recording(282000000, 1098, 'test directory')
     end
@@ -53,7 +56,9 @@ describe SimplePvr::HDHomeRun do
     it 'can stop recording' do
       @hd_home_run.stub(:system)
       @hd_home_run.stub(:spawn => 32)
-      Process.should_receive(:kill).with(:SIGINT, 32)
+      
+      FileUtils.should_receive(:touch).with('tuner0.lock')
+      FileUtils.should_receive(:rm).with('tuner0.lock')
       Process.should_receive(:wait).with(32)
 
       @hd_home_run.start_recording(282000000, 1098, 'test directory')
