@@ -53,7 +53,8 @@ describe SimplePvr::HDHomeRun do
     it 'can stop recording' do
       @hd_home_run.stub(:system)
       @hd_home_run.stub(:spawn => 32)
-      Process.should_receive(:kill).with('INT', 32)
+      Process.should_receive(:kill).with(:SIGINT, 32)
+      Process.should_receive(:wait).with(32)
 
       @hd_home_run.start_recording(282000000, 1098, 'test directory')
       @hd_home_run.stop_recording

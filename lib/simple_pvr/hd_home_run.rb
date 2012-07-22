@@ -75,7 +75,9 @@ module SimplePvr
     end
   
     def send_control_c_to_process(pid)
-      Process.kill('INT', pid)
+      # Doesn't work properly on Ubuntu?
+      Process.kill(:SIGINT, pid)
+      Process.wait(@pid)
     end
   end
 end

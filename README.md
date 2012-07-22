@@ -31,6 +31,10 @@ You need Ruby 1.9.2 (or newer - 1.9.0 or newer is probably enough). Dump this so
         gem install bundler
         bundle install
 
+It might not always be completely straightforward... we use DataMapper, which in turn relies on bcrypt-ruby,
+which compiles some native stuff. So on MacOS, you need to install XCode and its command-line utilities, or
+get "make" in some other way. On Linux, it should just work. Don't know about Windows.
+
 How to use
 ==========
 Edit schedule.rb. It will look like this:
@@ -51,6 +55,9 @@ The system will wait for the specified start times, and will then start the reco
 the system, it will do a channel scan and put the results in channels.txt. This is not needed later, but if your
 TV provider moves the channels around, you can force a channel scan by deleting channels.txt and restarting the
 system.
+
+The above example is very straight-forward, but since it's just Ruby, you can program your own schedules for e.g.
+recording every Thursday on a specific channel, or recording the news from the same timeslot every evening.
 
 The recordings are laid out like this:
 
@@ -91,7 +98,7 @@ channel names that the HDHomeRun has found for you. Create a file called e.g. "c
         www.ontv.dk/tv/1: DR 1
 		www.ontv.dk/tv/2: DR 2
 
-Then read your XMLTV file and this mappings file:
+Then read your XMLTV file and the mappings file:
 
         bundle exec ruby read_xmltv.rb programmes.xmltv channel_mappings.yaml
 
@@ -101,7 +108,8 @@ Future?
 =======
 Small things first
 ------------------
-* Richer API for setting schedules, e.g. being able to record a specific show every Thursday at 9 o'clock.
+* XMLTV reading is very, very slow. Maybe we should use Nokogiri for XML parsing?
+* hdhomerun_config processes are not properly stopped on Ubuntu. I wonder why, and I don't really know what to do.
 
 Then...
 -------
@@ -130,8 +138,8 @@ Run the specs like this:
 There's a semi-manual test of the actual recording, since I'm not sure how to check automatically that
 we can record a stream from a HDHomeRun box. Run it with
 
-        ruby spec/simple_pvr/recorder_test.rb
+        ruby spec/schedule_test.rb
 
 After running this, a new recording should be present in "recordings/test/(sequence number)/stream.ts",
 with 5 seconds of recording from the channel specified in the test (you need to alter the test file to
-your tuner and your available channels).
+your available channels).
