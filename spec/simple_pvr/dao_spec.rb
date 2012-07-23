@@ -85,6 +85,9 @@ describe SimplePvr::Dao do
       programmes[0].channel.name.should == 'DR 1'
       programmes[0].title.should == 'Interesting'
       programmes[0].subtitle.should == 'First'
+      programmes[0].description.should == 'Description'
+      programmes[0].start_time.should == Time.local(2012, 7, 17, 20, 30)
+      programmes[0].duration.should == 50.minutes
 
       programmes[1].channel.name.should == 'DR 2'
       programmes[1].title.should == 'Interesting'

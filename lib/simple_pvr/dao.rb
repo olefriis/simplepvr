@@ -4,6 +4,7 @@ require 'dm-migrations'
 module SimplePvr
   class Channel
     include DataMapper::Resource
+    storage_names[:default] = 'channels'
     
     property :id, Serial
     property :name, String
@@ -15,15 +16,26 @@ module SimplePvr
   
   class Programme
     include DataMapper::Resource
+    storage_names[:default] = 'programs'
     
     property :id, Serial
     property :title, String, index: true
     property :subtitle, String
     property :description, Text
-    property :start_time, DateTime
+    property :start_date_time, DateTime
     property :duration, Integer
     
     belongs_to :channel
+
+    # DataMapper loads only the date part of Time, but we want the whole thing.
+    # Thus, we convert a bit.
+    def start_time
+      start_date_time.to_time
+    end
+    
+    def start_time=(time)
+      start_date_time = time
+    end
   end
   
   DataMapper.finalize
@@ -74,16 +86,16 @@ module SimplePvr
         :title => title,
         :subtitle => subtitle,
         :description => description,
-        :start_time => start_time,
+        :start_date_time => start_time,
         :duration => duration.to_i)
     end
     
     def programmes_with_title(title)
-      Programme.all(:title => title, :order => :start_time)
+      Programme.all(:title => title, :order => :start_date_time)
     end
     
     def programmes_on_channel_with_title(channel_name, title)
-      Programme.all(:channel => { name: channel_name }, :title => title, :order => :start_time)
+      Programme.all(:channel => { name: channel_name }, :title => title, :order => :start_date_time)
     end
   end
 end
