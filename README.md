@@ -110,15 +110,13 @@ Then read your XMLTV file and the mappings file:
 
 Future?
 =======
-Small things first
-------------------
-* XMLTV reading is very, very slow. Maybe we should use Nokogiri for XML parsing?
-
-Then...
+First...
 -------
+* Very simple web interface for seeing TV schedules, setting recording options, and seeing the status of the
+  system.
 * "Gemify" the stuff, so installation becomes a breeze.
-* Make an API (REST interface?) to alter the schedule, so that the schedules can be manipulated by e.g. a
-  fancy web GUI which can handle XMLTV etc.
+* Make an API (REST interface?), so that everything can be manipulated by e.g. a fancy web GUI or a desktop GUI,
+  in case somebody would like to write one.
 * Utilize more than one tuner in the HDHomeRun box.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.
@@ -130,20 +128,20 @@ But then...
 Well, I don't know... I'm not sure we should take this much further. Let this be a nice, hackable library,
 not too big for people to read and understand.
 
-I'd love to make a web GUI on top of this library (it must be possible to do some fancy HTML5 stuff for
-showing TV schedules, setting up recordings, and watching recordings), but that should really happen as
-a separate project. You are free to beat me to this!
+I'd love to make a really fancy web GUI on top of this library, giving a desktop-like feeling in the browser (and
+putting that HTML5 video tag to good use), but that should really happen as a separate project. You are free to
+beat me to this!
 
 Development
 ===========
 Run the specs like this:
 
-        rspec
+        bundle exec rspec
 
 There's a semi-manual test of the actual recording, since I'm not sure how to check automatically that
 we can record a stream from a HDHomeRun box. Run it with
 
-        ruby spec/schedule_test.rb
+        bundle exec ruby spec/schedule_test.rb
 
 After running this, a new recording should be present in "recordings/test/(sequence number)/stream.ts",
 with 5 seconds of recording from the channel specified in the test (you need to alter the test file to
