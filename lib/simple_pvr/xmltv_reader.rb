@@ -24,9 +24,17 @@ module SimplePvr
     end
     
     def add_programme(channel, programme)
-      title_node = programme.xpath('./title')
-      subtitle_node = programme.xpath('./sub-title')
-      description_node = programme.xpath('./desc')
+      title_node, subtitle_node, description_node = nil
+      programme.children.each do |child|
+        case child.name.to_s
+        when 'title'
+          title_node = child
+        when 'sub-title'
+          subtitle_node = child
+        when 'desc'
+          description_node = child
+        end
+      end
       
       title = title_node.text
       subtitle = subtitle_node ? subtitle_node.text : ''
