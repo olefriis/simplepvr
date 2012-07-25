@@ -27,7 +27,7 @@ describe SimplePvr::HDHomeRun do
       @pipe.stub(:read => 'hdhomerun device ABCDEF01 found at 10.0.0.4')
       @hd_home_run = SimplePvr::HDHomeRun.new(@dao)
       @hd_home_run.stub(:tuner_control_file => 'tuner0.lock')
-      @file = File.open(File.dirname(__FILE__) + '/../resources/channels.txt', 'r')
+      @file = File.open(File.dirname(__FILE__) + '/../resources/channels.txt', 'r:UTF-8')
     end
     
     after do
@@ -37,7 +37,7 @@ describe SimplePvr::HDHomeRun do
     it 'can do a channel scan' do
       @hd_home_run.should_receive(:system).with('hdhomerun_config ABCDEF01 scan /tuner0 channels.txt')
       @dao.should_receive(:clear_channels)
-      File.should_receive(:open).with('channels.txt', 'r').and_yield(@file)
+      File.should_receive(:open).with('channels.txt', 'r:UTF-8').and_yield(@file)
       @dao.should_receive(:add_channel).with('DR K', 282000000, 1098)
       @dao.should_receive(:add_channel).with('DR HD', 282000000, 1165)
 

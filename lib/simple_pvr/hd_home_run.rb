@@ -51,7 +51,7 @@ module SimplePvr
     def read_channels_file(file_name)
       channel_frequency = nil
 
-      File.open(file_name, 'r') do |file|
+      File.open(file_name, 'r:UTF-8') do |file|
         file.each_line do |line|
           if line =~ /^SCANNING: (\d*) .*$/
             channel_frequency = $1.to_i
