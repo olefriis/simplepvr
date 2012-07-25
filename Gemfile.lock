@@ -60,6 +60,7 @@ GEM
     json (1.6.7)
     json_pure (1.6.7)
     multi_json (1.0.3)
+    nokogiri (1.4.6)
     rspec (2.11.0)
       rspec-core (~> 2.11.0)
       rspec-expectations (~> 2.11.0)
@@ -78,4 +79,5 @@ DEPENDENCIES
   activesupport
   data_mapper
   dm-sqlite-adapter
+  nokogiri
   rspec

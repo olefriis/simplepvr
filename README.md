@@ -35,6 +35,10 @@ It might not always be completely straightforward... we use DataMapper, which in
 which compiles some native stuff. So on MacOS, you need to install XCode and its command-line utilities, or
 get "make" in some other way. On Linux, it should just work. Don't know about Windows.
 
+Also, Nokogori might be problematic on some platforms, but importing XMLTV is three times faster with
+Nokogiri than with the built-in REXML (counting the whole process of importing XMLTV, not just reading the
+XML).
+
 How to use
 ==========
 Edit schedule.rb. It will look like this:
