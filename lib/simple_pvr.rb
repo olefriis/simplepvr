@@ -1,4 +1,4 @@
-require 'active_support/core_ext/numeric/time' # So we can say 60.minutes
+require 'active_support/all'
 require File.dirname(__FILE__) + '/simple_pvr/pvr_initializer'
 require File.dirname(__FILE__) + '/simple_pvr/scheduler'
 require File.dirname(__FILE__) + '/simple_pvr/database_schedule_reader'

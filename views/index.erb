@@ -13,6 +13,13 @@
 <h1>Upcoming recordings</h1>
 <p>
 <% for recording in upcoming_recordings %>
-<%= recording.start_time %>: <%= recording.show_name %> from <%= recording.channel.name %> at (<%= recording.duration / 60 %> minutes)<br/>
+<%= recording.start_time %>: <%= recording.show_name %> from <%= recording.channel.name %> (<%= recording.duration / 60 %> minutes)<br/>
+<% end %>
+</p>
+
+<h1>Channels</h1>
+<p>
+<% for channel in channels %>
+<a href="channels/<%= channel.id %>"><%= channel.name %></a><br/>
 <% end %>
 </p>
