@@ -2,7 +2,6 @@ require 'simple_pvr/hd_home_run'
 
 describe SimplePvr::HDHomeRun do
   before do
-    @dao = double('dao')
     @pipe = double('pipe')
     IO.should_receive(:popen).with('hdhomerun_config discover').and_yield(@pipe)
     FileUtils.stub(:exists? => false)
@@ -12,20 +11,20 @@ describe SimplePvr::HDHomeRun do
     it 'discovers a device when present' do
       @pipe.stub(:read => 'hdhomerun device ABCDEF01 found at 10.0.0.4')
 
-      SimplePvr::HDHomeRun.new(@dao).device_id.should == 'ABCDEF01'
+      SimplePvr::HDHomeRun.new.device_id.should == 'ABCDEF01'
     end
   
     it 'raises an exception when no device is present' do
       @pipe.stub(:read => 'no devices found')
 
-      expect { SimplePvr::HDHomeRun.new(@dao) }.to raise_error(Exception, 'No device found: no devices found')
+      expect { SimplePvr::HDHomeRun.new }.to raise_error(Exception, 'No device found: no devices found')
     end
   end
   
   context 'when initialized' do
     before do
       @pipe.stub(:read => 'hdhomerun device ABCDEF01 found at 10.0.0.4')
-      @hd_home_run = SimplePvr::HDHomeRun.new(@dao)
+      @hd_home_run = SimplePvr::HDHomeRun.new
       @hd_home_run.stub(:tuner_control_file => 'tuner0.lock')
       @file = File.open(File.dirname(__FILE__) + '/../resources/channels.txt', 'r:UTF-8')
     end
@@ -36,10 +35,10 @@ describe SimplePvr::HDHomeRun do
   
     it 'can do a channel scan' do
       @hd_home_run.should_receive(:system).with('hdhomerun_config ABCDEF01 scan /tuner0 channels.txt')
-      @dao.should_receive(:clear_channels)
+      SimplePvr::Model::Channel.should_receive(:clear)
       File.should_receive(:open).with('channels.txt', 'r:UTF-8').and_yield(@file)
-      @dao.should_receive(:add_channel).with('DR K', 282000000, 1098)
-      @dao.should_receive(:add_channel).with('DR HD', 282000000, 1165)
+      SimplePvr::Model::Channel.should_receive(:add).with('DR K', 282000000, 1098)
+      SimplePvr::Model::Channel.should_receive(:add).with('DR HD', 282000000, 1165)
 
       @hd_home_run.scan_for_channels
     end

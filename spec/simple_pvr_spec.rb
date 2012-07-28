@@ -1,17 +1,11 @@
 require 'simple_pvr'
 
 describe 'SimplePvr' do
-  MockProgrammeForSimplePvr = Struct.new(:channel, :start_time, :duration)
-  MockChannelForSimplePvr = Struct.new(:id, :name)
-  
   before do
-    @dao = double('Dao')
-    SimplePvr::PvrInitializer.stub(dao: @dao)
-    
-    @dr_k = MockChannelForSimplePvr.new(23, 'DR K')
-    @tv_2 = MockChannelForSimplePvr.new(25, 'TV 2')
-    @dao.stub(:channel_with_name).with('DR K').and_return(@dr_k)
-    @dao.stub(:channel_with_name).with('TV 2').and_return(@tv_2)
+    @dr_k = double(id: 23, name: 'DR K')
+    @tv_2 = double(id: 25, name: 'TV 2')
+    SimplePvr::Model::Channel.stub(:with_name).with('DR K').and_return(@dr_k)
+    SimplePvr::Model::Channel.stub(:with_name).with('TV 2').and_return(@tv_2)
     
     @recording_planner = double('RecordingPlanner')
     SimplePvr::RecordingPlanner.stub(new: @recording_planner)

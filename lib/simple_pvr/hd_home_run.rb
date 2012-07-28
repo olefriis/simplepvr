@@ -8,8 +8,7 @@ module SimplePvr
   class HDHomeRun
     attr_reader :device_id
   
-    def initialize(dao)
-      @dao = dao
+    def initialize
       @device_id = discover
       FileUtils.rm(tuner_control_file) if File.exists?(tuner_control_file)
     end
@@ -17,7 +16,7 @@ module SimplePvr
     def scan_for_channels
       file_name = 'channels.txt'
       scan_channels_with_tuner(file_name)
-      @dao.clear_channels
+      Model::Channel.clear
       read_channels_file(file_name)
     end
   
@@ -58,7 +57,7 @@ module SimplePvr
           elsif line =~ /^PROGRAM (\d*): \d* (.*)$/
             channel_id = $1.to_i
             channel_name = $2.strip
-            @dao.add_channel(channel_name, channel_frequency, channel_id)
+            Model::Channel.add(channel_name, channel_frequency, channel_id)
           end
         end
       end

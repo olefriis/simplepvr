@@ -1,16 +1,16 @@
-require File.dirname(__FILE__) + '/dao'
 require File.dirname(__FILE__) + '/hd_home_run'
 require File.dirname(__FILE__) + '/scheduler'
+require File.dirname(__FILE__) + '/model/database_initializer'
 
 module SimplePvr
   class PvrInitializer
     def self.setup
-      @dao = Dao.new
-      @hd_home_run = HDHomeRun.new(@dao)
+      Model::DatabaseInitializer.setup
+      @hd_home_run = HDHomeRun.new
       @scheduler = Scheduler.new
       @scheduler.start
 
-      @hd_home_run.scan_for_channels if @dao.number_of_channels == 0
+      @hd_home_run.scan_for_channels if Model::Channel.all.empty?
     end
     
     def self.dao

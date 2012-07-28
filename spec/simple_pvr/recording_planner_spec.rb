@@ -1,13 +1,10 @@
 require 'simple_pvr/recording_planner'
 
 describe SimplePvr::RecordingPlanner do
-  MockChannelForRecordingPlanner = Struct.new(:id, :name)
-  
   before do
-    @dr_1 = MockChannelForRecordingPlanner.new(21, 'DR 1')
-    @dr_k = MockChannelForRecordingPlanner.new(23, 'DR K')
+    @dr_1 = double(id: 21, name: 'DR 1')
+    @dr_k = double(id: 23, name: 'DR K')
     
-    @dao = double('Dao')
     @scheduler = double('Scheduler')
     SimplePvr::PvrInitializer.stub(scheduler: @scheduler)
     SimplePvr::PvrInitializer.stub(dao: @dao)
@@ -25,9 +22,9 @@ describe SimplePvr::RecordingPlanner do
   end
   
   it 'can set up schedules from channel and program title' do
-    @dao.stub(:programmes_on_channel_with_title).with(@dr_k, 'Borgias').and_return([
-      MockProgrammeForSimplePvr.new(@dr_k, Time.local(2012, 7, 10, 20, 50), 60.minutes),
-      MockProgrammeForSimplePvr.new(@dr_k, Time.local(2012, 7, 17, 20, 50), 60.minutes)
+    SimplePvr::Model::Programme.stub(:on_channel_with_title).with(@dr_k, 'Borgias').and_return([
+      double(channel:@dr_k, start_time: Time.local(2012, 7, 10, 20, 50), duration: 60.minutes),
+      double(channel:@dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
     ])
     @scheduler.should_receive(:recordings=).with([
       SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes),
@@ -39,15 +36,14 @@ describe SimplePvr::RecordingPlanner do
   end
   
   it 'can set up schedules from program title only' do
-    recordings = [
+    SimplePvr::Model::Programme.stub(:with_title).with('Borgias').and_return([
+      double(channel: @dr_1, start_time: Time.local(2012, 7, 10, 20, 50), duration: 60.minutes),
+      double(channel: @dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
+    ])
+    @scheduler.should_receive(:recordings=).with([
       SimplePvr::Recording.new(@dr_1, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes),
       SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes)
-    ]
-    @dao.stub(:programmes_with_title).with('Borgias').and_return([
-      MockProgrammeForSimplePvr.new(@dr_1, Time.local(2012, 7, 10, 20, 50), 60.minutes),
-      MockProgrammeForSimplePvr.new(@dr_k, Time.local(2012, 7, 17, 20, 50), 60.minutes)
     ])
-    @scheduler.should_receive(:recordings=).with(recordings)
 
     @recording_planner.specification(title: 'Borgias')
     @recording_planner.finish

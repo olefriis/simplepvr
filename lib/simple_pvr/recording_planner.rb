@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/model/programme'
+
 module SimplePvr
   class RecordingPlanner
     def initialize
@@ -12,9 +14,9 @@ module SimplePvr
     def specification(options)
       title, channel = options[:title], options[:channel]
       if channel
-        schedule_programmes(title, @dao.programmes_on_channel_with_title(channel, title))
+        schedule_programmes(title, Model::Programme.on_channel_with_title(channel, title))
       else
-        schedule_programmes(title, @dao.programmes_with_title(title))
+        schedule_programmes(title, Model::Programme.with_title(title))
       end
     end
     

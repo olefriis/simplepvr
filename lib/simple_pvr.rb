@@ -1,7 +1,6 @@
 require 'active_support/core_ext/numeric/time' # So we can say 60.minutes
 require File.dirname(__FILE__) + '/simple_pvr/pvr_initializer'
 require File.dirname(__FILE__) + '/simple_pvr/scheduler'
-require File.dirname(__FILE__) + '/simple_pvr/dao'
 require File.dirname(__FILE__) + '/simple_pvr/database_schedule_reader'
 
 #
@@ -21,7 +20,6 @@ end
 module SimplePvr
   class SimplePvr
     def initialize
-      @dao = PvrInitializer.dao
       @recording_planner = RecordingPlanner.new
     end
   
@@ -45,7 +43,7 @@ module SimplePvr
     end
     
     def record_programmes_with_title_on_channel(title, channel_name)
-      channel = @dao.channel_with_name(channel_name)
+      channel = Model::Channel.with_name(channel_name)
       @recording_planner.specification(title: title, channel: channel)
     end
     
@@ -53,7 +51,7 @@ module SimplePvr
       if duration.nil?
         raise Exception, "No duration specified for recording of '#{show_name}' from '#{channel_name}' at '#{start_time}'"
       end
-      channel = @dao.channel_with_name(channel_name)
+      channel = Model::Channel.with_name(channel_name)
       @recording_planner.simple(show_name, channel, start_time, duration)
     end
   end
