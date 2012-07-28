@@ -10,7 +10,7 @@ describe SimplePvr::Scheduler do
   
   it 'leaves recordings that are in the future' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
-    Time.stub(:now => start_time - 60.minutes)
+    Time.stub(:now => start_time.advance(hours: -1))
 
     @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
     @scheduler.process
@@ -28,7 +28,7 @@ describe SimplePvr::Scheduler do
   
   it 'starts recordings that are in progress' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
-    Time.stub(:now => start_time + 30.minutes)
+    Time.stub(:now => start_time.advance(minutes: 30))
     SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
 
@@ -46,7 +46,7 @@ describe SimplePvr::Scheduler do
     @scheduler.process
 
     @recorder.should_receive(:stop!)
-    Time.stub(:now => start_time + 61.minutes)
+    Time.stub(:now => start_time.advance(hours: 1, minutes: 1))
 
     @scheduler.process
   end

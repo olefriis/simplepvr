@@ -6,7 +6,7 @@ module SimplePvr
 
   class Recording
     def expired?
-      start_time + duration < Time.now
+      start_time.advance(seconds: duration) < Time.now
     end
     
     def inspect
