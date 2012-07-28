@@ -13,5 +13,5 @@ SimplePvr::PvrInitializer.setup
 xmltv_file = File.new(ARGV[0])
 mapping_to_channels = YAML.load_file(ARGV[1])
 
-reader = SimplePvr::XmltvReader.new(SimplePvr::PvrInitializer.dao, mapping_to_channels)
+reader = SimplePvr::XmltvReader.new(mapping_to_channels)
 reader.read(xmltv_file)

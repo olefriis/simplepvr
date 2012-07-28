@@ -36,11 +36,10 @@ describe SimplePvr::PvrInitializer do
       SimplePvr::PvrInitializer.setup
     end
   
-    it 'initializes a DAO and HDHomeRun instance' do
+    it 'initializes a HDHomeRun instance' do
       SimplePvr::Model::Channel.stub(all: [1])
     
       SimplePvr::PvrInitializer.setup
-      SimplePvr::PvrInitializer.dao.should == @dao
       SimplePvr::PvrInitializer.hdhomerun.should == @hdhomerun
     end
   end

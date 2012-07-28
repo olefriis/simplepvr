@@ -13,10 +13,6 @@ module SimplePvr
       @hdhomerun.scan_for_channels if Model::Channel.all.empty?
     end
     
-    def self.dao
-      @dao
-    end
-    
     def self.hdhomerun
       @hdhomerun
     end

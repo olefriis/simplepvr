@@ -4,7 +4,6 @@ module SimplePvr
   class RecordingPlanner
     def initialize
       @recordings = []
-      @dao = PvrInitializer.dao
     end
     
     def simple(title, channel, start_time, duration)
@@ -27,8 +26,7 @@ module SimplePvr
     private
     def schedule_programmes(title, programmes)
       programmes.each do |programme|
-        start_time = programme.start_time.to_time - 2.minutes
-        puts "start_time: #{start_time.class}, #{start_time}, #{programme.start_time}"
+        start_time = programme.start_time.advance(minutes: -2)
         duration = programme.duration + 7.minutes
         add_recording(title, programme.channel, start_time, duration)
       end

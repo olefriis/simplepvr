@@ -1,13 +1,14 @@
+require 'simple_pvr/model/programme'
 require 'nokogiri'
 
 module SimplePvr
   class XmltvReader
-    def initialize(dao, mapping_to_channels)
-      @dao, @mapping_to_channels = dao, mapping_to_channels
+    def initialize(mapping_to_channels)
+      @mapping_to_channels = mapping_to_channels
     end
     
     def read(input)
-      @dao.clear_programmes
+      Model::Programme.clear
       doc = Nokogiri::XML.parse(input)
 
       doc.xpath('/tv/programme').each do |programme|
@@ -42,7 +43,7 @@ module SimplePvr
       start_time = Time.parse(programme[:start])
       stop_time = Time.parse(programme[:stop])
 
-      @dao.add_programme(channel, title, subtitle, description, start_time, stop_time - start_time)
+      Model::Programme.add(channel, title, subtitle, description, start_time, stop_time - start_time)
     end
   end
 end
