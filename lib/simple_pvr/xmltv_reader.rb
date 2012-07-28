@@ -1,4 +1,3 @@
-require 'simple_pvr/model/programme'
 require 'nokogiri'
 
 module SimplePvr
