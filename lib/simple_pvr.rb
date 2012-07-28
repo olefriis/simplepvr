@@ -2,6 +2,7 @@ require 'active_support/core_ext/numeric/time' # So we can say 60.minutes
 require File.dirname(__FILE__) + '/simple_pvr/pvr_initializer'
 require File.dirname(__FILE__) + '/simple_pvr/scheduler'
 require File.dirname(__FILE__) + '/simple_pvr/dao'
+require File.dirname(__FILE__) + '/simple_pvr/database_schedule_reader'
 
 #
 # Simple DSL to set up schedules
@@ -21,54 +22,39 @@ module SimplePvr
   class SimplePvr
     def initialize
       @dao = PvrInitializer.dao
-      @recordings = []
+      @recording_planner = RecordingPlanner.new
     end
   
     def record(show_name, options={})
       if options[:at].nil? && options[:from].nil?
         record_programmes_with_title(show_name)
       elsif options[:at].nil?
-        record_programmes_with_title_on_channel(show_name, options)
+        record_programmes_with_title_on_channel(show_name, options[:from])
       else
-        record_from_timestamp_and_duration(show_name, options)
+        record_from_timestamp_and_duration(show_name, options[:from], options[:at], options[:for])
       end
     end
     
     def finish
-      scheduler = Scheduler.new
-      scheduler.recordings = @recordings
-      scheduler.start
+      @recording_planner.finish
     end
     
     private
-    def record_programmes_with_title(show_name)
-      schedule_programmes(show_name, @dao.programmes_with_title(show_name))
+    def record_programmes_with_title(title)
+      @recording_planner.specification(title: title)
     end
     
-    def record_programmes_with_title_on_channel(show_name, options)
-      channel = options[:from]
-      schedule_programmes(show_name, @dao.programmes_on_channel_with_title(channel, show_name))
+    def record_programmes_with_title_on_channel(title, channel_name)
+      channel = @dao.channel_with_name(channel_name)
+      @recording_planner.specification(title: title, channel: channel)
     end
     
-    def record_from_timestamp_and_duration(show_name, options)
-      if options[:for].nil?
-        raise Exception, "No duration specified for recording of '#{show_name}' from '#{options[:from]}' at '#{options[:at]}'"
+    def record_from_timestamp_and_duration(show_name, channel_name, start_time, duration)
+      if duration.nil?
+        raise Exception, "No duration specified for recording of '#{show_name}' from '#{channel_name}' at '#{start_time}'"
       end
-
-      add_recording(options[:from], show_name, options[:at], options[:for])
-    end
-    
-    def schedule_programmes(show_name, programmes)
-      programmes.each do |programme|
-        start_time = programme.start_time.to_time - 2.minutes
-        duration = programme.duration + 7.minutes
-        add_recording(programme.channel.name, show_name, start_time, duration)
-      end
-    end
-    
-    def add_recording(channel, show_name, start_time, duration)
-      puts "Adding #{channel}, #{show_name}, #{start_time}, #{duration}"
-      @recordings << Recording.new(channel, show_name, start_time, duration)
+      channel = @dao.channel_with_name(channel_name)
+      @recording_planner.simple(show_name, channel, start_time, duration)
     end
   end
 end

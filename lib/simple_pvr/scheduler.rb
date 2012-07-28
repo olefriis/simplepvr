@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/recorder'
 require File.dirname(__FILE__) + '/pvr_logger'
-require File.dirname(__FILE__) + '/pvr_initializer'
 
 module SimplePvr
   Recording = Struct.new(:channel, :show_name, :start_time, :duration)
@@ -11,13 +10,14 @@ module SimplePvr
     end
     
     def inspect
-      "'#{show_name}' from '#{channel}' at '#{start_time}'"
+      "'#{show_name}' from '#{channel.name}' at '#{start_time}'"
     end
   end
 
   class Scheduler
+    attr_reader :coming_recordings
+    
     def initialize
-      @dao = PvrInitializer.dao
       @coming_recordings, @current_recording, @recorder = [], nil, nil
       @mutex = Mutex.new
     end
@@ -77,8 +77,7 @@ module SimplePvr
     
     def start_new_recording
       @current_recording = @coming_recordings.delete_at(0)
-      channel = @dao.channel_with_name(@current_recording.channel)
-      @recorder = Recorder.new(@current_recording.show_name, channel)
+      @recorder = Recorder.new(@current_recording.show_name, @current_recording.channel)
       @recorder.start!
     end
   end

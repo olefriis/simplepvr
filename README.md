@@ -39,8 +39,8 @@ Also, Nokogori might be problematic on some platforms, but importing XMLTV is th
 Nokogiri than with the built-in REXML (counting the whole process of importing XMLTV, not just reading the
 XML).
 
-How to use
-==========
+How to use from command line
+============================
 Edit schedule.rb. It will look like this:
 
         require File.dirname(__FILE__) + '/lib/simplepvr'
@@ -56,29 +56,18 @@ specifying your shows, start up the system:
         bundle exec ruby schedule.rb
 
 The system will wait for the specified start times, and will then start the recordings. First time you start up
-the system, it will do a channel scan and put the results in channels.txt. This is not needed later, but if your
-TV provider moves the channels around, you can force a channel scan by deleting channels.txt and restarting the
-system.
+the system, it will do a channel scan. This is not needed later.
 
 The above example is very straight-forward, but since it's just Ruby, you can program your own schedules for e.g.
 recording every Thursday on a specific channel, or recording the news from the same timeslot every evening.
 
-The recordings are laid out like this:
+How to start the (simple!) web server
+=====================================
+For this to make any sense at all, you need to use XMLTV (read below). Start the server by running
 
-* recordings/
-  * Borgias/
-     * 1/
-     * 2/
-  * Sports news/
-     * 1/
-     * 2/
-     * 3/
-  * ...
+        bundle exec ruby pvr_server.rb
 
-Inside the numbered directories are two files:
-
-* stream.ts: The actual stream. Let VLC or another media player show these for you.
-* hdhomerun_save.log: The output from the actual recording command.
+...and go to [http://localhost:4567](http://localhost:4567).
 
 XMLTV
 =====
@@ -107,6 +96,25 @@ Then read your XMLTV file and the mappings file:
         bundle exec ruby read_xmltv.rb programmes.xmltv channel_mappings.yaml
 
 ...and wait a little. Then start up the system as normal, and you're done.
+
+Recordings
+==========
+The recordings are laid out like this:
+
+* recordings/
+  * Borgias/
+     * 1/
+     * 2/
+  * Sports news/
+     * 1/
+     * 2/
+     * 3/
+  * ...
+
+Inside the numbered directories are two files:
+
+* stream.ts: The actual stream. Let VLC or another media player show these for you.
+* hdhomerun_save.log: The output from the actual recording command.
 
 Future?
 =======

@@ -1,0 +1,11 @@
+<form action="create" method="post">
+	Title: <input name="title" type="text">
+	Channel:
+	<select name="channel_id">
+		<option selected value="0">-- Any --</option>
+		<% for channel in channels %>
+		<option value="<%= channel.id %>"><%= channel.name %></option>
+		<% end %>
+	</select>
+	<input type="submit" value="Create" />
+</form>

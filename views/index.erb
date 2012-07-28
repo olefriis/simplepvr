@@ -1,0 +1,18 @@
+<h1>Schedules</h1>
+<p>
+<% for schedule in schedules %>
+<form action="schedules/<%= schedule.id %>/delete" method="post">
+	<%= schedule.title %> <% if schedule.channel %> on <%= schedule.channel.name %> <% end %>
+	<input type="submit" value="Delete"/>
+</form>
+<br/>
+<% end %>
+</p>
+<p><a href="schedules/new">New schedule</a></p>
+
+<h1>Upcoming recordings</h1>
+<p>
+<% for recording in upcoming_recordings %>
+<%= recording.start_time %>: <%= recording.show_name %> from <%= recording.channel.name %> at (<%= recording.duration / 60 %> minutes)<br/>
+<% end %>
+</p>

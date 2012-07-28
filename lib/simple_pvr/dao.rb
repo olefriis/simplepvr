@@ -38,6 +38,17 @@ module SimplePvr
     end
   end
   
+  class Schedule
+    include DataMapper::Resource
+    storage_names[:default] = 'schedules'
+      
+    property :id, Serial
+    property :type, Enum[:specification]
+    property :title, String
+
+    belongs_to :channel, :required => false
+  end
+  
   DataMapper.finalize
   
   class Dao
@@ -45,6 +56,12 @@ module SimplePvr
       database_file_name ||= Dir.pwd + '/database.sqlite'
       DataMapper.setup(:default, "sqlite://#{database_file_name}")
       DataMapper.auto_upgrade!
+    end
+    
+    def clear
+      clear_schedules
+      clear_programmes
+      clear_channels
     end
     
     def add_channel(name, frequency, id)
@@ -55,18 +72,22 @@ module SimplePvr
       )
     end
     
+    def channels
+      Channel.all(:order => :name)
+    end
+    
     def clear_channels
       Programme.destroy
       Channel.destroy
     end
     
     def number_of_channels
-      Channel.all.length
+      channels.length
     end
     
     def channel_with_name(name)
       result = Channel.first(:name => name)
-      raise "Unknown channel: #{name}" unless result
+      raise "Unknown channel: '#{name}'" unless result
       result
     end
     
@@ -94,8 +115,23 @@ module SimplePvr
       Programme.all(:title => title, :order => :start_date_time)
     end
     
-    def programmes_on_channel_with_title(channel_name, title)
-      Programme.all(:channel => { name: channel_name }, :title => title, :order => :start_date_time)
+    def programmes_on_channel_with_title(channel, title)
+      Programme.all(:channel => channel, :title => title, :order => :start_date_time)
+    end
+    
+    def add_schedule_specification(options)
+      Schedule.create(
+        :type => :specification,
+        :title => options[:title],
+        :channel => options[:channel])
+    end
+    
+    def schedules
+      Schedule.all
+    end
+    
+    def clear_schedules
+      Schedule.destroy
     end
   end
 end

@@ -2,13 +2,8 @@ require 'simple_pvr/scheduler'
 
 describe SimplePvr::Scheduler do
   before do
-    @channel = double('Channel DR K', frequency: 282000000, channel_id: 1098)
-    @channel_dr1 = double('Channel DR 1', frequency: 290000000, channel_id: 1099)
-    
-    @dao = double('Dao')
-    @dao.stub(:channel_with_name).with('DR K').and_return(@channel)
-    @dao.stub(:channel_with_name).with('DR 1').and_return(@channel_dr1)
-    SimplePvr::PvrInitializer.stub(:dao => @dao)
+    @channel = double('Channel DR K', name: 'DR K', frequency: 282000000, channel_id: 1098)
+    @channel_dr1 = double('Channel DR 1', name: 'DR 1', frequency: 290000000, channel_id: 1099)
     
     @scheduler = SimplePvr::Scheduler.new
   end
@@ -17,7 +12,7 @@ describe SimplePvr::Scheduler do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
     Time.stub(:now => start_time - 60.minutes)
 
-    @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
     @scheduler.process
   end
   
@@ -27,7 +22,7 @@ describe SimplePvr::Scheduler do
     SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
 
-    @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
     @scheduler.process
   end
   
@@ -37,7 +32,7 @@ describe SimplePvr::Scheduler do
     SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
 
-    @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
     @scheduler.process
   end
   
@@ -47,7 +42,7 @@ describe SimplePvr::Scheduler do
     @recorder.should_receive(:start!)
     Time.stub(:now => start_time)
 
-    @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
     @scheduler.process
 
     @recorder.should_receive(:stop!)
@@ -60,7 +55,7 @@ describe SimplePvr::Scheduler do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
     Time.stub(:now => start_time)
     
-    @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time - 65.minutes, 60.minutes)]
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time - 65.minutes, 60.minutes)]
     @scheduler.process
   end
   
@@ -71,10 +66,10 @@ describe SimplePvr::Scheduler do
       SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
       @recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
       @scheduler.process
 
-      @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
       @scheduler.process
     end
     
@@ -84,12 +79,12 @@ describe SimplePvr::Scheduler do
       SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
       @recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
       @scheduler.process
 
       @recorder.should_receive(:stop!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time + 10.minutes, 60.minutes)]
+      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time + 10.minutes, 60.minutes)]
       @scheduler.process
     end
     
@@ -100,13 +95,13 @@ describe SimplePvr::Scheduler do
       SimplePvr::Recorder.stub(:new).with('Sports', @channel_dr1).and_return(@new_recorder = double('New recorder'))
       @old_recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new('DR K', 'Borgia', start_time, 60.minutes)]
+      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
       @scheduler.process
 
       @old_recorder.should_receive(:stop!)
       @new_recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new('DR 1', 'Sports', start_time, 60.minutes)]
+      @scheduler.recordings = [SimplePvr::Recording.new(@channel_dr1, 'Sports', start_time, 60.minutes)]
       @scheduler.process
     end
   end
