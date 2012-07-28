@@ -7,8 +7,8 @@ describe SimplePvr::PvrInitializer do
     @scheduler = double('Scheduler')
     SimplePvr::Scheduler.stub(new: @scheduler)
     
-    @hd_home_run = double('HDHomeRun')
-    SimplePvr::HDHomeRun.stub(new: @hd_home_run)
+    @hdhomerun = double('HDHomeRun')
+    SimplePvr::HDHomeRun.stub(new: @hdhomerun)
   end
   
   it 'starts the scheduler' do
@@ -25,7 +25,7 @@ describe SimplePvr::PvrInitializer do
   
     it 'runs a channel scan if channels are missing' do
       SimplePvr::Model::Channel.stub(all: [])
-      @hd_home_run.should_receive(:scan_for_channels)
+      @hdhomerun.should_receive(:scan_for_channels)
     
       SimplePvr::PvrInitializer.setup
     end
@@ -41,7 +41,7 @@ describe SimplePvr::PvrInitializer do
     
       SimplePvr::PvrInitializer.setup
       SimplePvr::PvrInitializer.dao.should == @dao
-      SimplePvr::PvrInitializer.hd_home_run.should == @hd_home_run
+      SimplePvr::PvrInitializer.hdhomerun.should == @hdhomerun
     end
   end
 end
