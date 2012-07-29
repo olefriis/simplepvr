@@ -97,6 +97,11 @@ Then read your XMLTV file and the mappings file:
 
 ...and wait a little. Then start up the system as normal, and you're done.
 
+If you're running the web server, you can tell it to update its schedules without restarting the server. This is
+done by POST'ing to /schedules/reload on the server, e.g.:
+
+        curl -d "" localhost:4567/schedules/reload
+
 Recordings
 ==========
 The recordings are laid out like this:
@@ -118,14 +123,12 @@ Inside the numbered directories are two files:
 
 Future?
 =======
-First...
--------
-* Very simple web interface for seeing TV schedules, setting recording options, and seeing the status of the
-  system.
+* Extend the web interface a bit.
 * "Gemify" the stuff, so installation becomes a breeze.
 * Make an API (REST interface?), so that everything can be manipulated by e.g. a fancy web GUI or a desktop GUI,
   in case somebody would like to write one.
 * Utilize more than one tuner in the HDHomeRun box.
+* Speed up XMLTV import.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.
 

@@ -12,6 +12,10 @@ get '/' do
   erb :index, locals: { schedules: schedules, upcoming_recordings: upcoming_recordings, channels: channels }
 end
 
+post '/schedules/reload' do
+  reload_schedules
+end
+
 get '/schedules/new' do
   channels = SimplePvr::Model::Channel.sorted_by_name
   erb :'schedules/new', locals: { channels: channels }
