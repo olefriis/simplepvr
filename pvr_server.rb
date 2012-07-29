@@ -69,7 +69,7 @@ def show_programmes_for_date(channel, date)
   tomorrow_time = date.tomorrow
   yesterday = "#{yesterday_time.year}-#{yesterday_time.month}-#{yesterday_time.day}"
   tomorrow = "#{tomorrow_time.year}-#{tomorrow_time.month}-#{tomorrow_time.day}"
-  programmes = SimplePvr::Model::Programme.all(channel: channel, start_date_time: (date..tomorrow_time), order: :start_date_time)
+  programmes = SimplePvr::Model::Programme.all(channel: channel, start_time: (date..tomorrow_time), order: :start_time)
   erb :'channels/show', locals: { today: date, yesterday: yesterday, tomorrow: tomorrow, channel: channel, programmes: programmes }
 end
 
