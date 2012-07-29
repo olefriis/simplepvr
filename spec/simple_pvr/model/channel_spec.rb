@@ -25,8 +25,8 @@ describe SimplePvr::Model::Channel do
   end
 
   it 'clears all programmes when clearing channels' do
-    Channel.add("DR 1", 23000000, 1098)
-    3.times { Programme.add('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+    channel = Channel.add("DR 1", 23000000, 1098)
+    3.times { Programme.add(channel, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
     Channel.clear
 
     Programme.all.length.should == 0

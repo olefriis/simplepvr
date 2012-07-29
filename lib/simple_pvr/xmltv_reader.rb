@@ -2,16 +2,24 @@ require 'nokogiri'
 
 module SimplePvr
   class XmltvReader
+    include Model
+    
     def initialize(mapping_to_channels)
       @mapping_to_channels = mapping_to_channels
+      @channel_from_name = {}
+      Channel.all.each do |channel|
+        @channel_from_name[channel.name] = channel
+      end
     end
     
     def read(input)
       Model::Programme.clear
       doc = Nokogiri::XML.parse(input)
 
-      doc.xpath('/tv/programme').each do |programme|
-        process_programme(programme)
+      Model::Programme.transaction do
+        doc.xpath('/tv/programme').each do |programme|
+          process_programme(programme)
+        end
       end
     end
     
@@ -26,7 +34,7 @@ module SimplePvr
     def add_programme(channel, programme)
       title_node, subtitle_node, description_node = nil
       programme.children.each do |child|
-        case child.name.to_s
+        case child.name
         when 'title'
           title_node = child
         when 'sub-title'
@@ -42,7 +50,13 @@ module SimplePvr
       start_time = Time.parse(programme[:start])
       stop_time = Time.parse(programme[:stop])
 
-      Model::Programme.add(channel, title, subtitle, description, start_time, stop_time - start_time)
+      Programme.add(channel_from_name(channel), title, subtitle, description, start_time, stop_time - start_time)
+    end
+    
+    def channel_from_name(channel_name)
+      channel = @channel_from_name[channel_name]
+      raise Exception, "Unknown channel: #{channel_name}" unless channel
+      channel
     end
   end
 end

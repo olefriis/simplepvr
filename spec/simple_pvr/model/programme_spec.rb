@@ -17,28 +17,22 @@ describe SimplePvr::Model::Programme do
   end
   
   it 'can insert programmes' do
-    3.times { Programme.add('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+    3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
   
     Programme.all.length.should == 3
   end
-  
-  it 'cannot insert programmes for unknown channels' do
-    expect {
-      Programme.add('Unknown', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    }.to raise_error 'Unknown channel: Unknown'
-  end
 
   it 'can clear all programmes' do
-    3.times { Programme.add('DR 1', 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+    3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
     Programme.clear
   
     Programme.all.length.should == 0
   end
 
   it 'can find all programmes with a certain title' do
-    Programme.add('DR 2', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    Programme.add('DR 1', 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_2, 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
 
     programmes = Programme.with_title('Interesting')
     programmes.length.should == 2
@@ -56,10 +50,10 @@ describe SimplePvr::Model::Programme do
   end
 
   it 'can find all programmes with a certain title for a specific channel' do
-    Programme.add('DR 1', 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add('DR 1', 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    Programme.add('DR 2', 'Interesting', '...but on wrong channel...', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add('DR 1', 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+    Programme.add(@dr_2, 'Interesting', '...but on wrong channel...', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
   
     programmes = Programme.on_channel_with_title(@dr_1, 'Interesting')
     programmes.length.should == 2

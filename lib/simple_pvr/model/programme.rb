@@ -17,9 +17,7 @@ module SimplePvr
         Programme.destroy
       end
 
-      def self.add(channel_name, title, subtitle, description, start_time, duration)
-        channel = Channel.first(:name => channel_name)
-        raise Exception, "Unknown channel: #{channel_name}" unless channel
+      def self.add(channel, title, subtitle, description, start_time, duration)
         channel.programmes.create(
           :channel => channel,
           :title => title,
