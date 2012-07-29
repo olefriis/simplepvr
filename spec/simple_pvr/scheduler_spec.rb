@@ -16,6 +16,17 @@ describe SimplePvr::Scheduler do
     @scheduler.process
   end
   
+  it 'knows which programmes are being recorded' do
+    start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    Time.stub(:now => start_time.advance(hours: -1))
+    scheduled_programme = double(id: 2)
+    unscheduled_programme = double(id: 3)
+
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes, scheduled_programme)]
+    @scheduler.is_scheduled?(scheduled_programme).should be_true
+    @scheduler.is_scheduled?(unscheduled_programme).should be_false
+  end
+  
   it 'starts recordings at start time' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
     Time.stub(:now => start_time)

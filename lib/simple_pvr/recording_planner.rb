@@ -28,12 +28,12 @@ module SimplePvr
       programmes.each do |programme|
         start_time = programme.start_time.advance(minutes: -2)
         duration = programme.duration + 7.minutes
-        add_recording(title, programme.channel, start_time, duration)
+        add_recording(title, programme.channel, start_time, duration, programme)
       end
     end
     
-    def add_recording(title, channel, start_time, duration)
-      @recordings << Recording.new(channel, title, start_time, duration)
+    def add_recording(title, channel, start_time, duration, programme=nil)
+      @recordings << Recording.new(channel, title, start_time, duration, programme)
     end
   end
 end

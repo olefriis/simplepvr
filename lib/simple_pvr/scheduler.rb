@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/recorder'
 require File.dirname(__FILE__) + '/pvr_logger'
 
 module SimplePvr
-  Recording = Struct.new(:channel, :show_name, :start_time, :duration)
+  Recording = Struct.new(:channel, :show_name, :start_time, :duration, :programme)
 
   class Recording
     def expired?
@@ -36,10 +36,19 @@ module SimplePvr
         @coming_recordings = recordings.sort_by {|r| r.start_time }.find_all {|r| !r.expired? }
         PvrLogger.info("Scheduling coming recordings: #{@coming_recordings}")
 
+        @scheduled_programmes = {}
+        @coming_recordings.each do |recording|
+          @scheduled_programmes[recording.programme.id] = true if recording.programme
+        end
+
         if @current_recording && @coming_recordings[0] != @current_recording
           stop_current_recording
         end
       end
+    end
+    
+    def is_scheduled?(programme)
+      @scheduled_programmes[programme.id]
     end
 
     def process

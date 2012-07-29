@@ -2,12 +2,14 @@ require File.dirname(__FILE__) + '/lib/simple_pvr'
 require 'sinatra'
 
 SimplePvr::PvrInitializer.setup
-scheduler = SimplePvr::PvrInitializer.scheduler
 SimplePvr::DatabaseScheduleReader.read
+
+Time::DATE_FORMATS[:programme_time] = '%a, %d %b %Y %H:%M:%S'
+Time::DATE_FORMATS[:day] = '%a, %d %b'
 
 get '/' do
   schedules = SimplePvr::Model::Schedule.all
-  upcoming_recordings = scheduler.coming_recordings
+  upcoming_recordings = SimplePvr::PvrInitializer.scheduler.coming_recordings
   channels = SimplePvr::Model::Channel.sorted_by_name
   erb :index, locals: { schedules: schedules, upcoming_recordings: upcoming_recordings, channels: channels }
 end
@@ -49,7 +51,11 @@ end
 
 get '/programmes/:id' do
   programme = SimplePvr::Model::Programme.get(params[:id])
-  erb :'programmes/show', locals: { programme: programme }
+  is_scheduled = SimplePvr::PvrInitializer.scheduler.is_scheduled?(programme)
+  erb :'programmes/show', locals: {
+    programme: programme,
+    is_scheduled: is_scheduled
+  }
 end
 
 post '/programmes/:id/record_on_any_channel' do
@@ -70,7 +76,14 @@ def show_programmes_for_date(channel, date)
   yesterday = "#{yesterday_time.year}-#{yesterday_time.month}-#{yesterday_time.day}"
   tomorrow = "#{tomorrow_time.year}-#{tomorrow_time.month}-#{tomorrow_time.day}"
   programmes = SimplePvr::Model::Programme.all(channel: channel, start_time: (date..tomorrow_time), order: :start_time)
-  erb :'channels/show', locals: { today: date, yesterday: yesterday, tomorrow: tomorrow, channel: channel, programmes: programmes }
+  erb :'channels/show', locals: {
+    today: date,
+    yesterday: yesterday,
+    tomorrow: tomorrow,
+    channel: channel,
+    programmes: programmes,
+    scheduler: SimplePvr::PvrInitializer.scheduler
+  }
 end
 
 def reload_schedules

@@ -22,13 +22,12 @@ describe SimplePvr::RecordingPlanner do
   end
   
   it 'can set up schedules from channel and program title' do
-    SimplePvr::Model::Programme.stub(:on_channel_with_title).with(@dr_k, 'Borgias').and_return([
-      double(channel:@dr_k, start_time: Time.local(2012, 7, 10, 20, 50), duration: 60.minutes),
-      double(channel:@dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
-    ])
+    @programme_1 = double(channel:@dr_k, start_time: Time.local(2012, 7, 10, 20, 50), duration: 60.minutes)
+    @programme_2 = double(channel:@dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
+    SimplePvr::Model::Programme.stub(:on_channel_with_title).with(@dr_k, 'Borgias').and_return([@programme_1, @programme_2])
     @scheduler.should_receive(:recordings=).with([
-      SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes),
-      SimplePvr::Recording.new(@dr_k,'Borgias',  Time.local(2012, 7, 17, 20, 48), 67.minutes)
+      SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes, @programme_1),
+      SimplePvr::Recording.new(@dr_k,'Borgias',  Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
     ])
 
     @recording_planner.specification(title: 'Borgias', channel: @dr_k)
@@ -36,13 +35,12 @@ describe SimplePvr::RecordingPlanner do
   end
   
   it 'can set up schedules from program title only' do
-    SimplePvr::Model::Programme.stub(:with_title).with('Borgias').and_return([
-      double(channel: @dr_1, start_time: Time.local(2012, 7, 10, 20, 50), duration: 60.minutes),
-      double(channel: @dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
-    ])
+    @programme_1 = double(channel: @dr_1, start_time: Time.local(2012, 7, 10, 20, 50), duration: 60.minutes)
+    @programme_2 = double(channel: @dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
+    SimplePvr::Model::Programme.stub(:with_title).with('Borgias').and_return([@programme_1, @programme_2])
     @scheduler.should_receive(:recordings=).with([
-      SimplePvr::Recording.new(@dr_1, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes),
-      SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes)
+      SimplePvr::Recording.new(@dr_1, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes, @programme_1),
+      SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
     ])
 
     @recording_planner.specification(title: 'Borgias')

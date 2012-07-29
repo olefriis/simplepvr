@@ -1,8 +1,10 @@
 <h1><%= channel.name %></h1>
-<h2><a href="/channels/<%= channel.id %>/for_date/<%= yesterday %>">&lt;&lt;</a> <%= today.strftime('%Y-%m-%d') %> <a href="/channels/<%= channel.id %>/for_date/<%= tomorrow %>">&gt;&gt;</a></h2>
+<h2><a href="/channels/<%= channel.id %>/for_date/<%= yesterday %>">&lt;&lt;</a> <%= today.to_s(:day) %> <a href="/channels/<%= channel.id %>/for_date/<%= tomorrow %>">&gt;&gt;</a></h2>
 
 <p>
 <% for programme in programmes %>
-<a href="/programmes/<%= programme.id %>"><%= programme.start_time.strftime('%H:%M:%S') %>: <%= programme.title %></a><br/>
+	<% if scheduler.is_scheduled?(programme) %><div style="background: lightgreen"><% else %><div><% end %>
+		<a href="/programmes/<%= programme.id %>"><%= programme.start_time.strftime('%H:%M:%S') %>: <%= programme.title %></a><br/>
+	</div>
 <% end %>
 </p>

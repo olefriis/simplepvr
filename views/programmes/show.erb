@@ -1,6 +1,9 @@
 <h1><%= programme.title %></h1>
-<%= programme.start_time %> on <%= programme.channel.name %>
+<%= programme.start_time.to_s(:programme_time) %> on <%= programme.channel.name %>
 
+<% if is_scheduled %>
+<p>This programme is being recorded</p>
+<% else %>
 <form action="/programmes/<%= programme.id %>/record_on_any_channel" method="post">
 	<input type="submit" value="Record on any channel">
 </form>
@@ -8,3 +11,4 @@
 <form action="/programmes/<%= programme.id %>/record_on_this_channel" method="post">
 	<input type="submit" value="Record on this channel">
 </form>
+<% end %>
