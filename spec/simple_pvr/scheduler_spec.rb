@@ -16,17 +16,6 @@ describe SimplePvr::Scheduler do
     @scheduler.process
   end
   
-  it 'knows which programmes are being recorded' do
-    start_time = Time.local(2012, 7, 15, 20, 15, 30)
-    Time.stub(:now => start_time.advance(hours: -1))
-    scheduled_programme = double(id: 2)
-    unscheduled_programme = double(id: 3)
-
-    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes, scheduled_programme)]
-    @scheduler.is_scheduled?(scheduled_programme).should be_true
-    @scheduler.is_scheduled?(unscheduled_programme).should be_false
-  end
-  
   it 'starts recordings at start time' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
     Time.stub(:now => start_time)
@@ -68,6 +57,36 @@ describe SimplePvr::Scheduler do
     
     @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time - 65.minutes, 60.minutes)]
     @scheduler.process
+  end
+  
+  it 'knows which programmes are being recorded' do
+    start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    Time.stub(:now => start_time.advance(hours: -1))
+    scheduled_programme = double(id: 2)
+    unscheduled_programme = double(id: 3)
+
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes, scheduled_programme)]
+    @scheduler.is_scheduled?(scheduled_programme).should be_true
+    @scheduler.is_scheduled?(unscheduled_programme).should be_false
+  end
+  
+  it 'gives idle status when nothing is recording' do
+    @scheduler.recordings = []
+    @scheduler.process
+
+    @scheduler.status_text.should == 'Idle'
+  end
+
+  it 'gives recording status when recording' do
+    start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    Time.stub(:now => start_time.advance(minutes: 30))
+    SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
+    @recorder.stub(:start!)
+
+    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
+    @scheduler.process
+
+    @scheduler.status_text.should == "Recording 'Borgia' on channel 'DR K'"
   end
   
   context 'when updating existing recordings' do

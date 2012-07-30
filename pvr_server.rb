@@ -8,10 +8,11 @@ Time::DATE_FORMATS[:programme_time] = '%a, %d %b %Y %H:%M:%S'
 Time::DATE_FORMATS[:day] = '%a, %d %b'
 
 get '/' do
+  status_text = SimplePvr::PvrInitializer.scheduler.status_text
   schedules = SimplePvr::Model::Schedule.all
   upcoming_recordings = SimplePvr::PvrInitializer.scheduler.coming_recordings
   channels = SimplePvr::Model::Channel.sorted_by_name
-  erb :index, locals: { schedules: schedules, upcoming_recordings: upcoming_recordings, channels: channels }
+  erb :index, locals: { status_text: status_text, schedules: schedules, upcoming_recordings: upcoming_recordings, channels: channels }
 end
 
 post '/schedules/reload' do

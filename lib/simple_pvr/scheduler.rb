@@ -50,6 +50,10 @@ module SimplePvr
     def is_scheduled?(programme)
       @scheduled_programmes[programme.id]
     end
+    
+    def status_text
+      @current_recording ? "Recording '#{@current_recording.show_name}' on channel '#{@current_recording.channel.name}'": 'Idle'
+    end
 
     def process
       if is_recording?
