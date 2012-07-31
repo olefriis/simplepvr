@@ -1,5 +1,9 @@
-<h1><%= programme.title %></h1>
-<%= programme.start_time.to_s(:programme_time) %> on <%= programme.channel.name %>
+<h1><%=h programme.title %></h1>
+<% if programme.subtitle %>
+	<p>(<%=h programme.subtitle %>)</p>
+<% end %>
+<p><%=h programme.start_time.to_s(:programme_time) %> on <%=h programme.channel.name %></p>
+<p><%=h programme.description %></p>
 
 <% if is_scheduled %>
 <p>This programme is being recorded</p>

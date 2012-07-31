@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/lib/simple_pvr'
 require 'sinatra'
 
+include ERB::Util
+
 SimplePvr::PvrInitializer.setup
 SimplePvr::DatabaseScheduleReader.read
 

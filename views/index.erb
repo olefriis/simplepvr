@@ -1,11 +1,11 @@
 <h1>Status</h1>
-<p><%= status_text %></p>
+<p><%=h status_text %></p>
 
 <h1>Schedules</h1>
 <p>
 <% for schedule in schedules %>
 <form action="schedules/<%= schedule.id %>/delete" method="post">
-	<%= schedule.title %> <% if schedule.channel %> on <%= schedule.channel.name %> <% end %>
+	<%=h schedule.title %> <% if schedule.channel %> on <%=h schedule.channel.name %> <% end %>
 	<input type="submit" value="Delete"/>
 </form>
 <br/>
@@ -16,13 +16,13 @@
 <h1>Upcoming recordings</h1>
 <p>
 <% for recording in upcoming_recordings %>
-<%= recording.start_time.to_s(:programme_time) %>: <%= recording.show_name %> from <%= recording.channel.name %> (<%= recording.duration / 60 %> minutes)<br/>
+<%= recording.start_time.to_s(:programme_time) %>: <%=h recording.show_name %> from <%=h recording.channel.name %> (<%= recording.duration / 60 %> minutes)<br/>
 <% end %>
 </p>
 
 <h1>Channels</h1>
 <p>
 <% for channel in channels %>
-<a href="channels/<%= channel.id %>"><%= channel.name %></a><br/>
+<a href="channels/<%= channel.id %>"><%=h channel.name %></a><br/>
 <% end %>
 </p>

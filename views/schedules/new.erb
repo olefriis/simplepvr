@@ -4,7 +4,7 @@
 	<select name="channel_id">
 		<option selected value="0">-- Any --</option>
 		<% for channel in channels %>
-		<option value="<%= channel.id %>"><%= channel.name %></option>
+		<option value="<%= channel.id %>"><%=h channel.name %></option>
 		<% end %>
 	</select>
 	<input type="submit" value="Create" />
