@@ -1,0 +1,14 @@
+<h1><%=h show %></h1>
+<% if episodes.empty? %>
+	<p>There are no recorded episodes of this show.</p>
+<% else %>
+	<p>
+		<% for episode in episodes %>
+		<form action="/recordings/<%=u show %>/episodes/<%=u episode %>/delete" method="post">
+			<%=h episode %>
+			<input type="submit" value="Delete"/>
+		</form>
+		<br/>
+		<% end %>
+	</p>
+<% end %>

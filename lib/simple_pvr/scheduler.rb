@@ -52,7 +52,13 @@ module SimplePvr
     end
     
     def status_text
-      @current_recording ? "Recording '#{@current_recording.show_name}' on channel '#{@current_recording.channel.name}'": 'Idle'
+      @mutex.synchronize do
+        if @current_recording
+          "Recording '#{@current_recording.show_name}' on channel '#{@current_recording.channel.name}'"
+        else
+          'Idle'
+        end
+      end
     end
 
     def process

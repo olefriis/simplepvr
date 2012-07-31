@@ -1,0 +1,6 @@
+<h1>Channels</h1>
+<p>
+<% for channel in channels %>
+<a href="channels/<%= channel.id %>"><%=h channel.name %></a><br/>
+<% end %>
+</p>
