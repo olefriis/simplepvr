@@ -9,6 +9,9 @@ describe SimplePvr::PvrInitializer do
     
     @hdhomerun = double('HDHomeRun')
     SimplePvr::HDHomeRun.stub(new: @hdhomerun)
+    
+    @recording_manager = double('RecordingManager')
+    SimplePvr::RecordingManager.stub(new: @recording_manager)
   end
   
   it 'starts the scheduler' do
@@ -36,11 +39,12 @@ describe SimplePvr::PvrInitializer do
       SimplePvr::PvrInitializer.setup
     end
   
-    it 'initializes a HDHomeRun instance' do
+    it 'initializes a HDHomeRun and RecordingManager instance' do
       SimplePvr::Model::Channel.stub(all: [1])
     
       SimplePvr::PvrInitializer.setup
       SimplePvr::PvrInitializer.hdhomerun.should == @hdhomerun
+      SimplePvr::PvrInitializer.recording_manager.should == @recording_manager
     end
   end
 end

@@ -28,4 +28,33 @@ describe SimplePvr::RecordingManager do
     @manager.delete_show_episode('series 1', '3')
     File.exists?(@recording_dir + '/series 1/3').should be_false
   end
+  
+  context 'when finding recording directories' do
+    before do
+      @recording = SimplePvr::Recording.new(double(name: 'Channel 4'), 'Star Trek', Time.now, 50.minutes)
+    end
+    
+    it 'records to directory with number 1 if nothing exists' do
+      @manager.create_directory_for_recording(@recording)
+    
+      File.exists?(@recording_dir + '/Star Trek/1').should be_true
+    end
+  
+    it 'finds next number in sequence for new directory' do
+      FileUtils.mkdir_p(@recording_dir + "/Star Trek/1")
+      FileUtils.mkdir_p(@recording_dir + "/Star Trek/2")
+      FileUtils.mkdir_p(@recording_dir + "/Star Trek/3")
+      @manager.create_directory_for_recording(@recording)
+    
+      File.exists?(@recording_dir + '/Star Trek/4').should be_true
+    end
+  
+    it 'ignores random directories which are not sequence numbers' do
+      FileUtils.mkdir_p(@recording_dir + "/Star Trek/4")
+      FileUtils.mkdir_p(@recording_dir + "/Star Trek/random directory name")
+      @manager.create_directory_for_recording(@recording)
+    
+      File.exists?(@recording_dir + '/Star Trek/5').should be_true
+    end
+  end
 end

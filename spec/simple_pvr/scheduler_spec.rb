@@ -18,31 +18,34 @@ describe SimplePvr::Scheduler do
   
   it 'starts recordings at start time' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    starting_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
     Time.stub(:now => start_time)
-    SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
+    SimplePvr::Recorder.stub(:new).with(starting_recording).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
 
-    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
+    @scheduler.recordings = [starting_recording]
     @scheduler.process
   end
   
   it 'starts recordings that are in progress' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    recording_in_progress = SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
     Time.stub(:now => start_time.advance(minutes: 30))
-    SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
+    SimplePvr::Recorder.stub(:new).with(recording_in_progress).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
 
-    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
+    @scheduler.recordings = [recording_in_progress]
     @scheduler.process
   end
   
   it 'ends recordings at end time' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
-    SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
+    ending_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
+    SimplePvr::Recorder.stub(:new).with(ending_recording).and_return(@recorder = double('Recorder'))
     @recorder.should_receive(:start!)
     Time.stub(:now => start_time)
 
-    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
+    @scheduler.recordings = [ending_recording]
     @scheduler.process
 
     @recorder.should_receive(:stop!)
@@ -53,9 +56,10 @@ describe SimplePvr::Scheduler do
   
   it 'skips recordings that have passed' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    passed_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time - 65.minutes, 60.minutes)
     Time.stub(:now => start_time)
     
-    @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time - 65.minutes, 60.minutes)]
+    @scheduler.recordings = [passed_recording]
     @scheduler.process
   end
   
@@ -80,7 +84,7 @@ describe SimplePvr::Scheduler do
   it 'gives recording status when recording' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
     Time.stub(:now => start_time.advance(minutes: 30))
-    SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
+    SimplePvr::Recorder.stub(new: (@recorder = double('Recorder')))
     @recorder.stub(:start!)
 
     @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
@@ -92,11 +96,12 @@ describe SimplePvr::Scheduler do
   context 'when updating existing recordings' do
     it 'leaves running recording if new recording is equal' do
       start_time = Time.local(2012, 7, 15, 20, 15, 30)
+      continuing_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
       Time.stub(:now => start_time)
-      SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
+      SimplePvr::Recorder.stub(:new).with(continuing_recording).and_return(@recorder = double('Recorder'))
       @recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
+      @scheduler.recordings = [continuing_recording]
       @scheduler.process
 
       @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
@@ -105,33 +110,37 @@ describe SimplePvr::Scheduler do
     
     it 'stops existing recording if not present in new recording list' do
       start_time = Time.local(2012, 7, 15, 20, 15, 30)
+      stopping_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
+      upcoming_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time + 10.minutes, 60.minutes)
       Time.stub(:now => start_time)
-      SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@recorder = double('Recorder'))
+      SimplePvr::Recorder.stub(:new).with(stopping_recording).and_return(@recorder = double('Recorder'))
       @recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
+      @scheduler.recordings = [stopping_recording]
       @scheduler.process
 
       @recorder.should_receive(:stop!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time + 10.minutes, 60.minutes)]
+      @scheduler.recordings = [upcoming_recording]
       @scheduler.process
     end
     
     it 'stops existing recording and starts new recording if new recording list has other current recording' do
       start_time = Time.local(2012, 7, 15, 20, 15, 30)
+      stopping_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
+      starting_recording = SimplePvr::Recording.new(@channel_dr1, 'Sports', start_time, 60.minutes)
       Time.stub(:now => start_time)
-      SimplePvr::Recorder.stub(:new).with('Borgia', @channel).and_return(@old_recorder = double('Recorder'))
-      SimplePvr::Recorder.stub(:new).with('Sports', @channel_dr1).and_return(@new_recorder = double('New recorder'))
+      SimplePvr::Recorder.stub(:new).with(stopping_recording).and_return(@old_recorder = double('Recorder'))
+      SimplePvr::Recorder.stub(:new).with(starting_recording).and_return(@new_recorder = double('New recorder'))
       @old_recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)]
+      @scheduler.recordings = [stopping_recording]
       @scheduler.process
 
       @old_recorder.should_receive(:stop!)
       @new_recorder.should_receive(:start!)
 
-      @scheduler.recordings = [SimplePvr::Recording.new(@channel_dr1, 'Sports', start_time, 60.minutes)]
+      @scheduler.recordings = [starting_recording]
       @scheduler.process
     end
   end

@@ -7,6 +7,7 @@ module SimplePvr
     def self.setup
       Model::DatabaseInitializer.setup
       @hdhomerun = HDHomeRun.new
+      @recording_manager = RecordingManager.new
       @scheduler = Scheduler.new
       @scheduler.start
 
@@ -15,6 +16,10 @@ module SimplePvr
     
     def self.hdhomerun
       @hdhomerun
+    end
+    
+    def self.recording_manager
+      @recording_manager
     end
     
     def self.scheduler

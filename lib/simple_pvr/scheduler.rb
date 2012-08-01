@@ -96,7 +96,7 @@ module SimplePvr
     
     def start_new_recording
       @current_recording = @coming_recordings.delete_at(0)
-      @recorder = Recorder.new(@current_recording.show_name, @current_recording.channel)
+      @recorder = Recorder.new(@current_recording)
       @recorder.start!
     end
   end
