@@ -4,7 +4,7 @@
 <% else %>
 	<p>
 		<% for episode in episodes %>
-		<form action="/recordings/<%=u show %>/episodes/<%=u episode %>/delete" method="post">
+		<form action="/recordings/<%=u show %>/episodes/<%=u episode.episode %>/delete" method="post">
 			<%=h episode.episode %>
 			<% if episode.subtitle.present? %><br/><%=h episode.subtitle %><% end %>
 			<% if episode.start_time %><br/><%= episode.start_time.to_s(:programme_time) %><% end %>
