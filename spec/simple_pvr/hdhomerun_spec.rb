@@ -25,7 +25,8 @@ describe SimplePvr::HDHomeRun do
     before do
       @pipe.stub(:read => 'hdhomerun device ABCDEF01 found at 10.0.0.4')
       @hdhomerun = SimplePvr::HDHomeRun.new
-      @hdhomerun.stub(:tuner_control_file => 'tuner0.lock')
+      @hdhomerun.stub(:tuner_control_file).with(0).and_return('tuner0.lock')
+      @hdhomerun.stub(:tuner_control_file).with(1).and_return('tuner1.lock')
       @file = File.open(File.dirname(__FILE__) + '/../resources/channels.txt', 'r:UTF-8')
     end
     
@@ -43,25 +44,39 @@ describe SimplePvr::HDHomeRun do
       @hdhomerun.scan_for_channels
     end
     
-    it 'can start recording' do
+    it 'can start recording on one tuner' do
       @hdhomerun.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner0/channel auto:282000000")
       @hdhomerun.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner0/program 1098")
       @hdhomerun.should_receive(:spawn) #... with a lot of arguments ...
       FileUtils.should_receive(:touch).with('tuner0.lock')
       
-      @hdhomerun.start_recording(282000000, 1098, 'test directory')
+      @hdhomerun.start_recording(0, 282000000, 1098, 'test directory')
     end
     
-    it 'can stop recording' do
+    it 'can stop recording on one tuner' do
       @hdhomerun.stub(:system)
       @hdhomerun.stub(:spawn => 32)
       
       FileUtils.should_receive(:touch).with('tuner0.lock')
       FileUtils.should_receive(:rm).with('tuner0.lock')
       Process.should_receive(:wait).with(32)
+      @hdhomerun.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner0/channel none")
 
-      @hdhomerun.start_recording(282000000, 1098, 'test directory')
-      @hdhomerun.stop_recording
+      @hdhomerun.start_recording(0, 282000000, 1098, 'test directory')
+      @hdhomerun.stop_recording(0)
+    end
+    
+    it 'can start and stop recording on another tuner' do
+      @hdhomerun.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner1/channel auto:282000000")
+      @hdhomerun.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner1/program 1098")
+      @hdhomerun.stub(:spawn => 32)
+      FileUtils.should_receive(:touch).with('tuner1.lock')
+      FileUtils.should_receive(:rm).with('tuner1.lock')
+      Process.should_receive(:wait).with(32)
+      @hdhomerun.should_receive(:system).with("hdhomerun_config ABCDEF01 set /tuner1/channel none")
+
+      @hdhomerun.start_recording(1, 282000000, 1098, 'test directory')
+      @hdhomerun.stop_recording(1)
     end
   end
 end

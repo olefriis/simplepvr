@@ -7,38 +7,42 @@ module SimplePvr
   #
   class HDHomeRun
     attr_reader :device_id
-  
+
     def initialize
       @device_id = discover
-      FileUtils.rm(tuner_control_file) if File.exists?(tuner_control_file)
+      @tuner_pids = [nil, nil]
+      FileUtils.rm(tuner_control_file(0)) if File.exists?(tuner_control_file(0))
+      FileUtils.rm(tuner_control_file(1)) if File.exists?(tuner_control_file(1))
     end
-  
+
     def scan_for_channels
       file_name = 'channels.txt'
       scan_channels_with_tuner(file_name)
       Model::Channel.clear
       read_channels_file(file_name)
     end
-  
-    def start_recording(frequency, program_id, directory)
-      set_tuner_to_frequency frequency
-      set_tuner_to_program program_id
-      @pid = spawn_recorder_process_in directory
-      PvrLogger.info("Process ID for recording: #{@pid}")
+
+    def start_recording(tuner, frequency, program_id, directory)
+      set_tuner_to_frequency(tuner, frequency)
+      set_tuner_to_program(tuner, program_id)
+      @tuner_pids[tuner] = spawn_recorder_process(tuner, directory)
+      PvrLogger.info("Process ID for recording on tuner #{tuner}: #{@tuner_pids[tuner]}")
     end
-  
-    def stop_recording
-      PvrLogger.info("Stopping process #{@pid}")
-      send_control_c_to_process @pid
-      reset_tuner_frequency
+
+    def stop_recording(tuner)
+      pid = @tuner_pids[tuner]
+      PvrLogger.info("Stopping process #{pid} for tuner #{tuner}")
+      send_control_c_to_process(tuner, pid)
+      reset_tuner_frequency(tuner)
+      @tuner_pids[tuner] = nil
     end
-  
+
     private
     def discover
       IO.popen('hdhomerun_config discover') do |pipe|
         output = pipe.read
         return $1 if output =~ /^hdhomerun device (.*) found at .*$/
-      
+    
         raise Exception, "No device found: #{output}"
       end
     end
@@ -46,7 +50,7 @@ module SimplePvr
     def scan_channels_with_tuner(file_name)
       system "hdhomerun_config #{@device_id} scan /tuner0 #{file_name}"
     end
-    
+  
     def read_channels_file(file_name)
       channel_frequency = nil
 
@@ -63,31 +67,30 @@ module SimplePvr
       end
     end
 
-    def set_tuner_to_frequency(frequency)
-      system "hdhomerun_config #{@device_id} set /tuner0/channel auto:#{frequency}"
+    def set_tuner_to_frequency(tuner, frequency)
+      system "hdhomerun_config #{@device_id} set /tuner#{tuner}/channel auto:#{frequency}"
+    end
+
+    def set_tuner_to_program(tuner, program_id)
+      system "hdhomerun_config #{@device_id} set /tuner#{tuner}/program #{program_id}"
+    end
+
+    def spawn_recorder_process(tuner, directory)
+      FileUtils.touch(tuner_control_file(tuner))
+      spawn File.dirname(__FILE__) + "/hdhomerun_save.sh #{@device_id} 0 \"#{directory}/stream.ts\" \"#{directory}/hdhomerun_save.log\" \"#{tuner_control_file(tuner)}\""
     end
   
-    def set_tuner_to_program(program_id)
-      system "hdhomerun_config #{@device_id} set /tuner0/program #{program_id}"
+    def reset_tuner_frequency(tuner)
+      system "hdhomerun_config #{@device_id} set /tuner#{tuner}/channel none"
     end
-  
-    def spawn_recorder_process_in(directory)
-      FileUtils.touch(tuner_control_file)
-      spawn File.dirname(__FILE__) + "/hdhomerun_save.sh #{@device_id} 0 \"#{directory}/stream.ts\" \"#{directory}/hdhomerun_save.log\" \"#{tuner_control_file}\""
-      #spawn "hdhomerun_config #{@device_id} save /tuner0 \"#{directory}/stream.ts\"", [:out, :err]=>["#{directory}/hdhomerun_save.log", "w"]
-    end
-    
-    def reset_tuner_frequency
-      system "hdhomerun_config #{@device_id} set /tuner0/channel none"
-    end
-  
-    def send_control_c_to_process(pid)
-      FileUtils.rm(tuner_control_file)
+
+    def send_control_c_to_process(tuner, pid)
+      FileUtils.rm(tuner_control_file(tuner))
       Process.wait(pid)
     end
-    
-    def tuner_control_file
-      File.dirname(__FILE__) + "/tuner0.lock"
+  
+    def tuner_control_file(tuner)
+      File.dirname(__FILE__) + "/tuner#{tuner}.lock"
     end
   end
 end

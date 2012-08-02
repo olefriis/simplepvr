@@ -12,18 +12,18 @@ describe SimplePvr::Recorder do
     @recording_manager.stub(:create_directory_for_recording).with(@recording).and_return('recording directory')  
     SimplePvr::PvrInitializer.stub(recording_manager: @recording_manager)
     
-    @recorder = SimplePvr::Recorder.new(@recording)
+    @recorder = SimplePvr::Recorder.new(1, @recording)
   end
   
   it 'can start recording' do
-    @hdhomerun.should_receive(:start_recording).with(282000000, 1098, 'recording directory')
+    @hdhomerun.should_receive(:start_recording).with(1, 282000000, 1098, 'recording directory')
   
     @recorder.start!
   end
   
   it 'can stop recording as well' do
     @hdhomerun.stub(:start_recording)
-    @hdhomerun.should_receive(:stop_recording)
+    @hdhomerun.should_receive(:stop_recording).with(1)
   
     @recorder.start!
     @recorder.stop!
