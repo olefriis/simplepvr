@@ -1,5 +1,5 @@
 <h1><%=h programme.title %></h1>
-<% if programme.subtitle %>
+<% if programme.subtitle.present? %>
 	<p>(<%=h programme.subtitle %>)</p>
 <% end %>
 <p><%=h programme.start_time.to_s(:programme_time) %> on <%=h programme.channel.name %></p>

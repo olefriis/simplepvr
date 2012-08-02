@@ -120,6 +120,7 @@ Inside the numbered directories are two files:
 
 * stream.ts: The actual stream. Let VLC or another media player show these for you.
 * hdhomerun_save.log: The output from the actual recording command.
+* metadata.yml: Recording time, title, channel, etc.
 
 Future?
 =======

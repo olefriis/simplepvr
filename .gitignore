@@ -3,4 +3,5 @@
 /channel_mapping.yaml
 /programmes.xmltv
 /recordings
+/spec/resources/recordings
 *.sqlite

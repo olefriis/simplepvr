@@ -1,4 +1,5 @@
 require 'simple_pvr/recording_manager'
+require 'yaml'
 
 describe SimplePvr::RecordingManager do
   before do
@@ -21,7 +22,38 @@ describe SimplePvr::RecordingManager do
   end
   
   it 'knows which episodes of a given show exists' do
-    @manager.episodes_of('series 1').should == ['1', '3']
+    episodes = @manager.episodes_of('series 1')
+    
+    episodes.length.should == 2
+    episodes[0].episode.should == '1'
+    episodes[1].episode.should == '3'
+  end
+  
+  it 'reads metadata for recordings if present' do
+    start_time = Time.now
+    metadata = {
+      channel: 'Channel 4',
+      subtitle: 'A subtitle',
+      description: 'A description',
+      start_time: start_time,
+      duration: 10.minutes
+    }
+    File.open(@recording_dir + '/series 1/3/metadata.yml', 'w') {|f| f.write(metadata.to_yaml) }
+    
+    episodes = @manager.episodes_of('series 1')
+    
+    episodes.length.should == 2
+
+    episodes[0].show_name.should == 'series 1'
+    episodes[0].episode.should == '1'
+    
+    episodes[1].show_name.should == 'series 1'
+    episodes[1].episode.should == '3'
+    episodes[1].channel.should == 'Channel 4'
+    episodes[1].subtitle.should == 'A subtitle'
+    episodes[1].description.should == 'A description'
+    episodes[1].start_time.should == start_time
+    episodes[1].duration == 10.minutes
   end
   
   it 'can delete an episode of a given show' do
@@ -29,9 +61,10 @@ describe SimplePvr::RecordingManager do
     File.exists?(@recording_dir + '/series 1/3').should be_false
   end
   
-  context 'when finding recording directories' do
+  context 'when creating recording directories' do
     before do
-      @recording = SimplePvr::Recording.new(double(name: 'Channel 4'), 'Star Trek', Time.now, 50.minutes)
+      @start_time = Time.local(2012, 7, 23, 15, 30, 15)
+      @recording = SimplePvr::Recording.new(double(name: 'Channel 4'), 'Star Trek', @start_time, 50.minutes)
     end
     
     it 'records to directory with number 1 if nothing exists' do
@@ -55,6 +88,29 @@ describe SimplePvr::RecordingManager do
       @manager.create_directory_for_recording(@recording)
     
       File.exists?(@recording_dir + '/Star Trek/5').should be_true
+    end
+    
+    it 'stores simple metadata if no programme information exists' do
+      @manager.create_directory_for_recording(@recording)
+    
+      metadata = YAML.load_file(@recording_dir + '/Star Trek/1/metadata.yml')
+      metadata[:title].should == 'Star Trek'
+      metadata[:channel].should == 'Channel 4'
+      metadata[:start_time].should == @start_time
+      metadata[:duration].should == 50.minutes
+    end
+    
+    it 'stores extensive metadata if programme information exists' do
+      @recording.programme = SimplePvr::Model::Programme.new(subtitle: 'A subtitle', description: "A description,\nspanning several lines")
+      @manager.create_directory_for_recording(@recording)
+    
+      metadata = YAML.load_file(@recording_dir + '/Star Trek/1/metadata.yml')
+      metadata[:title].should == 'Star Trek'
+      metadata[:channel].should == 'Channel 4'
+      metadata[:start_time].should == @start_time
+      metadata[:duration].should == 50.minutes
+      metadata[:subtitle].should == 'A subtitle'
+      metadata[:description].should == "A description,\nspanning several lines"
     end
   end
 end

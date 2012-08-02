@@ -5,7 +5,10 @@
 	<p>
 		<% for episode in episodes %>
 		<form action="/recordings/<%=u show %>/episodes/<%=u episode %>/delete" method="post">
-			<%=h episode %>
+			<%=h episode.episode %>
+			<% if episode.subtitle.present? %><br/><%=h episode.subtitle %><% end %>
+			<% if episode.start_time %><br/><%= episode.start_time.to_s(:programme_time) %><% end %>
+			<% if episode.description.present? %><br/><%=h episode.description %><% end %>
 			<input type="submit" value="Delete"/>
 		</form>
 		<br/>
