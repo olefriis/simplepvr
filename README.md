@@ -128,7 +128,7 @@ Future?
 * "Gemify" the stuff, so installation becomes a breeze.
 * Make an API (REST interface?), so that everything can be manipulated by e.g. a fancy web GUI or a desktop GUI,
   in case somebody would like to write one.
-* Utilize more than one tuner in the HDHomeRun box.
+* Visualize conflicts in upcoming recordings.
 * Speed up XMLTV import.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.

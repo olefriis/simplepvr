@@ -15,10 +15,10 @@ module SimplePvr
   end
 
   class Scheduler
-    attr_reader :coming_recordings
+    attr_reader :upcoming_recordings
     
     def initialize
-      @coming_recordings, @current_recording, @recorder = [], nil, nil
+      @upcoming_recordings, @current_recordings, @recorders = [], [nil, nil], {}
       @mutex = Mutex.new
     end
 
@@ -33,17 +33,12 @@ module SimplePvr
     
     def recordings=(recordings)
       @mutex.synchronize do
-        @coming_recordings = recordings.sort_by {|r| r.start_time }.find_all {|r| !r.expired? }
-        PvrLogger.info("Scheduling coming recordings: #{@coming_recordings}")
+        @upcoming_recordings = recordings.sort_by {|r| r.start_time }.find_all {|r| !r.expired? }
+        PvrLogger.info("Scheduling upcoming recordings: #{@upcoming_recordings}")
 
-        @scheduled_programmes = {}
-        @coming_recordings.each do |recording|
-          @scheduled_programmes[recording.programme.id] = true if recording.programme
-        end
-
-        if @current_recording && @coming_recordings[0] != @current_recording
-          stop_current_recording
-        end
+        @scheduled_programmes = programme_ids_from(@upcoming_recordings)
+        stop_current_recordings_not_relevant_anymore
+        @upcoming_recordings = remove_current_recordings(@upcoming_recordings)
       end
     end
     
@@ -53,51 +48,77 @@ module SimplePvr
     
     def status_text
       @mutex.synchronize do
-        if @current_recording
-          "Recording '#{@current_recording.show_name}' on channel '#{@current_recording.channel.name}'"
-        else
-          'Idle'
-        end
+        return 'Idle' unless is_recording?
+
+        status_texts = active_recordings.map {|recording| "'#{recording.show_name}' on channel '#{recording.channel.name}'"}
+        'Recording ' + status_texts.join(', ')
       end
     end
 
     def process
-      if is_recording?
-        check_expiration_of_current_recording
-      else
-        check_start_of_coming_recording
-      end
+      check_expiration_of_current_recordings
+      check_start_of_coming_recordings
     end
     
     private
     def is_recording?
-      @recorder != nil
+      !active_recordings.empty?
     end
     
-    def check_expiration_of_current_recording
-      if @current_recording.expired?
-        stop_current_recording
+    def active_recordings
+      @current_recordings.find_all {|recording| recording }
+    end
+    
+    def programme_ids_from(recordings)
+      result = {}
+      recordings.each do |recording|
+        result[recording.programme.id] = true if recording.programme
+      end
+      result
+    end
+    
+    def remove_current_recordings(recordings)
+      recordings.find_all {|recording| !@current_recordings.include?(recording) }
+    end
+    
+    def stop_current_recordings_not_relevant_anymore
+      @current_recordings.each do |recording|
+        stop_recording(recording) if recording && !@upcoming_recordings.include?(recording)
       end
     end
     
-    def stop_current_recording
-      @recorder.stop! 
-      @current_recording, @recorder = nil, nil
-    end
-    
-    def check_start_of_coming_recording
-      coming_recording = @coming_recordings[0]
-      return unless coming_recording
-      
-      if coming_recording.start_time <= Time.now
-        start_new_recording
+    def check_expiration_of_current_recordings
+      @current_recordings.each do |recording|
+        stop_recording(recording) if recording && recording.expired?
       end
     end
     
-    def start_new_recording
-      @current_recording = @coming_recordings.delete_at(0)
-      @recorder = Recorder.new(0, @current_recording)
-      @recorder.start!
+    def check_start_of_coming_recordings
+      while should_start_next_recording
+        start_next_recording
+      end
+    end
+    
+    def should_start_next_recording
+      next_recording = @upcoming_recordings[0]
+      next_recording && next_recording.start_time <= Time.now
+    end
+    
+    def stop_recording(recording)
+      @recorders[recording].stop!
+      @recorders[recording] = nil
+      @current_recordings[@current_recordings.find_index(recording)] = nil
+    end
+    
+    def start_next_recording
+      next_recording = @upcoming_recordings.delete_at(0)
+      available_slot = @current_recordings.find_index(nil)
+      if available_slot
+        recorder = Recorder.new(available_slot, next_recording)
+        @current_recordings[available_slot] = next_recording
+        @recorders[next_recording] = recorder
+        recorder.start!
+      end
     end
   end
 end

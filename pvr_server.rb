@@ -16,7 +16,7 @@ end
 
 get '/schedules' do
   schedules = SimplePvr::Model::Schedule.all
-  upcoming_recordings = SimplePvr::PvrInitializer.scheduler.coming_recordings
+  upcoming_recordings = SimplePvr::PvrInitializer.scheduler.upcoming_recordings
   erb :'schedules/index', locals: { schedules: schedules, upcoming_recordings: upcoming_recordings }
 end
 

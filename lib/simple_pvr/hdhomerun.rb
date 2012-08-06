@@ -77,7 +77,7 @@ module SimplePvr
 
     def spawn_recorder_process(tuner, directory)
       FileUtils.touch(tuner_control_file(tuner))
-      spawn File.dirname(__FILE__) + "/hdhomerun_save.sh #{@device_id} 0 \"#{directory}/stream.ts\" \"#{directory}/hdhomerun_save.log\" \"#{tuner_control_file(tuner)}\""
+      spawn File.dirname(__FILE__) + "/hdhomerun_save.sh #{@device_id} #{tuner} \"#{directory}/stream.ts\" \"#{directory}/hdhomerun_save.log\" \"#{tuner_control_file(tuner)}\""
     end
   
     def reset_tuner_frequency(tuner)

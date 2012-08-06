@@ -38,6 +38,38 @@ describe SimplePvr::Scheduler do
     @scheduler.process
   end
   
+  it 'can start two recordings at once' do
+    first_start_time = Time.local(2012, 7, 15, 19, 45, 30)
+    second_start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    recording_in_progress = SimplePvr::Recording.new(@channel, 'Borgia', first_start_time, 60.minutes)
+    starting_recording = SimplePvr::Recording.new(@channel, 'Borgia', second_start_time, 60.minutes)
+    Time.stub(:now => second_start_time)
+    SimplePvr::Recorder.stub(:new).with(0, recording_in_progress).and_return(@recorder0 = double('Recorder'))
+    SimplePvr::Recorder.stub(:new).with(1, starting_recording).and_return(@recorder1 = double('Recorder'))
+    @recorder0.should_receive(:start!)
+    @recorder1.should_receive(:start!)
+
+    @scheduler.recordings = [recording_in_progress, starting_recording]
+    @scheduler.process
+  end
+  
+  it 'rejects third recording at once' do
+    first_start_time = Time.local(2012, 7, 15, 19, 45, 30)
+    second_start_time = Time.local(2012, 7, 15, 20, 15, 30)
+    third_start_time = Time.local(2012, 7, 15, 20, 20, 0)
+    recording_in_progress = SimplePvr::Recording.new(@channel, 'Borgia', first_start_time, 60.minutes)
+    starting_recording = SimplePvr::Recording.new(@channel, 'Borgia', second_start_time, 60.minutes)
+    rejected_recording = SimplePvr::Recording.new(@channel, 'Borgia', third_start_time, 60.minutes)
+    Time.stub(:now => second_start_time)
+    SimplePvr::Recorder.stub(:new).with(0, recording_in_progress).and_return(@recorder0 = double('Recorder'))
+    SimplePvr::Recorder.stub(:new).with(1, starting_recording).and_return(@recorder1 = double('Recorder'))
+    @recorder0.should_receive(:start!)
+    @recorder1.should_receive(:start!)
+
+    @scheduler.recordings = [recording_in_progress, starting_recording, rejected_recording]
+    @scheduler.process
+  end
+  
   it 'ends recordings at end time' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
     ending_recording = SimplePvr::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
