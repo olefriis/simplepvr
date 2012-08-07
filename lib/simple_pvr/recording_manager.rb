@@ -21,7 +21,6 @@ module SimplePvr
       result = episodes.map do |episode|
         metadata_for(show_name, episode)
       end
-      puts "Result.length: #{result.length}"
       result
     end
     
