@@ -43,14 +43,17 @@ module SimplePvr
 
     private
     def directory_for_show(show_name)
-      @recordings_directory + '/' + show_name
+      directory_name_without_harmful_characters = show_name.gsub(/\.|\/|\\|:/, '')
+      directory_name = directory_name_without_harmful_characters.present? ? directory_name_without_harmful_characters : 'Unnamed'
+      @recordings_directory + '/' + directory_name
     end
     
     def directory_for_show_and_episode(show_name, episode)
-      @recordings_directory + '/' + show_name + '/' + episode
+      directory_for_show(show_name) + '/' + episode
     end
     
     def ensure_directory_exists(directory)
+      puts "Directory name: #{directory}"
       FileUtils.makedirs(directory) unless File.exists?(directory)
     end
     

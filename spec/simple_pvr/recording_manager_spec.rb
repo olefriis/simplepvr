@@ -72,6 +72,20 @@ describe SimplePvr::RecordingManager do
     
       File.exists?(@recording_dir + '/Star Trek/1').should be_true
     end
+    
+    it 'removes some potentially harmful characters from directory name' do
+      @recording.show_name = 'Some... harmful/irritating\\ characters in: title'
+      @manager.create_directory_for_recording(@recording)
+    
+      File.exists?(@recording_dir + '/Some harmfulirritating characters in title/1').should be_true
+    end
+  
+    it 'finds a directory name for titles which would otherwise get an empty directory name' do
+      @recording.show_name = '/.'
+      @manager.create_directory_for_recording(@recording)
+    
+      File.exists?(@recording_dir + '/Unnamed/1').should be_true
+    end
   
     it 'finds next number in sequence for new directory' do
       FileUtils.mkdir_p(@recording_dir + "/Star Trek/1")
