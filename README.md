@@ -107,6 +107,10 @@ done by POST'ing to /schedules/reload on the server, e.g.:
 
         curl -d "" localhost:4567/schedules/reload
 
+Or, if you've secured your web server with Basic HTTP Authentication, specify username and password:
+
+        curl -d "" -u me:secret localhost:4567/schedules/reload
+
 Recordings
 ==========
 The recordings are laid out like this:
