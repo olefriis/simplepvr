@@ -67,7 +67,12 @@ For this to make any sense at all, you need to use XMLTV (read below). Start the
 
         bundle exec ruby pvr_server.rb
 
-...and go to [http://localhost:4567](http://localhost:4567).
+...and go to [http://localhost:4567](http://localhost:4567). If you want to expose this URL to the outside
+world, you'd better supply a username and password:
+
+        username=me password=secret bundle exec ruby pvr_server.rb
+
+This will secure the application with Basic HTTP Authentication.
 
 XMLTV
 =====

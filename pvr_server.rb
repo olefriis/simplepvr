@@ -10,6 +10,16 @@ recording_manager = SimplePvr::RecordingManager.new
 Time::DATE_FORMATS[:programme_time] = '%a, %d %b %Y %H:%M:%S'
 Time::DATE_FORMATS[:day] = '%a, %d %b'
 
+http_username, http_password = ENV['username'], ENV['password']
+if http_username && http_password
+  SimplePvr::PvrLogger.info('Securing server with Basic HTTP Authentication')
+  use Rack::Auth::Basic, 'Restricted Area' do |username, password|
+    [username, password] == [http_username, http_password]
+  end
+else
+  SimplePvr::PvrLogger.info('Beware: Unsecured server. Do not expose to the rest of the world!')
+end
+
 get '/' do
   redirect '/channels'
 end
