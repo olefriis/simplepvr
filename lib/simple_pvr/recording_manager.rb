@@ -25,6 +25,7 @@ module SimplePvr
     end
     
     def delete_show_episode(show_name, episode)
+      puts "Fjerner #{@recordings_directory + '/' + show_name + '/' + episode}"
       FileUtils.rm_rf(@recordings_directory + '/' + show_name + '/' + episode)
     end
 
@@ -53,7 +54,6 @@ module SimplePvr
     end
     
     def ensure_directory_exists(directory)
-      puts "Directory name: #{directory}"
       FileUtils.makedirs(directory) unless File.exists?(directory)
     end
     

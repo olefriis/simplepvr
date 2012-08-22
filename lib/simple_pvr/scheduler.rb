@@ -43,7 +43,7 @@ module SimplePvr
     end
     
     def is_scheduled?(programme)
-      @scheduled_programmes[programme.id]
+      @scheduled_programmes[programme.id] != nil
     end
     
     def status_text

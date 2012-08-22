@@ -1,0 +1,35 @@
+<div class="row">
+	<div class="span6">
+		<h1>Existing schedules</h1>
+		<div class="row" ng-repeat="schedule in schedules">
+			<div class="span6">
+				<p>{{schedule.title}} <span ng-show="schedule.channel">on {{schedule.channel.name}}</span></p>
+				<p><a ng-click="deleteSchedule(schedule)" class="btn">Delete</a></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span6">
+				<h1>Create new schedule</h1>
+				<form>
+					<p>Name: <input type="text" ng-model="newSchedule.title"></p>
+					<p>Channel: <select ng-model="newSchedule.channelId">
+				      <option value="0">-- Any channel --</option>
+				      <option ng-repeat="channel in channels" value="{{channel.id}}">{{channel.name}}</option>
+				    </select></p>
+					<p ng-show="newSchedule.title"><a ng-click="createSchedule()" class="btn">Create schedule</a></p>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="span6">
+		<h1>Upcoming recordings</h1>
+		<div class="row" ng-repeat="recording in upcomingRecordings">
+	    	<div class="span6">
+		    	<h2>{{recording.show_name}}</h2>
+				<p>{{recording.start_time}} on {{recording.channel.name}}</p>
+				<p ng-show="recording.subtitle">{{recording.subtitle}}</p>
+				<p ng-show="recording.description">{{recording.description}}</p>
+			</div>
+		</div>
+	</div>
+</div>

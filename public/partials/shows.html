@@ -1,0 +1,7 @@
+<div class="row">
+	<div class="span6" ng-repeat="show in shows">
+    	<h2>{{show.name}}</h2>
+		<p><a class="btn btn-primary" ng-href="#/shows/{{show.id}}">Episodes</a>
+		<button class="btn" type="button" ng-click="deleteEpisodes(show)">Delete all episodes</button></p>
+	</div>
+</div>
