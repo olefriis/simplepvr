@@ -44,8 +44,9 @@ module SimplePvr
 
     private
     def directory_for_show(show_name)
-      directory_name_without_harmful_characters = show_name.gsub(/\.|\/|\\|:/, '')
-      directory_name = directory_name_without_harmful_characters.present? ? directory_name_without_harmful_characters : 'Unnamed'
+      sanitized_directory_name = show_name.gsub(/\"|\'|\*|\.|\/|\\|:/, '')
+      puts "Sanitized: #{sanitized_directory_name}"
+      directory_name = sanitized_directory_name.present? ? sanitized_directory_name : 'Unnamed'
       @recordings_directory + '/' + directory_name
     end
     

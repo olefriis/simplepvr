@@ -74,7 +74,7 @@ describe SimplePvr::RecordingManager do
     end
     
     it 'removes some potentially harmful characters from directory name' do
-      @recording.show_name = 'Some... harmful/irritating\\ characters in: title'
+      @recording.show_name = "Some... harmful/irritating\\ characters in: '*title\""
       @manager.create_directory_for_recording(@recording)
     
       File.exists?(@recording_dir + '/Some harmfulirritating characters in title/1').should be_true
