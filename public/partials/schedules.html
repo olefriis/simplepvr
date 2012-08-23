@@ -26,9 +26,8 @@
 		<div class="row" ng-repeat="recording in upcomingRecordings">
 	    	<div class="span6">
 		    	<h2>{{recording.show_name}}</h2>
-				<p>{{recording.start_time}} on {{recording.channel.name}}</p>
+				<p>{{recording.start_time | date:'medium'}} on {{recording.channel.name}}</p>
 				<p ng-show="recording.subtitle">{{recording.subtitle}}</p>
-				<p ng-show="recording.description">{{recording.description}}</p>
 			</div>
 		</div>
 	</div>
