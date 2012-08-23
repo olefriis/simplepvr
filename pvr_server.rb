@@ -72,7 +72,8 @@ get '/channels/?' do
   SimplePvr::Model::Channel.sorted_by_name.map do |channel|
     {
       id: channel.id,
-      name: channel.name
+      name: channel.name,
+      hidden: channel.hidden
     }
   end.to_json
 end
@@ -106,16 +107,34 @@ get '/channels/:channel_id/programme_listings/:date/?' do |channel_id, date_stri
 end
 
 get '/channels/:id' do |id|
-  now = Time.now
-  date = Time.local(now.year, now.month, now.day)
   channel = SimplePvr::Model::Channel.get(id)
-  show_programmes_for_date(channel, date)
+  {
+    id: channel.id,
+    name: channel.name,
+    hidden: channel.hidden
+  }.to_json
 end
 
-get '/channels/:id/for_date/:date' do |id, date_string|
-  date = Time.parse(date_string)
+post '/channels/:id/hide' do |id|
   channel = SimplePvr::Model::Channel.get(id)
-  show_programmes_for_date(channel, date)
+  channel.hidden = true
+  channel.save
+  {
+    id: channel.id,
+    name: channel.name,
+    hidden: channel.hidden
+  }.to_json
+end
+
+post '/channels/:id/show' do |id|
+  channel = SimplePvr::Model::Channel.get(id)
+  channel.hidden = false
+  channel.save
+  {
+    id: channel.id,
+    name: channel.name,
+    hidden: channel.hidden
+  }.to_json
 end
 
 get '/programmes/:id' do |id|

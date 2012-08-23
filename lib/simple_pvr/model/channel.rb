@@ -8,6 +8,7 @@ module SimplePvr
       property :name, String
       property :frequency, Integer
       property :channel_id, Integer
+      property :hidden, Boolean, :required => true, :default => false
     
       has n, :programmes
     

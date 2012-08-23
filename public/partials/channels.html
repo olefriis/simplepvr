@@ -1,6 +1,14 @@
 <div class="row">
-	<div ng-repeat="channel in channels" class="span4">
+	<div class="span12">
+		<label class="checkbox">
+			<input type="checkbox" ng-model="showHiddenChannels">Show hidden channels</input>
+		</label>
+	</div>
+	<div ng-repeat="channel in channels | filter:shouldShowChannel" class="span4">
 		<h2>{{channel.name}}</h2>
-		<p><a ng-href="#/channels/{{channel.id}}/programmeListings/today" class="btn">View programmes</a></p>
+		<p><a ng-href="#/channels/{{channel.id}}/programmeListings/today" class="btn">View programmes</a>
+		   <button class="btn" type="button" ng-click="hideChannel(channel)" ng-hide="channel.hidden">Hide channel</button>
+		   <button class="btn" type="button" ng-click="showChannel(channel)" ng-show="channel.hidden">Show channel</button>
+		</p>
 	</div>
 </div>

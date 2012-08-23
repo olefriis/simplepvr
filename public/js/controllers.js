@@ -20,8 +20,21 @@ function SchedulesCtrl($scope, Schedule, UpcomingRecording, Channel) {
 	}
 }
 
-function ChannelsCtrl($scope, Channel) {
+function ChannelsCtrl($scope, $http, Channel) {
 	$scope.channels = Channel.query();
+	$scope.showHiddenChannels = false;
+	
+	$scope.hideChannel = function(channel) {
+		// I wish Angular could let me define this operation on the Channel object
+		$http.post('/channels/' + channel.id + '/hide').success(function() { channel.$get(); });
+	}
+	$scope.showChannel = function(channel) {
+		// I wish Angular could let me define this operation on the Channel object
+		$http.post('/channels/' + channel.id + '/show').success(function() { channel.$get(); });
+	}
+	$scope.shouldShowChannel = function(channel) {
+		return $scope.showHiddenChannels || !channel.hidden;
+	}
 }
 
 function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
@@ -40,9 +53,11 @@ function ProgrammeCtrl($scope, $routeParams, $http, Programme) {
 	}
 	
 	$scope.recordOnThisChannel = function() {
+		// I wish Angular could let me define this operation on the Programme object
 		post('/programmes/' + $scope.programme.id + '/record_on_this_channel');
 	}
 	$scope.recordOnAnyChannel = function() {
+		// I wish Angular could let me define this operation on the Programme object
 		post('/programmes/' + $scope.programme.id + '/record_on_any_channel');
 	}
 	

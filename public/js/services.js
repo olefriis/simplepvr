@@ -8,7 +8,7 @@ factory('Schedule', function($resource) {
 	return $resource('/schedules/:id', {id: '@id'});
 }).
 factory('Channel', function($resource) {
-	return $resource('/channels/:id');
+	return $resource('/channels/:id', {id: '@id'});
 }).
 factory('ProgrammeListing', function($resource) {
 	return $resource('/channels/:channelId/programme_listings/:date');
