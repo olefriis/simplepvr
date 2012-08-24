@@ -81,28 +81,38 @@ end
 get '/channels/:channel_id/programme_listings/:date/?' do |channel_id, date_string|
   if date_string == 'today'
     now = Time.now
-    today = Time.local(now.year, now.month, now.day)
+    this_date = Time.local(now.year, now.month, now.day)
   else
-    today = Time.parse(date_string)
+    this_date = Time.parse(date_string)
   end
-  yesterday = today.yesterday
-  tomorrow = today.tomorrow
+  previous_date = this_date.advance(days: -7)
+  next_date = this_date.advance(days: 7)
   channel = SimplePvr::Model::Channel.get(channel_id)
-  programmes = SimplePvr::Model::Programme.all(channel: channel, start_time: (today..tomorrow), order: :start_time)
+
+  days = (0..6).map do |date_advanced|
+    from_date = this_date.advance(days: date_advanced)
+    to_date = this_date.advance(days: date_advanced + 1)
+    programmes = SimplePvr::Model::Programme.all(channel: channel, start_time: (from_date..to_date), order: :start_time)
+
+    {
+      date: from_date.to_s(:programme_date),
+      programmes: programmes.map do |programme|
+        {
+          id: programme.id,
+          start_time: programme.start_time.to_s(:programme_time_overview),
+          title: programme.title,
+          scheduled: SimplePvr::PvrInitializer.scheduler.is_scheduled?(programme)
+        }
+      end
+    }
+  end
   
   {
     channel: { id: channel.id, name: channel.name },
-    yesterday: yesterday.to_s(:programme_date),
-    today: today.to_s(:programme_date),
-    tomorrow: tomorrow.to_s(:programme_date),
-    programmes: programmes.map do |programme|
-      {
-        id: programme.id,
-        start_time: programme.start_time.to_s(:programme_time_overview),
-        title: programme.title,
-        scheduled: SimplePvr::PvrInitializer.scheduler.is_scheduled?(programme)
-      }
-    end
+    previous_date: previous_date.to_s(:programme_date),
+    this_date: this_date.to_s(:programme_date),
+    next_date: next_date.to_s(:programme_date),
+    days: days
   }.to_json
 end
 

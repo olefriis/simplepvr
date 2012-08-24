@@ -41,7 +41,13 @@ function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
 	$scope.channelId = $routeParams.channelId;
 	$scope.date = $routeParams.date;
 	
-	$scope.programmeListing = ProgrammeListing.get({channelId: $scope.channelId, date: $scope.date});
+	$scope.programmeListing = ProgrammeListing.get({channelId: $scope.channelId, date: $scope.date}, function(programmeListing) {
+		$scope.dayChunks = [
+			[programmeListing.days[0], programmeListing.days[1], programmeListing.days[2]],
+			[programmeListing.days[3], programmeListing.days[4], programmeListing.days[5]],
+			[programmeListing.days[6]],
+		];
+	});
 }
 
 function ProgrammeCtrl($scope, $routeParams, $http, Programme) {

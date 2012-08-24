@@ -1,15 +1,6 @@
 'use strict';
 
 angular.module('simplePvr', ['simplePvrServices']).
-directive('popover', function($parse) {
-    return function(scope, element, attrs) {
-		$(element).popover({
-			trigger:'hover',
-			title: $parse(element.attr('popover-title')),
-			content: element.attr('popover-content')
-		});
-	}
-}).
 config(['$routeProvider', function($routeProvider) {
 	$routeProvider.
 	when('/schedules', {
