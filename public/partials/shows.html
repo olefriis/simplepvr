@@ -1,5 +1,5 @@
-<div class="row">
-	<div class="span6" ng-repeat="show in shows">
+<div class="row" ng-repeat="showChunk in shows | chunk:2">
+	<div class="span6" ng-repeat="show in showChunk">
     	<h2>{{show.name}}</h2>
 		<p><a class="btn btn-primary" ng-href="#/shows/{{show.id}}">Episodes</a>
 		<button class="btn" type="button" ng-click="deleteEpisodes(show)">Delete all episodes</button></p>
