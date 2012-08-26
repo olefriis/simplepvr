@@ -1,7 +1,11 @@
 <div class="row">
-	<h1>Recordings of {{show.name}}</h1>
-	<div class="span6" ng-repeat="recording in recordings">
-    	<h2>{{recording.episode}}</h2>
+	<div class="span12">
+		<h1>Recordings of {{show.name}}</h1>
+	</div>
+</div>
+<div class="row" ng-repeat="recordingChunk in recordings | chunk:2">
+	<div class="span6" ng-repeat="recording in recordingChunk">
+   		<h2>{{recording.episode}}</h2>
 		<p>{{recording.subtitle}}</p>
 		<p>{{recording.start_time | date:'medium'}} from channel {{recording.channel_name}}.</p>
 		<p>{{recording.description}}</p>
