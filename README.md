@@ -167,3 +167,13 @@ we can record a stream from a HDHomeRun box. Run it with
 After running this, a new recording should be present in "recordings/test/(sequence number)/stream.ts",
 with 5 seconds of recording from the channel specified in the test (you need to alter the test file to
 your available channels).
+
+Run the JavaScript tests by first calling
+
+        test/scripts/test-server.sh
+
+then opening a browser on the shown URL. Capture the browser in strict mode. After this, you can run
+
+        test/scripts/test.sh
+
+any number of times. However, the test-server needs to be restarted from time to time.
