@@ -10,7 +10,7 @@ MythTV stopped working for me and my HDHomeRun box in the 0.25 release. And even
 of merits, I just have no idea what to do when it stops working - I am not in control of my media center.
 
 During the last couple of years, I have spent a substantial amount of time on bugs that suddenly appeared
-in MythTV and suddenly went away. I really don't like using systems which break like this.
+in MythTV and suddenly went away. I really don't like using systems this brittle.
 
 So I wanted to create a really simple PVR in Ruby, making it possible for others to hack away and have
 fun while recording TV shows for the rest of the family.
@@ -61,8 +61,8 @@ the system, it will do a channel scan. This is not needed later.
 The above example is very straight-forward, but since it's just Ruby, you can program your own schedules for e.g.
 recording every Thursday on a specific channel, or recording the news from the same timeslot every evening.
 
-How to start the (simple!) web server
-=====================================
+Running the web GUI
+===================
 For this to make any sense at all, you need to use XMLTV (read below). Start the server by running
 
         bundle exec ruby pvr_server.rb
@@ -125,7 +125,7 @@ The recordings are laid out like this:
      * 3/
   * ...
 
-Inside the numbered directories are two files:
+Inside the numbered directories are these files:
 
 * stream.ts: The actual stream. Let VLC or another media player show these for you.
 * hdhomerun_save.log: The output from the actual recording command.
@@ -133,25 +133,39 @@ Inside the numbered directories are two files:
 
 Future?
 =======
-* Extend the web interface a bit.
+This projects needs to be a nice, readable, hackable, tested system. No pull requests are
+accepted that violate this.
+
+There are lots of stuff I'd like to do, but I have no deadline - which means that pull requests
+are the only means you have for speeding things up. This includes:
+
 * "Gemify" the stuff, so installation becomes a breeze.
-* Make an API (REST interface?), so that everything can be manipulated by e.g. a fancy web GUI or a desktop GUI,
-  in case somebody would like to write one.
+* Web interface:
+  * Better overview of recordings.
+  * Text search for programmes.
+  * Playback of recordings (also on mobile devices).
+  * Some better overview pages, e.g. "all children programmes", "all movies this week".
+  * Possibility to set up schedules defined by a channel, a start time, and a duration (and a name,
+    probably), so that the web GUI is usable even without XMLTV.
+* Record specific programmes, not only "record all with this title".
+* Exclude specific programmes from "all with this title".
+* Duplication detection.
 * Visualize conflicts in upcoming recordings.
-* Speed up XMLTV import.
+* XMLTV import:
+  * Needs more speed!
+  * Let SimplePVR itself fetch XMLTV URLs at specified times of day.
+  * Set-up of matching XMLTV IDs to channels could make good use of a GUI.
+  * Parse and make use of channel icons, programme icons, episode numbers, etc.
+* Searching for tuners and scanning for channels would be nice through a GUI.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.
+* Remove "the schedule.rb way" to set up recordings, since nobody will probably use this...
 
-...all while cleaning up the code, making it more readable. I surely will accept pull requests!
+Some features would be cool to have, but I don't have a personal need for them, so they will only
+happen if *you* implement them and send me a pull request.
 
-But then...
------------
-Well, I don't know... I'm not sure we should take this much further. Let this be a nice, hackable library,
-not too big for people to read and understand.
-
-I'd love to make a really fancy web GUI on top of this library, giving a desktop-like feeling in the browser (and
-putting that HTML5 video tag to good use), but that should really happen as a separate project. You are free to
-beat me to this!
+* Some kind of live TV.
+* Create metadata for XBMC and Serviio.
 
 Development
 ===========
