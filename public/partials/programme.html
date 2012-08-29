@@ -1,7 +1,7 @@
 <div class="span6">
 	<div class="row">
 		<h1>{{programme.title}}</h1>
-		<p>{{programme.start_time | date:'medium'}} on channel {{programme.channel.name}}.</p>
+		<p>{{programme.start_time | date:'fullDate'}} at {{programme.start_time | date:'HH:mm'}} on channel {{programme.channel.name}}.</p>
 		<p>{{programme.subtitle}}</p>
 		<p>{{programme.description}}</p>
 		<div ng-show="programme.is_scheduled">

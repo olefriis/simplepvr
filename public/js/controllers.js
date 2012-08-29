@@ -40,8 +40,11 @@ function ChannelsCtrl($scope, $http, Channel) {
 function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
 	$scope.channelId = $routeParams.channelId;
 	$scope.date = $routeParams.date;
-	
 	$scope.programmeListing = ProgrammeListing.get({channelId: $scope.channelId, date: $scope.date});
+	
+	$scope.styleForProgrammeLine = function(programme) {
+		return programme.scheduled ? "background-color: #7F7" : "";
+	}
 }
 
 function ProgrammeCtrl($scope, $routeParams, $http, Programme) {

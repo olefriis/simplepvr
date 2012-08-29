@@ -7,8 +7,6 @@ SimplePvr::PvrInitializer.setup
 SimplePvr::DatabaseScheduleReader.read
 recording_manager = SimplePvr::RecordingManager.new
 
-Time::DATE_FORMATS[:programme_time] = '%a, %d %b %Y %H:%M:%S'
-Time::DATE_FORMATS[:programme_time_overview] = '%H:%M'
 Time::DATE_FORMATS[:programme_date] = '%F'
 Time::DATE_FORMATS[:day] = '%a, %d %b'
 
@@ -99,7 +97,7 @@ get '/channels/:channel_id/programme_listings/:date/?' do |channel_id, date_stri
       programmes: programmes.map do |programme|
         {
           id: programme.id,
-          start_time: programme.start_time.to_s(:programme_time_overview),
+          start_time: programme.start_time,
           title: programme.title,
           scheduled: SimplePvr::PvrInitializer.scheduler.is_scheduled?(programme)
         }
@@ -174,7 +172,7 @@ def programme_json(programme)
     title: programme.title,
     subtitle: programme.subtitle,
     description: programme.description,
-    start_time: programme.start_time.to_s(:programme_time),
+    start_time: programme.start_time,
     is_scheduled: is_scheduled
   }.to_json
 end
