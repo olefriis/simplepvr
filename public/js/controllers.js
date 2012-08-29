@@ -42,8 +42,8 @@ function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
 	$scope.date = $routeParams.date;
 	$scope.programmeListing = ProgrammeListing.get({channelId: $scope.channelId, date: $scope.date});
 	
-	$scope.styleForProgrammeLine = function(programme) {
-		return programme.scheduled ? "background-color: #7F7" : "";
+	$scope.classForProgrammeLine = function(programme) {
+		return programme.scheduled ? "success" : "";
 	}
 }
 

@@ -7,9 +7,9 @@
 	<div class="span4" ng-repeat="day in dayChunk">
 		<table class="table table-condensed table-striped">
 			<th colspan="2">{{day.date | date:'fullDate'}}</th>
-			<tr ng-repeat="programme in day.programmes | filter:programmeFilter">
-				<td style="{{styleForProgrammeLine(programme)}}">{{programme.start_time | date:'HH:mm'}}</td>
-				<td style="{{styleForProgrammeLine(programme)}}"><a ng-href="#/programmes/{{programme.id}}">{{programme.title}}</td>
+			<tr ng-repeat="programme in day.programmes | filter:programmeFilter" class="{{classForProgrammeLine(programme)}}">
+				<td>{{programme.start_time | date:'HH:mm'}}</td>
+				<td><a ng-href="#/programmes/{{programme.id}}">{{programme.title}}</td>
 			</tr>
 		</table>
 	</div>
