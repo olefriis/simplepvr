@@ -73,7 +73,9 @@ function ShowsCtrl($scope, $http, Show) {
 	}
 	
 	$scope.deleteEpisodes = function(show) {
-		show.$delete(loadShows);
+		if (confirm("Really delete all episodes of\n" + show.name + "\n?")) {
+			show.$delete(loadShows);
+		}
 	}
 	
 	loadShows();
@@ -85,7 +87,9 @@ function ShowCtrl($scope, $routeParams, Show, Recording) {
 	}
 	
 	$scope.deleteRecording = function(recording) {
-		recording.$delete(loadRecordings);
+		if (confirm("Really delete recording\n" + recording.episode + "\nof show\n" + $scope.show.name + "\n?")) {
+			recording.$delete(loadRecordings);
+		}
 	}
 
 	$scope.show = Show.get({id: $routeParams.showId});
