@@ -139,10 +139,12 @@ accepted that violate this.
 There are lots of stuff I'd like to do, but I have no deadline - which means that pull requests
 are the only means you have for speeding things up. This includes:
 
+* Integration tests: I've thought a lot of how to do this a smart way, but I'll resort to doing some
+  integration tests with Cucumber. Creating and maintaining integration tests is resource-demanding,
+  but they always pay off.
 * "Gemify" the stuff, so installation becomes a breeze.
 * Web interface:
   * Better overview of recordings.
-  * Text search for programmes.
   * Playback of recordings (also on mobile devices).
   * Some better overview pages, e.g. "all children programmes", "all movies this week".
   * Possibility to set up schedules defined by a channel, a start time, and a duration (and a name,
