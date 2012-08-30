@@ -146,26 +146,34 @@ post '/channels/:id/show' do |id|
   }.to_json
 end
 
+get '/programmes/title_search' do
+  SimplePvr::Model::Programme.titles_containing(params['query']).to_json
+end
+
+get '/programmes/search' do
+  SimplePvr::Model::Programme.with_title_containing(params['query']).map {|programme| programme_hash(programme) }.to_json
+end
+
 get '/programmes/:id' do |id|
   programme = SimplePvr::Model::Programme.get(id)
-  programme_json(programme)
+  programme_hash(programme).to_json
 end
 
 post '/programmes/:id/record_on_any_channel' do |id|
   programme = SimplePvr::Model::Programme.get(id.to_i)
   SimplePvr::Model::Schedule.add_specification(title: programme.title)
   reload_schedules
-  programme_json(programme)
+  programme_hash(programme).to_json
 end
 
 post '/programmes/:id/record_on_this_channel' do |id|
   programme = SimplePvr::Model::Programme.get(id.to_i)
   SimplePvr::Model::Schedule.add_specification(title: programme.title, channel: programme.channel)
   reload_schedules
-  programme_json(programme)
+  programme_hash(programme).to_json
 end
 
-def programme_json(programme)
+def programme_hash(programme)
   is_scheduled = SimplePvr::PvrInitializer.scheduler.is_scheduled?(programme)
   {
     id: programme.id,
@@ -175,7 +183,7 @@ def programme_json(programme)
     description: programme.description,
     start_time: programme.start_time,
     is_scheduled: is_scheduled
-  }.to_json
+  }
 end
 
 get '/shows' do

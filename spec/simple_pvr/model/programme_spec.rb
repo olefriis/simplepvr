@@ -66,4 +66,45 @@ describe SimplePvr::Model::Programme do
     programmes[1].title.should == 'Interesting'
     programmes[1].subtitle.should == 'Second'
   end
+  
+  it 'can find titles containing a certain string' do
+    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Uninteresting', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    
+    titles = Programme.titles_containing('programme')
+    titles.should == ['First programme', 'Second programme']
+  end
+  
+  it 'gives no duplicates as title search' do
+    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+    
+    titles = Programme.titles_containing('programme')
+    titles.should == ['First programme', 'Second programme']
+  end
+  
+  it 'finds at most 8 titles containing a certain string' do
+    20.times {|i| Programme.add(@dr_1, "Programme #{i}", '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes) }
+
+    titles = Programme.titles_containing('programme')
+    titles.length.should == 8
+  end
+  
+  it 'can find programmes with titles containing a certain string, ordered by start time' do
+    first_programme = Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    second_programme = Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Uninteresting', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    
+    titles = Programme.with_title_containing('programme')
+    titles.should == [second_programme, first_programme]
+  end
+  
+  it 'finds at most 20 programmes with titles containing a certain string' do
+    30.times {|i| Programme.add(@dr_1, "Programme #{i}", '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes) }
+
+    titles = Programme.with_title_containing('programme')
+    titles.length.should == 20
+  end
 end

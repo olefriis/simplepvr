@@ -1,6 +1,13 @@
 'use strict';
 
 angular.module('simplePvr', ['simplePvrServices']).
+directive('pvrAutocomplete', function() {
+	return function(scope, element, attrs) {
+		element.typeahead({
+			source: scope.autocomplete
+		});
+	}
+}).
 filter('chunk', function() {
   function chunkArray(array, chunkSize) {
     var result = [];
@@ -57,6 +64,10 @@ config(['$routeProvider', function($routeProvider) {
 	when('/shows/:showId', {
 		templateUrl: 'partials/show.html',
 		controller: ShowCtrl
+	}).
+	when('/search', {
+		templateUrl: 'partials/search.html',
+		controller: SearchCtrl
 	}).
 	when('/status', {
 		templateUrl: 'partials/status.html',

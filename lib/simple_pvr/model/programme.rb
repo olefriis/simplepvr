@@ -19,20 +19,33 @@ module SimplePvr
 
       def self.add(channel, title, subtitle, description, start_time, duration)
         channel.programmes.create(
-          :channel => channel,
-          :title => title,
-          :subtitle => subtitle,
-          :description => description,
-          :start_time => start_time,
-          :duration => duration.to_i)
+          channel: channel,
+          title: title,
+          subtitle: subtitle,
+          description: description,
+          start_time: start_time,
+          duration: duration.to_i)
       end
 
       def self.with_title(title)
-        Programme.all(:title => title, :order => :start_time)
+        Programme.all(title: title, order: :start_time)
       end
 
       def self.on_channel_with_title(channel, title)
-        Programme.all(:channel => channel, :title => title, :order => :start_time)
+        Programme.all(channel: channel, title: title, order: :start_time)
+      end
+      
+      def self.titles_containing(text)
+        # Maybe there's a smarter way to do substring search than constructing "%#{text}%"? I'd like
+        # a version where the original input is escaped properly. However, this method is not
+        # dangerous, it just means that the user can enter "%" or "_" in the search string for a
+        # wildcard.
+        Programme.all(:title.like => "%#{text}%", fields: [:title], order: :title, limit: 8, unique: true).map {|programme| programme.title }
+      end
+      
+      def self.with_title_containing(text)
+        # Same "LIKE" comments as above...
+        Programme.all(:title.like => "%#{text}%", order: :start_time, limit: 20)
       end
     end
   end

@@ -96,6 +96,24 @@ function ShowCtrl($scope, $routeParams, Show, Recording) {
 	loadRecordings();
 }
 
+function SearchProgrammesCtrl($scope, $http, $location) {
+	$scope.autocomplete = function(query, process) {
+		$http.get('/programmes/title_search', {params: {query: query}}).success(process);
+	}
+	
+	$scope.search = function() {
+		var query = $("#programme-search-query").val();
+		$location.path('/search').search({query: query});
+	}
+}
+
+function SearchCtrl($scope, $routeParams, $http) {
+	$scope.query = $routeParams.query;
+	$http.get('/programmes/search', {params: {query: $scope.query}}).success(function(result) {
+		$scope.result = result;
+	});
+}
+
 function StatusCtrl($scope, Status) {
 	$scope.status = Status.get();
 }

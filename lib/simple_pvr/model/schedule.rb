@@ -8,13 +8,13 @@ module SimplePvr
       property :type, Enum[:specification]
       property :title, String
 
-      belongs_to :channel, :required => false
+      belongs_to :channel, required: false
     
       def self.add_specification(options)
         Schedule.create(
-          :type => :specification,
-          :title => options[:title],
-          :channel => options[:channel])
+          type: :specification,
+          title: options[:title],
+          channel: options[:channel])
       end
     end
   end
