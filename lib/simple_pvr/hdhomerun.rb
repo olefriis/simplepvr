@@ -2,6 +2,15 @@ require File.dirname(__FILE__) + '/pvr_logger'
 
 module SimplePvr
   #
+  # Simple fake version of HDHomeRun class. Makes it possible to run integration tests.
+  #
+  class HDHomeRunFake
+    def scan_for_channels; end
+    def start_recording(tuner, frequency, programme_id, directory); end
+    def stop_recording(tuner); end
+  end
+  
+  #
   # Encapsulates all the HDHomeRun-specific functionality. Do not initialize HDHomeRun objects yourself,
   # but get the current instance through PvrInitializer.
   #

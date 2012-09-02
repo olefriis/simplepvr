@@ -4,7 +4,12 @@ Feature: Programme search
   I want to search through all programmes
 
 Background:
-  Given I am on the schedules page
+  Given the following programmes:
+    | title          | subtitle                        | day |
+    | Bonderøven     | Danish documentary              |   1 |
+    | Blood and Bone | American action movie from 2009 |   2 |
+    | Noddy          | Children's programme            |   3 |
+  And I am on the schedules page
 
 Scenario: Autocomplete in programme search
   Given I enter "Bon" in the programme search field
@@ -12,4 +17,4 @@ Scenario: Autocomplete in programme search
 
 Scenario: Searching for a text reveals summary of programmes with matching titles
   Given I search for programmes with title "Bon"
-  Then I should see "føllet Manfred er til hingstekåring" in the page contents
+  Then I should see "Danish documentary" in the page contents

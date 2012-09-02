@@ -1,12 +1,15 @@
 ENV['RACK_ENV'] = 'test'
-
-require File.join(File.dirname(__FILE__), '..', '..', 'pvr_server.rb')
-
 require 'capybara'
 require 'capybara/cucumber'
 require 'rspec'
 
-Capybara.app = Sinatra::Application
+require File.join(File.dirname(__FILE__), '../../lib/simple_pvr')
+require File.join(File.dirname(__FILE__), '../../lib/simple_pvr/server')
+
+SimplePvr::PvrInitializer.setup_for_integration_test
+SimplePvr::DatabaseScheduleReader.read
+
+Capybara.app = SimplePvr::Server
 Capybara.default_driver = :selenium
 
 class SimplePvrWorld
@@ -17,4 +20,8 @@ end
 
 World do
   SimplePvrWorld.new
+end
+
+Before do
+  #SimplePvr::Model::DatabaseInitializer.clear
 end
