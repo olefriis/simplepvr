@@ -9,3 +9,5 @@ gem 'sinatra'
 
 # For testing
 gem 'rspec'
+gem 'cucumber'
+gem 'capybara'
