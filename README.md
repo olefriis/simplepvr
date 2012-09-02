@@ -193,3 +193,7 @@ then opening a browser on the shown URL. Capture the browser in strict mode. Aft
         test/scripts/test.sh
 
 any number of times. However, the test-server needs to be restarted from time to time.
+
+Run the integration tests like this:
+
+        bundle exec cucumber
