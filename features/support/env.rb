@@ -23,5 +23,5 @@ World do
 end
 
 Before do
-  #SimplePvr::Model::DatabaseInitializer.clear
+  SimplePvr::Model::DatabaseInitializer.clear
 end

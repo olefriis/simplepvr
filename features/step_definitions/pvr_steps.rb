@@ -1,9 +1,19 @@
-Given /the following programmes\:/ do |programme_table|
-  channel = SimplePvr::Model::Channel.add('Channel 1', 0, 0)
+def find_or_create_channel_with_name(name)
+  channel = SimplePvr::Model::Channel.get(:name => name)
+  channel || SimplePvr::Model::Channel.add(name, 0, 0)
+end
 
+Given /the following programmes\:/ do |programme_table|
   programme_table.hashes.each do |programme|
+    channel = find_or_create_channel_with_name(programme['channel'] || 'Channel 1')
     SimplePvr::Model::Programme.add(channel, programme['title'] || '', programme['subtitle'] || '',
       programme['description'] || '', Time.now, 60.minutes)
+  end
+end
+
+Given /the following channels\:/ do |channel_table|
+  channel_table.hashes.each do |channel|
+    SimplePvr::Model::Channel.add(channel['name'], 0, 0)
   end
 end
 
