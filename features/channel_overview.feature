@@ -27,3 +27,11 @@ Scenario: Channel filtering
   Then I should see "Channel 1"
   And I should see "Channel 2"
   But I should not see "Animals"
+
+Scenario: Weekly overview
+  Given I am on the channel overview page
+  And I fill in "channel_filter" with "Channel 1"
+  And I follow "View programmes"
+  Then I should see "Bonderøven"
+  And I should see "Blood and Bone"
+  But I should not see "Noddy"

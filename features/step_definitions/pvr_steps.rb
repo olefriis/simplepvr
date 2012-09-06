@@ -1,6 +1,6 @@
 def find_or_create_channel_with_name(name)
-  channel = SimplePvr::Model::Channel.get(:name => name)
-  channel || SimplePvr::Model::Channel.add(name, 0, 0)
+  channel = SimplePvr::Model::Channel.first(name: name)
+  channel ? channel : SimplePvr::Model::Channel.add(name, 0, 0)
 end
 
 Given /the following programmes\:/ do |programme_table|
@@ -13,7 +13,7 @@ end
 
 Given /the following channels\:/ do |channel_table|
   channel_table.hashes.each do |channel|
-    SimplePvr::Model::Channel.add(channel['name'], 0, 0)
+    find_or_create_channel_with_name(channel['name'])
   end
 end
 
@@ -34,4 +34,8 @@ Then /I should see "(.*)" in the page contents/ do |text|
   within('#contents') do
     page.should have_content(text)
   end
+end
+
+Then /I wait (\d*) seconds/ do |seconds|
+  sleep seconds.to_i
 end
