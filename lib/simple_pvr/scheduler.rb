@@ -66,7 +66,7 @@ module SimplePvr
     end
     
     def active_recordings
-      @current_recordings.find_all {|recording| recording }
+      @current_recordings.find_all {|recording| recording != nil }
     end
     
     def programme_ids_from(recordings)
