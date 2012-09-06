@@ -6,8 +6,9 @@ end
 Given /the following programmes\:/ do |programme_table|
   programme_table.hashes.each do |programme|
     channel = find_or_create_channel_with_name(programme['channel'] || 'Channel 1')
+    air_time = Time.now.advance(days: (programme['day'] || '0').to_i)
     SimplePvr::Model::Programme.add(channel, programme['title'] || '', programme['subtitle'] || '',
-      programme['description'] || '', Time.now, 60.minutes)
+      programme['description'] || '', air_time, 60.minutes)
   end
 end
 
@@ -15,6 +16,12 @@ Given /the following channels\:/ do |channel_table|
   channel_table.hashes.each do |channel|
     find_or_create_channel_with_name(channel['name'])
   end
+end
+
+Given /I have navigated to the week overview for channel "(.*)"/ do |channel|
+  visit path_to('the channel overview page')
+  fill_in('channel_filter', :with => channel)
+  click_link('View programmes')
 end
 
 When /I enter "(.*)" in the programme search field/ do |query|

@@ -10,10 +10,10 @@ Background:
     | Channel 2 |
     | Animals   |
   And the following programmes:
-    | title          | subtitle                        | channel   | day |
-    | Bonderøven     | Danish documentary              | Channel 1 |   1 |
-    | Blood and Bone | American action movie from 2009 | Channel 1 |   2 |
-    | Noddy          | Children's programme            | Channel 2 |   3 |
+    | title          | subtitle                        | channel   |
+    | Bonderøven     | Danish documentary              | Channel 1 |
+    | Blood and Bone | American action movie from 2009 | Channel 1 |
+    | Noddy          | Children's programme            | Channel 2 |
 
 Scenario: Channel overview
   Given I am on the channel overview page
@@ -28,7 +28,7 @@ Scenario: Channel filtering
   And I should see "Channel 2"
   But I should not see "Animals"
 
-Scenario: Weekly overview
+Scenario: I can go to a week overview for a given channel
   Given I am on the channel overview page
   And I fill in "channel_filter" with "Channel 1"
   And I follow "View programmes"

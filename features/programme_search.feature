@@ -5,10 +5,10 @@ Feature: Programme search
 
 Background:
   Given the following programmes:
-    | title          | subtitle                        | day |
-    | Bonderøven     | Danish documentary              |   1 |
-    | Blood and Bone | American action movie from 2009 |   2 |
-    | Noddy          | Children's programme            |   3 |
+    | title          | subtitle                        |
+    | Bonderøven     | Danish documentary              |
+    | Blood and Bone | American action movie from 2009 |
+    | Noddy          | Children's programme            |
   And I am on the schedules page
 
 Scenario: Autocomplete in programme search
