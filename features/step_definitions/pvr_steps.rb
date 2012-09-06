@@ -24,6 +24,13 @@ Given /I have navigated to the week overview for channel "(.*)"/ do |channel|
   click_link('View programmes')
 end
 
+Given /I have navigated to the programme page for "(.*)" on channel "(.*)"/ do |title, channel|
+  visit path_to('the channel overview page')
+  fill_in('channel_filter', :with => channel)
+  click_link('View programmes')
+  click_link(title)
+end
+
 When /I enter "(.*)" in the programme search field/ do |query|
   fill_in('programme-search-query', :with => query)
 end
@@ -41,6 +48,22 @@ Then /I should see "(.*)" in the page contents/ do |text|
   within('#contents') do
     page.should have_content(text)
   end
+end
+
+Then /I should see the schedule "(.*)"/ do |text|
+  within('#schedules') do
+    page.should have_content(text)
+  end
+end
+
+Then /I should not see the schedule "(.*)"/ do |text|
+  within('#schedules') do
+    page.should_not have_content(text)
+  end
+end
+
+Then /there should be (\d*) upcoming recordings/ do |upcoming_recordings|
+  find('#upcoming_recordings').all('h2').length.should == upcoming_recordings.to_i
 end
 
 Then /I wait (\d*) seconds/ do |seconds|

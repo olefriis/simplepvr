@@ -4,18 +4,18 @@ Feature: Week overview
   I want the weekly schedules for a channel
 
 Background:
-Given the following channels:
-  | name      |
-  | Channel 1 |
-  | Channel 2 |
-And the following programmes:
-  | title              | subtitle                        | channel   | day |
-  | Bonderøven         | Danish documentary              | Channel 1 |   1 |
-  | Blood and Bone     | American action movie from 2009 | Channel 1 |   2 |
-  | The future is here | American action movie from 2032 | Channel 1 |   8 |
-  | The past is here   | American action movie from 1992 | Channel 1 |  -1 |
-  | Noddy              | Children's programme            | Channel 2 |   3 |
-And I have navigated to the week overview for channel "Channel 1"
+  Given the following channels:
+    | name      |
+    | Channel 1 |
+    | Channel 2 |
+  And the following programmes:
+    | title              | subtitle                        | channel   | day |
+    | Bonderøven         | Danish documentary              | Channel 1 |   1 |
+    | Blood and Bone     | American action movie from 2009 | Channel 1 |   2 |
+    | The future is here | American action movie from 2032 | Channel 1 |   8 |
+    | The past is here   | American action movie from 1992 | Channel 1 |  -1 |
+    | Noddy              | Children's programme            | Channel 2 |   3 |
+  And I have navigated to the week overview for channel "Channel 1"
 
 Scenario: I see programmes for the following week on the channel
   Then I should see "Bonderøven"
