@@ -5,6 +5,8 @@ module NavigationHelpers
       '/'
     when 'the channel overview page'
       '/#/channels'
+    when 'the status page'
+      '/#/status'
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
         "Now, go and add a mapping in #{__FILE__}"
