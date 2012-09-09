@@ -11,12 +11,14 @@
 			<div class="span6">
 				<h1>Create new schedule</h1>
 				<form>
-					<p>Name: <input type="text" ng-model="newSchedule.title"></p>
-					<p>Channel: <select ng-model="newSchedule.channelId">
+					<label class="control-label" for="newScheduleTitle">Name</label>
+					<input id="newScheduleTitle" type="text" ng-model="newSchedule.title"></p>
+					<label class="control-label" for="newScheduleChannel">Channel</label>
+					<select id="newScheduleChannel" ng-model="newSchedule.channelId">
 				      <option value="0">-- Any channel --</option>
 				      <option ng-repeat="channel in channels" value="{{channel.id}}">{{channel.name}}</option>
 				    </select></p>
-					<p ng-show="newSchedule.title"><a ng-click="createSchedule()" class="btn">Create schedule</a></p>
+					<span ng-show="newSchedule.title"><button ng-click="createSchedule()" class="btn">Create schedule</button></span>
 				</form>
 			</div>
 		</div>

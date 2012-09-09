@@ -31,6 +31,14 @@ Scenario: Schedule by title for all channels
   But I should not see the schedule "Bonderøven on Channel 1"
   And there should be 3 upcoming recordings
 
+Scenario: Set up schedule manually
+  Given I am on the schedules page
+  And I fill in "Name" with "Bonderøven"
+  And I select "Channel 1" from "Channel"
+  And I press "Create schedule"
+  Then I should see the schedule "Bonderøven on Channel 1"
+  And there should be 2 upcoming recordings
+
 Scenario: Scheduling the current programme starts recording immediately
   Given I am on the status page
   Then I should see "Idle"
