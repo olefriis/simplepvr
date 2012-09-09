@@ -4,9 +4,9 @@ module NavigationHelpers
     when 'the schedules page'
       '/'
     when 'the channel overview page'
-      '/#/channels'
+      '/channels'
     when 'the status page'
-      '/#/status'
+      '/status'
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
         "Now, go and add a mapping in #{__FILE__}"

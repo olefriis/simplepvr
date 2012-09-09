@@ -26,11 +26,11 @@ function ChannelsCtrl($scope, $http, Channel) {
 	
 	$scope.hideChannel = function(channel) {
 		// I wish Angular could let me define this operation on the Channel object
-		$http.post('/channels/' + channel.id + '/hide').success(function() { channel.$get(); });
+		$http.post('/api/channels/' + channel.id + '/hide').success(function() { channel.$get(); });
 	}
 	$scope.showChannel = function(channel) {
 		// I wish Angular could let me define this operation on the Channel object
-		$http.post('/channels/' + channel.id + '/show').success(function() { channel.$get(); });
+		$http.post('/api/channels/' + channel.id + '/show').success(function() { channel.$get(); });
 	}
 	$scope.shouldShowChannel = function(channel) {
 		return $scope.showHiddenChannels || !channel.hidden;
@@ -57,11 +57,11 @@ function ProgrammeCtrl($scope, $routeParams, $http, Programme) {
 	
 	$scope.recordOnThisChannel = function() {
 		// I wish Angular could let me define this operation on the Programme object
-		post('/programmes/' + $scope.programme.id + '/record_on_this_channel');
+		post('/api/programmes/' + $scope.programme.id + '/record_on_this_channel');
 	}
 	$scope.recordOnAnyChannel = function() {
 		// I wish Angular could let me define this operation on the Programme object
-		post('/programmes/' + $scope.programme.id + '/record_on_any_channel');
+		post('/api/programmes/' + $scope.programme.id + '/record_on_any_channel');
 	}
 	
 	loadProgramme();
@@ -98,7 +98,7 @@ function ShowCtrl($scope, $routeParams, Show, Recording) {
 
 function SearchProgrammesCtrl($scope, $http, $location) {
 	$scope.autocomplete = function(query, process) {
-		$http.get('/programmes/title_search', {params: {query: query}}).success(process);
+		$http.get('/api/programmes/title_search', {params: {query: query}}).success(process);
 	}
 	
 	$scope.search = function() {
@@ -109,7 +109,7 @@ function SearchProgrammesCtrl($scope, $http, $location) {
 
 function SearchCtrl($scope, $routeParams, $http) {
 	$scope.query = $routeParams.query;
-	$http.get('/programmes/search', {params: {query: $scope.query}}).success(function(result) {
+	$http.get('/api/programmes/search', {params: {query: $scope.query}}).success(function(result) {
 		$scope.result = result;
 	});
 }

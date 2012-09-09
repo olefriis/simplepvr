@@ -19,11 +19,7 @@ module SimplePvr
 
     settings.public_folder = File.dirname(__FILE__) + '/../../public/'
 
-    get '/' do
-      send_file File.join(settings.public_folder, 'index.html')
-    end
-
-    get '/schedules/?' do
+    get '/api/schedules/?' do
       Model::Schedule.all.map do |schedule|
         {
           id: schedule.id,
@@ -33,7 +29,7 @@ module SimplePvr
       end.to_json
     end
 
-    post '/schedules/?' do
+    post '/api/schedules/?' do
       parameters = JSON.parse(request.body.read)
       title, channel_id, channel = parameters['title'], parameters['channel_id'].to_i, nil
       puts "Title: #{title}, channel: #{channel_id}"
@@ -43,13 +39,13 @@ module SimplePvr
       result.to_json
     end
 
-    delete '/schedules/:id' do |id|
+    delete '/api/schedules/:id' do |id|
       Model::Schedule.get(id).destroy
       reload_schedules
       ''
     end
 
-    get '/upcoming_recordings/?' do
+    get '/api/upcoming_recordings/?' do
       PvrInitializer.scheduler.upcoming_recordings.map do |recording|
         {
           programme_id: recording.programme.id,
@@ -62,11 +58,11 @@ module SimplePvr
       end.to_json
     end
 
-    post '/schedules/reload' do
+    post '/api/schedules/reload' do
       reload_schedules
     end
 
-    get '/channels/?' do
+    get '/api/channels/?' do
       Model::Channel.sorted_by_name.map do |channel|
         {
           id: channel.id,
@@ -76,7 +72,7 @@ module SimplePvr
       end.to_json
     end
 
-    get '/channels/:channel_id/programme_listings/:date/?' do |channel_id, date_string|
+    get '/api/channels/:channel_id/programme_listings/:date/?' do |channel_id, date_string|
       if date_string == 'today'
         now = Time.now
         this_date = Time.local(now.year, now.month, now.day)
@@ -114,7 +110,7 @@ module SimplePvr
       }.to_json
     end
 
-    get '/channels/:id' do |id|
+    get '/api/channels/:id' do |id|
       channel = Model::Channel.get(id)
       {
         id: channel.id,
@@ -123,7 +119,7 @@ module SimplePvr
       }.to_json
     end
 
-    post '/channels/:id/hide' do |id|
+    post '/api/channels/:id/hide' do |id|
       channel = Model::Channel.get(id)
       channel.hidden = true
       channel.save
@@ -134,7 +130,7 @@ module SimplePvr
       }.to_json
     end
 
-    post '/channels/:id/show' do |id|
+    post '/api/channels/:id/show' do |id|
       channel = Model::Channel.get(id)
       channel.hidden = false
       channel.save
@@ -145,27 +141,27 @@ module SimplePvr
       }.to_json
     end
 
-    get '/programmes/title_search' do
+    get '/api/programmes/title_search' do
       Model::Programme.titles_containing(params['query']).to_json
     end
 
-    get '/programmes/search' do
+    get '/api/programmes/search' do
       Model::Programme.with_title_containing(params['query']).map {|programme| programme_hash(programme) }.to_json
     end
 
-    get '/programmes/:id' do |id|
+    get '/api/programmes/:id' do |id|
       programme = Model::Programme.get(id)
       programme_hash(programme).to_json
     end
 
-    post '/programmes/:id/record_on_any_channel' do |id|
+    post '/api/programmes/:id/record_on_any_channel' do |id|
       programme = Model::Programme.get(id.to_i)
       Model::Schedule.add_specification(title: programme.title)
       reload_schedules
       programme_hash(programme).to_json
     end
 
-    post '/programmes/:id/record_on_this_channel' do |id|
+    post '/api/programmes/:id/record_on_this_channel' do |id|
       programme = Model::Programme.get(id.to_i)
       Model::Schedule.add_specification(title: programme.title, channel: programme.channel)
       reload_schedules
@@ -185,7 +181,7 @@ module SimplePvr
       }
     end
 
-    get '/shows' do
+    get '/api/shows' do
       shows = PvrInitializer.recording_manager.shows
       shows.map do |show|
         {
@@ -195,19 +191,19 @@ module SimplePvr
       end.to_json
     end
 
-    get '/shows/:id/?' do |id|
+    get '/api/shows/:id/?' do |id|
       {
         id: id,
         name: id
       }.to_json
     end
 
-    delete '/shows/:id/?' do |id|
+    delete '/api/shows/:id/?' do |id|
       PvrInitializer.recording_manager.delete_show(id)
       ''
     end
 
-    get '/shows/:show_id/recordings/?' do |show_id|
+    get '/api/shows/:show_id/recordings/?' do |show_id|
       recordings = PvrInitializer.recording_manager.episodes_of(show_id)
       recordings.map do |recording|
         {
@@ -222,15 +218,23 @@ module SimplePvr
       end.to_json
     end
 
-    delete '/shows/:show_id/recordings/:episode' do |show_id, episode|
+    delete '/api/shows/:show_id/recordings/:episode' do |show_id, episode|
       PvrInitializer.recording_manager.delete_show_episode(show_id, episode)
       ''
     end
 
-    get '/status' do
+    get '/api/status' do
       {
         status_text: PvrInitializer.scheduler.status_text
       }.to_json
+    end
+
+    get '/app/*' do |path|
+      send_file File.join(settings.public_folder, path)
+    end
+
+    get '/*' do
+      send_file File.join(settings.public_folder, 'index.html')
     end
 
     def reload_schedules
