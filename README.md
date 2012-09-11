@@ -103,13 +103,13 @@ Then read your XMLTV file and the mappings file:
 ...and wait a little. Then start up the system as normal, and you're done.
 
 If you're running the web server, you can tell it to update its schedules without restarting the server. This is
-done by POST'ing to /schedules/reload on the server, e.g.:
+done by POST'ing to /api/schedules/reload on the server, e.g.:
 
-        curl -d "" localhost:4567/schedules/reload
+        curl -d "" localhost:4567/api/schedules/reload
 
 Or, if you've secured your web server with Basic HTTP Authentication, specify username and password:
 
-        curl -d "" -u me:secret localhost:4567/schedules/reload
+        curl -d "" -u me:secret localhost:4567/api/schedules/reload
 
 Recordings
 ==========
