@@ -120,6 +120,7 @@ are the only means you have for speeding things up. This includes:
 * Searching for tuners and scanning for channels would be nice through a GUI.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.
+  [Bluepill](https://github.com/arya/bluepill) seems to do the job, but seems like too big a hammer...
 
 Some features would be cool to have, but I don't have a personal need for them, so they will only
 happen if *you* implement them and send me a pull request.
