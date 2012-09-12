@@ -39,31 +39,9 @@ Also, Nokogori might be problematic on some platforms, but importing XMLTV is th
 Nokogiri than with the built-in REXML (counting the whole process of importing XMLTV, not just reading the
 XML).
 
-How to use from command line
-============================
-Edit schedule.rb. It will look like this:
-
-        require File.dirname(__FILE__) + '/lib/simplepvr'
-		
-		schedule do
-		  record 'Borgias', from:'DR K', at:Time.local(2012, 7, 10, 20, 46), for:60.minutes
-		  record 'Sports news', from:'TV 2 | Danmark', at:Time.local(2012, 7, 11, 12, 15), for:20.minutes
-		end
-
-which will record two shows of 60 and 20 minutes' duration on the channels 'DR K' and 'TV 2', respectively. After
-specifying your shows, start up the system:
-
-        bundle exec ruby schedule.rb
-
-The system will wait for the specified start times, and will then start the recordings. First time you start up
-the system, it will do a channel scan. This is not needed later.
-
-The above example is very straight-forward, but since it's just Ruby, you can program your own schedules for e.g.
-recording every Thursday on a specific channel, or recording the news from the same timeslot every evening.
-
 Running the web GUI
 ===================
-For this to make any sense at all, you need to use XMLTV (read below). Start the server by running
+Start the server by running
 
         bundle exec ruby pvr_server.rb
 
@@ -76,21 +54,7 @@ This will secure the application with Basic HTTP Authentication.
 
 XMLTV
 =====
-If you have an XMLTV file, you're in luck: You can read that into the system and set up schedules like this:
-
-        schedule do
-          record 'Borgias', from:'DR K'
-		end
-
-...and all shows withe the name 'Borgias' from 'DR K' will be found and scheduled. The recording will start 2
-minutes before the scheduled programme and end 5 minutes later, just in case the programme doesn't start at the
-exact planned time. If you don't care about which channel the show is on, you can just specify the show title:
-
-        schedule do
-          record 'Borgias'
-        end
-
-To use this feature, first you must specify in a YAML file how the channel IDs in your xmltv file relates to the
+First you must specify in a YAML file how the channel IDs in your XMLTV file relates to the
 channel names that the HDHomeRun has found for you. Create a file called e.g. "channel_mappings.yaml":
 
         www.ontv.dk/tv/1: DR 1
@@ -100,9 +64,7 @@ Then read your XMLTV file and the mappings file:
 
         bundle exec ruby read_xmltv.rb programmes.xmltv channel_mappings.yaml
 
-...and wait a little. Then start up the system as normal, and you're done.
-
-If you're running the web server, you can tell it to update its schedules without restarting the server. This is
+...and wait a little. You can tell the webserver to update its schedules without restarting the server. This is
 done by POST'ing to /api/schedules/reload on the server, e.g.:
 
         curl -d "" localhost:4567/api/schedules/reload
@@ -139,9 +101,6 @@ accepted that violate this.
 There are lots of stuff I'd like to do, but I have no deadline - which means that pull requests
 are the only means you have for speeding things up. This includes:
 
-* Integration tests: I've thought a lot of how to do this a smart way, but I'll resort to doing some
-  integration tests with Cucumber. Creating and maintaining integration tests is resource-demanding,
-  but they always pay off.
 * "Gemify" the stuff, so installation becomes a breeze.
 * Web interface:
   * Better overview of recordings.
@@ -161,7 +120,6 @@ are the only means you have for speeding things up. This includes:
 * Searching for tuners and scanning for channels would be nice through a GUI.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.
-* Remove "the schedule.rb way" to set up recordings, since nobody will probably use this...
 
 Some features would be cool to have, but I don't have a personal need for them, so they will only
 happen if *you* implement them and send me a pull request.
@@ -174,15 +132,6 @@ Development
 Run the specs like this:
 
         bundle exec rspec
-
-There's a semi-manual test of the actual recording, since I'm not sure how to check automatically that
-we can record a stream from a HDHomeRun box. Run it with
-
-        bundle exec ruby spec/schedule_test.rb
-
-After running this, a new recording should be present in "recordings/test/(sequence number)/stream.ts",
-with 5 seconds of recording from the channel specified in the test (you need to alter the test file to
-your available channels).
 
 Run the JavaScript tests by first calling
 
