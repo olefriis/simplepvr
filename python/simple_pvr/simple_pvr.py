@@ -1,59 +1,47 @@
-require 'active_support/all'
-require File.dirname(__FILE__) + '/simple_pvr/pvr_initializer'
-require File.dirname(__FILE__) + '/simple_pvr/scheduler'
-require File.dirname(__FILE__) + '/simple_pvr/database_schedule_reader'
-require File.dirname(__FILE__) + '/simple_pvr/recording_manager'
 
-#
-# Simple DSL to set up schedules
-#
-
-def schedule(&block)
-    SimplePvr::PvrInitializer.setup
-
-    pvr = SimplePvr::SimplePvr.new
+def schedule(block=""):
+    from simple_pvr import PvrInitializer
+    PvrInitializer.setup
+    pvr = SimplePvr()
     pvr.instance_eval &block
     pvr.finish
 
-    SimplePvr::PvrInitializer.sleep_forever
-end
+    PvrInitializer.sleep_forever
 
-module SimplePvr
-class SimplePvr
-def initialize
-    @recording_planner = RecordingPlanner.new
-end
 
-def record(show_name, options={})
-    if options[:at].nil? && options[:from].nil?
-    record_programmes_with_title(show_name)
-elsif options[:at].nil?
-record_programmes_with_title_on_channel(show_name, options[:from])
-else
-record_from_timestamp_and_duration(show_name, options[:from], options[:at], options[:for])
-end
-end
 
-def finish
-    @recording_planner.finish
-end
+class SimplePvr:
+    def __init__(self):
+        from .master_import import RecordingPlanner
+        self._recording_planner = RecordingPlanner()
 
-private
-def record_programmes_with_title(title)
-    @recording_planner.specification(title: title)
-    end
 
-    def record_programmes_with_title_on_channel(title, channel_name)
-        channel = Model::Channel.with_name(channel_name)
-        @recording_planner.specification(title: title, channel: channel)
-        end
+    def record(self, show_name, atTime=None, fromTime = None, forTime = None):
+        if (atTime is None and fromTime is None):
+            self._record_programmes_with_title(show_name)
+        elif (atTime is None):
+            self._record_programmes_with_title_on_channel(show_name, fromTime)
+        else:
+            self._record_from_timestamp_and_duration(show_name, fromTime, atTime, forTime)
 
-        def record_from_timestamp_and_duration(show_name, channel_name, start_time, duration)
-            if duration.nil?
+
+    def finish(self):
+        self._recording_planner.finish()
+
+#private
+    def _record_programmes_with_title(self, title):
+        self._recording_planner.specification(title)
+
+
+    def _record_programmes_with_title_on_channel(self, title, channel_name):
+        from .master_import import Channel
+        channel = Channel.with_name(channel_name)
+        self._recording_planner.specification(title, channel)
+
+    def _record_from_timestamp_and_duration(self, show_name, channel_name, start_time, duration = None):
+        from .master_import import Channel
+        if duration is None:
             raise Exception, "No duration specified for recording of '#{show_name}' from '#{channel_name}' at '#{start_time}'"
-        end
-        channel = Model::Channel.with_name(channel_name)
-        @recording_planner.simple(show_name, channel, start_time, duration)
-    end
-end
-end
+
+        channel = Channel.with_name(channel_name)
+        self._recording_planner.simple(show_name, channel, start_time, duration)

@@ -9,7 +9,7 @@
 		<p>{{programme.start_time | date:'fullDate'}} at {{programme.start_time | date:'HH:mm'}} on channel {{programme.channel.name}}.</p>
 		<p>{{programme.subtitle}}</p>
 		<p>{{programme.description}}</p>
-		<p><a ng-href="#/programmes/{{programme.id}}">Show details</a></p>
+		<p><a ng-href="/programmes/{{programme.id}}">Show details</a></p>
 		<div ng-show="programme.is_scheduled">
 			<p>This programme is being recorded.</p>
 		</div>

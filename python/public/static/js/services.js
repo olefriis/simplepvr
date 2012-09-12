@@ -2,26 +2,26 @@
 
 angular.module('simplePvrServices', ['ngResource']).
 factory('UpcomingRecording', function($resource) {
-	return $resource('/upcoming_recordings/:id');
+	return $resource('/api/upcoming_recordings/:id');
 }).
 factory('Schedule', function($resource) {
-	return $resource('/schedules/:id', {id: '@id'});
+	return $resource('/api/schedules/:id', {id: '@id'});
 }).
 factory('Channel', function($resource) {
-	return $resource('/channels/:id', {id: '@id'});
+	return $resource('/api/channels/:id', {id: '@id'});
 }).
 factory('ProgrammeListing', function($resource) {
-	return $resource('/channels/:channelId/programme_listings/:date');
+	return $resource('/api/channels/:channelId/programme_listings/:date');
 }).
 factory('Programme', function($resource) {
-	return $resource('/programmes/:id');
+	return $resource('/api/programmes/:id');
 }).
 factory('Show', function($resource) {
-	return $resource('/shows/:id', {id: '@id'});
+	return $resource('/api/shows/:id', {id: '@id'});
 }).
 factory('Recording', function($resource) {
-	return $resource('/shows/:showId/recordings/:recordingId', {showId: '@show_id', recordingId: '@id'});
+	return $resource('/api/shows/:showId/recordings/:recordingId', {showId: '@show_id', recordingId: '@id'});
 }).
 factory('Status', function($resource) {
-	return $resource('/status');
+	return $resource('/api/status');
 });

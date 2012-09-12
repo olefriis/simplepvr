@@ -39,44 +39,46 @@ filter('chunk', function() {
 	return result;
   }
 }).
-config(['$routeProvider', function($routeProvider) {
+config(function($routeProvider, $locationProvider) {
+    $locationProvider.html5Mode(true).hashPrefix('');
+
 	$routeProvider.
 	when('/schedules', {
-		templateUrl: 'static/partials/schedules.html',
+		templateUrl: '/static/partials/schedules.html',
 		controller: SchedulesCtrl
 	}).
 	when('/channels', {
-		templateUrl: 'static/partials/channels.html',
+		templateUrl: '/static/partials/channels.html',
 		controller: ChannelsCtrl
 	}).
 	when('/channels/:channelId/programmeListings/:date', {
-		templateUrl: 'static/partials/programmeListing.html',
+		templateUrl: '/static/partials/programmeListing.html',
 		controller: ProgrammeListingCtrl
 	}).
 	when('/programmes/:programmeId', {
-		templateUrl: 'static/partials/programme.html',
+		templateUrl: '/static/partials/programme.html',
 		controller: ProgrammeCtrl
 	}).
 	when('/shows', {
-		templateUrl: 'static/partials/shows.html',
+		templateUrl: '/static/partials/shows.html',
 		controller: ShowsCtrl
 	}).
 	when('/shows/:showId', {
-		templateUrl: 'static/partials/show.html',
+		templateUrl: '/static/partials/show.html',
 		controller: ShowCtrl
 	}).
 	when('/search', {
-		templateUrl: 'static/partials/search.html',
+		templateUrl: '/static/partials/search.html',
 		controller: SearchCtrl
 	}).
 	when('/status', {
-		templateUrl: 'static/partials/status.html',
+		templateUrl: '/static/partials/status.html',
 		controller: StatusCtrl
 	}).
 	when('/about', {
-		templateUrl: 'static/partials/about.html'
+		templateUrl: '/static/partials/about.html'
 	}).
 	otherwise({
 		redirectTo: '/schedules'
 	});
-}]);
+});

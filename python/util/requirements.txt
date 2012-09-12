@@ -1,17 +1,4 @@
-# Simplepvr python dependencies
+# Channel mapper util dependencies
 
-python-dateutil>=2.0
-Flask>=0.8
-SQLAlchemy>=0.7
- ##http://packages.python.org/Flask-SQLAlchemy/quickstart.html#a-minimal-application
-Flask-SQLAlchemy>=0.16
-SQLAlchemy-migrate>=0.7.2
 PyYAML>=3.10
 jellyfish>=0.2
-Jinja2>=2.6
-Werkzeug>=0.8.3
-certifi>=0.0.8
-chardet>=1.0.1
-distribute>=0.6.24
-gunicorn>=0.14.2
-requests>=0.11.1

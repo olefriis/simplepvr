@@ -7,7 +7,9 @@ import xml.etree.ElementTree as xml
 import jellyfish
 import logging
 
+
 #class PvrLogger:
+JARO_WINKLER_THRESHOLD = 0.75
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -17,43 +19,98 @@ def read_channels_file(file_name):
     file = codecs.open(file_name, "r")
     count = 0
     for line in file:
-        scanning_search = re.search(r'^SCANNING: (\d*) .*$', line)
-        program_search = re.search(r'^PROGRAM (\d*): \d* (.*)$', line)
-        if scanning_search:
-            channel_frequency = int(scanning_search.group(1))
-        elif program_search:
-            channel_id = int(program_search.group(1))
-            channel_name = program_search.group(2).strip()
+        scanning_entry = re.search(r'^SCANNING: (\d*) .*$', line)
+        program_entry = re.search(r'^PROGRAM (\d*): \d* (.*)$', line)
+        if scanning_entry:
+            channel_frequency = int(scanning_entry.group(1))
+        elif program_entry:
+            channel_id = int(program_entry.group(1))
+            channel_name = program_entry.group(2).strip()
             if not "encrypted" in channel_name and not "$" in channel_name:
                 data.append({'HDHomeRun Channel' : {'id': count, 'freq' : channel_frequency, 'program': channel_id, 'name':channel_name}})
                 hdhr_names.append( channel_name )
                 logger.debug("Program[id: {}]: [ freq: {}, program: {}, name: {} ]".format(count, channel_frequency, channel_id, channel_name))
                 count += 1
 
+
+def getSafeLogString(maxIdx, maxValue, name__text):
+    try:
+        return "Using hdhr_ref {} ({}) for XMLTV channel {} - score of {}".format(maxIdx, hdhr_names[maxIdx], name__text,maxValue)
+    except UnicodeError:
+        return "Using hdhr_ref {} for XMLTV channel"
+
+
 def read_xmltv(file_name):
     element_tree = xml.parse(file_name)
 
     for channel in element_tree.getroot().findall('channel'):
+        found_match = False
         match_scores = []
-        name__text = channel.find('display-name').text
+        name__text = channel.find('display-name').text.encode(sys.stdout.encoding)
+
+        icon_url = channel.find('icon').attrib['src']
+
         stripped_name = name__text.replace(" ", "")
 
         for hdhr_name in hdhr_names:
-            stripped_hdhr_name = hdhr_name.replace(" ", "")
-            score = jellyfish.jaro_winkler(stripped_name, stripped_hdhr_name)
+            score = 0
+            safe_hdhr_name = hdhr_name if is_ascii(hdhr_name) else hdhr_name.decode(sys.stdout.encoding)
+            stripped_hdhr_name = safe_hdhr_name.replace(" ", "")
+            try:
+                score = jellyfish.jaro_winkler(stripped_name, stripped_hdhr_name )
+            except UnicodeEncodeError:
+                try:
+                    safe_name_text = name__text if is_ascii(name__text) else name__text.decode(sys.stdout.encoding)
+                    logger.warn("Unable to do score for '{}' vs '{}'".format(safe_name_text, safe_hdhr_name))
+                except UnicodeEncodeError:
+                    ## Hvis vi heller ikke kan logge vores error pga. encoding, logger vi en ny error der er "sikker"
+                    logger.warn(name__text, " <-> ", hdhr_name, " isAscii: ", is_ascii(hdhr_name), " -- Safe version ", safe_name_text, " - ", safe_hdhr_name, " - sys encoding: ", sys.stdout.encoding)
+
             match_scores.append(score)
 
         maxValue = max(match_scores)
-        maxIdx = match_scores.index(maxValue)
 
-        logger.debug("Using hdhr_ref {} ({}) for XMLTV channel {} - score of {}".format(maxIdx, hdhr_names[maxIdx], name__text, maxValue))
-        channelinfo = {'XMLTV Mapping' : {'id' : channel.attrib['id'], 'name' : name__text, 'hdhr_ref' :  maxIdx}}
-        data.append(channelinfo)
 
+        if maxValue > JARO_WINKLER_THRESHOLD:
+            found_match = True
+            maxIdx = match_scores.index(maxValue)
+            hdhrName = hdhr_names[maxIdx]
+            logger.info(getSafeLogString(maxIdx, maxValue, name__text))
+            xmltvId = channel.attrib['id']
+            channelinfo = {'XMLTV Mapping' : {'id' : xmltvId, 'name' : name__text, 'icon': icon_url, 'hdhr_ref' :  maxIdx, 'hdhr_name': hdhrName}}
+            logger.debug("Data for maxIdx[{}]{}".format(maxIdx, data[maxIdx]['HDHomeRun Channel']))
+            channel_mappings.update({xmltvId : hdhrName})
+            data.append(channelinfo)
+            hdhr_names.remove(hdhrName)
+        else:
+            hdhrName = hdhr_names[maxIdx]
+            try:
+                logger.debug("Score < {}. Ignoring result '{}' for '{}' - score ({})".format(JARO_WINKLER_THRESHOLD,
+                                                                                             hdhrName, name__text, maxValue))
+            except UnicodeError:
+                logger.debug(name__text + " vs " + hdhrName)
+
+    ## Insert FIXME entries for the hdhr-names that were not automatically matched to an XMLTV channel id
+    count = 0
+    for name in hdhr_names:
+        logger.debug("No XMLTV id found for channel name '{}'".format(name))
+        channel_mappings.update({"[{}] FIXME: XMLTV ID HERE".format(count) : name})
+        count = count + 1
     #Write HDHR channels, and XMLTV mappings to yaml file
-    yaml.dump(data, yamlFile, default_flow_style=False)
+    yaml.dump(data, yamlFile, default_flow_style=False, encoding='utf-8')
+    yaml.dump(channel_mappings, channelMappingFile, default_flow_style=False, encoding='utf-8')
 
-    print("Done - results available in '" + yamlFile.name + "'")
+    print("Done - results available in '" + yamlFile.name + "' and '"+ channelMappingFile.name+"'")
+
+def is_ascii(myStr):
+    try:
+        myStr.decode('ascii')
+    except UnicodeDecodeError:
+        #print "it was not a ascii-encoded unicode string"
+        return False
+    else:
+        return True
+#        print "It may have been an ascii-encoded unicode string"
 
 def file_exists(file_path, desc = "File does not exist"):
     if not os.path.exists(file_path):
@@ -68,6 +125,9 @@ if len(sys.argv) != 3:
 
 yamlFile = codecs.open('mapping.yaml', 'w')
 
+channelMappingFile = codecs.open('channel_mappings.yaml', 'w')
+
+channel_mappings = {}
 data = []
 hdhr_names = []
 

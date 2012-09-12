@@ -5,3 +5,4 @@
 /recordings
 /spec/resources/recordings
 *.sqlite
+*.pyc
