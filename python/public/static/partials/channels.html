@@ -1,0 +1,19 @@
+<div class="row">
+	<div class="span12">
+		<form class="form-inline">
+			<input type="text" placeholder="Filter..." ng-model="channelFilter">
+			<label class="checkbox">
+				<input type="checkbox" ng-model="showHiddenChannels">Show hidden channels</input>
+			</label>
+		</form>
+	</div>
+</div>
+<div class="row" ng-repeat="channelChunk in channels | orderBy:name | filter:shouldShowChannel | filter:channelFilter | chunk:3">
+	<div ng-repeat="channel in channelChunk" class="span4">
+		<h2>{{channel.name}}</h2>
+		<p><a ng-href="#/channels/{{channel.id}}/programmeListings/today" class="btn">View programmes</a>
+	   		<button class="btn" type="button" ng-click="hideChannel(channel)" ng-hide="channel.hidden">Hide channel</button>
+	   		<button class="btn" type="button" ng-click="showChannel(channel)" ng-show="channel.hidden">Show channel</button>
+		</p>
+	</div>
+</div>
