@@ -1,9 +1,7 @@
-#require 'active_support/all'
 import codecs
 from collections import namedtuple
 import os
 from shutil import rmtree
-from sys import path
 import yaml
 
 from .pvr_logger import logger
@@ -13,7 +11,6 @@ RecordingMetadata = namedtuple('RecordingMetadata', ['show_name', 'episode', 'ch
 class RecordingManager:
     def __init__(self, recordings_directory=None):
         self.recordings_directory = recordings_directory if recordings_directory is not None else os.curdir + "/recordings"
-        #self.recordings_directory = recordings_directory || Dir.pwd + '/recordings'
 
     def shows(self):
         if (os.path.exists(self.recordings_directory)):
@@ -22,7 +19,7 @@ class RecordingManager:
             return {}
 
     def delete_show(self, show_name):
-        rmtree(directory_for_show(show_name), ignore_errors = True)
+        rmtree(self._directory_for_show(show_name), ignore_errors = True)
 
     def episodes_of(self, show_name):
         episodes = os.listdir(self._directory_for_show(show_name))
@@ -36,12 +33,12 @@ class RecordingManager:
         os.remove(self.recordings_directory + "/" + show_name + "/" + episode)
 
     def create_directory_for_recording(self, recording):
-        show_directory = directory_for_show(recording.show_name)
-        ensure_directory_exists(show_directory)
+        show_directory = self._directory_for_show(recording.show_name)
+        self._ensure_directory_exists(show_directory)
 
-        new_sequence_number = next_sequence_number_for(show_directory)
+        new_sequence_number = self._next_sequence_number_for(show_directory)
         recording_directory = "{}/{}".format(show_directory, new_sequence_number)
-        ensure_directory_exists(recording_directory)
+        self._ensure_directory_exists(recording_directory)
 
         self._create_metadata(recording_directory, recording)
 
@@ -49,24 +46,31 @@ class RecordingManager:
 
 #private
     def _directory_for_show(self, show_name):
-        sanitized_directory_name = show_name.translate(None, "\\\"'*./:")
-        logger().debug("Sanitized: {}".format(sanitized_directory_name))
+        from .master_import import safe_replace
+        sanitized_directory_name = safe_replace(show_name)
+        logger().info("Show name: {} vs sanitized name: {}".format(show_name, sanitized_directory_name))
         directory_name = sanitized_directory_name if os.path.exists(sanitized_directory_name) else 'Unnamed'
-        self.recordings_directory + '/' + directory_name
+        return self.recordings_directory + '/' + directory_name
 
     def _directory_for_show_and_episode(self, show_name, episode):
-        return self._directory_for_show(show_name) + '/' + episode
+        from .master_import import safe_replace
+        sanitized_episode_name = safe_replace(episode)
+        return self._directory_for_show(show_name) + '/' + sanitized_episode_name
 
     def _ensure_directory_exists(self, directory):
+        if directory is None:
+            raise Exception, "Directory cannot be null"
         if not os.path.exists(directory):
             os.makedirs(directory)
 
     def _next_sequence_number_for(self, base_directory):
         entries = os.listdir(base_directory)
         numeric_entries = []
+        largest_current_sequence_number = 0
         for entry in entries:
             numeric_entries.append(int(entry))
-        largest_current_sequence_number = max(numeric_entries)
+        if len(numeric_entries) > 0:
+            largest_current_sequence_number = max(numeric_entries)
         return 1 + largest_current_sequence_number
 
     def _metadata_for(self, show_name, episode):

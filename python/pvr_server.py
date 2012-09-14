@@ -1,19 +1,17 @@
-import os
 import sys
-sys.path.append(os.curdir)
+from simple_pvr.pvr_initializer import setup
+from simple_pvr import DatabaseScheduleReader
 
+def main(argv=None):
+    print "pvr initializer setup"
+    setup()
 
-def start():
-    from simple_pvr import DatabaseScheduleReader,server, pvr_initializer
-
-    pvr_initializer().setup
-
-    if pvr_initializer().hdhomerun() is None or pvr_initializer().scheduler() is None or pvr_initializer().recording_manager() is None:
-        raise Exception(pvr_initializer())
-
+    print "DatabaseScheduleReader"
     DatabaseScheduleReader().read()
 
-    server.run()
+    print "Server running on main thread"
+    from simple_pvr import server
+    server.startServer()
 
-if __name__ == '__main__':
-    start()
+if __name__ == "__main__":
+    sys.exit(main())

@@ -13,15 +13,19 @@ from subprocess import Popen, PIPE
 
 from .pvr_logger import logger
 
+proc = None
 def kill_proc():
-    proc.kill()
+    if proc:
+        proc.kill()
+    else:
+        logger().warn("No process to kill")
 
 def system(cmd, timeout = 60):
     logger().info("Executing command '{}'".format(cmd))
     proc = Popen(cmd, shell=True)
-    t = Timer(timeout, kill_proc)
-    t.start()
-    proc.wait()
+    ## Kill process after timeout seconds.
+    t = Timer(timeout, kill_proc).start()
+    proc.wait() ## Wait for process to complete, increase timeout parameter if default 60 seconds is not enough
 
 def wait_pid(pid):
     return os.waitpid(pid)
@@ -47,13 +51,13 @@ class HDHomeRun:
     def start_recording(self, tuner, frequency, program_id, directory):
         self._set_tuner_to_frequency(tuner, frequency)
         self._set_tuner_to_program(tuner, program_id)
-        self.tuner_pids[tuner] = _spawn_recorder_process(tuner, directory)
+        self.tuner_pids[tuner] = self._spawn_recorder_process(tuner, directory)
         logger().info("Process ID for recording on tuner {0}: {1}".format(tuner, self.tuner_pids[tuner]))
 
     def stop_recording(self, tuner):
         pid = self.tuner_pids[tuner]
         logger().info("Stopping process {0} for tuner {1}".format(pid, tuner))
-        send_control_c_to_process(tuner, pid)
+        self._send_control_c_to_process(tuner, pid)
         self._reset_tuner_frequency(tuner)
         self.tuner_pids[tuner] = None
 
@@ -74,7 +78,7 @@ class HDHomeRun:
         #raise Exception, "No device found: #{output}"
 
     def _scan_channels_with_tuner(self, file_name):
-        system(_hdhr_config_prefix() + " scan /tuner0 {0}".format(file_name))
+        system(self._hdhr_config_prefix() + " scan /tuner0 {0}".format(file_name))
 
     def _read_channels_file(self, file_name):
         from .master_import import Channel
@@ -92,18 +96,18 @@ class HDHomeRun:
                 Channel.add(channel, channel_name, channel_frequency, channel_id)
 
     def _set_tuner_to_frequency(self, tuner, frequency):
-        system(_hdhr_config_prefix() + " set /tuner{0}/channel auto:{1}".format(self.device_id, tuner, frequency))
+        system(self._hdhr_config_prefix() + " set /tuner{}/channel auto:{}".format(tuner, frequency))
 
     def _set_tuner_to_program(self, tuner, program_id):
-        system(_hdhr_config_prefix + " set /tuner{0}/program {1}".format(tuner, program_id))
+        system(self._hdhr_config_prefix() + " set /tuner{}/program {}".format(tuner, program_id))
 
     def _spawn_recorder_process(self, tuner, directory):
-        open(_tuner_control_file(tuner), "a") ## Touch file
-        subprocess.call(['os.curdir + "/hdhomerun_save.sh"', self.device_id, tuner, '"'+ directory +'/stream.ts"', '"'+ directory +'/hdhomerun_save.log"', '"'+ self._tuner_control_file(tuner)+'"'], shell=True)
-        return os.curdir() + tuner_
+        open(self._tuner_control_file(tuner), "a") ## Touch file
+        subprocess.call([os.curdir + '"/hdhomerun_save.sh"', self.device_id, str(tuner), '"'+ directory +'/stream.ts"', '"'+ directory +'/hdhomerun_save.log"', '"'+ self._tuner_control_file(tuner)+'"'], shell=True)
+        return os.curdir + str(tuner)
 
     def _reset_tuner_frequency(self, tuner):
-        system(_hdhr_config_prefix + " set /tuner{0}/channel none".format(tuner))
+        system(self._hdhr_config_prefix() + " set /tuner{0}/channel none".format(tuner))
 
     def _send_control_c_to_process(self, tuner, pid):
         self._deleteFileIfExists(self._tuner_control_file(tuner))

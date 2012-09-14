@@ -1,6 +1,4 @@
-
 from datetime import timedelta
-from .pvr_initializer import pvr_initializer
 
 class RecordingPlanner:
 
@@ -21,7 +19,8 @@ class RecordingPlanner:
             self._schedule_programmes(title, Programme.with_title(title))
 
     def finish(self):
-        pvr_initializer().scheduler().recordings(self._recordings)
+        from .pvr_initializer import scheduler
+        scheduler().recordings(self._recordings)
 
     #private
     def _schedule_programmes(self, title, programmes):

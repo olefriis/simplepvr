@@ -19,27 +19,14 @@ def synchronized(lock):
     return wrap
 
 myLock = Lock()
-class Scheduler(threading.Thread):
+class Scheduler():
     upcoming_recordings = []
 
     def __init__(self):
-        
         self.scheduled_programmes = []
         Scheduler.upcoming_recordings = []
         self.current_recordings = [None, None]
         self.recorders = {}
-        self.mutex = Lock()
-
-    @synchronized(myLock)
-    def run(self):
-        #self.thread = Thread():
-        while True:
-            self.mutex.acquire()
-            try:
-                process(self)
-                sleep(1)
-            finally:
-                self.mutex.release()
 
     @synchronized(myLock)
     def recordings(self,recordings):
@@ -52,10 +39,8 @@ class Scheduler(threading.Thread):
         logger().info("Scheduling upcoming recordings: {0}".format(Scheduler.upcoming_recordings))
 
         self.scheduled_programmes = self.programme_ids_from(Scheduler.upcoming_recordings)
-        self.stop_current_recordings_not_relevant_anymore
+        self.stop_current_recordings_not_relevant_anymore()
         Scheduler.upcoming_recordings = self.remove_current_recordings(Scheduler.upcoming_recordings)
-        if Scheduler.upcoming_recordings is None:
-            Scheduler.upcoming_recordings = []
 
     def is_scheduled(self, programme):
         return programme.id in self.scheduled_programmes
@@ -80,9 +65,13 @@ class Scheduler(threading.Thread):
     def get_upcoming_recordings(self):
         return Scheduler.upcoming_recordings
 
+    @synchronized(myLock)
     def process(self):
-        self.check_expiration_of_current_recordings
-        self.check_start_of_coming_recordings
+        logger().info("Scheduler doing processing of recordings queue")
+        self.check_expiration_of_current_recordings()
+        self.check_start_of_coming_recordings()
+        ## Schedule new run of process in 30 seconds
+        threading.Timer(30, self.process).start()
 
     def _is_recording(self):
         for recording in self.current_recordings:
@@ -111,34 +100,39 @@ class Scheduler(threading.Thread):
     def stop_current_recordings_not_relevant_anymore(self):
         for recording in self.current_recordings:
             if recording and recording not in Scheduler.upcoming_recordings:
-                stop_recording(recording)
+                self.stop_recording(recording)
 
 
     def check_expiration_of_current_recordings(self):
         for recording in self.current_recordings:
             if recording and recording.expired():
-                stop_recording(recording)
+                self.stop_recording(recording)
 
     def check_start_of_coming_recordings(self):
-        while should_start_next_recording:
-            start_next_recording()
+        while self.should_start_next_recording():
+            self.start_next_recording()
 
     def should_start_next_recording(self):
+        next_recording = None
         if len(Scheduler.upcoming_recordings) > 0:
             next_recording = Scheduler.upcoming_recordings[0]
         return next_recording is not None and next_recording.start_time <= datetime.datetime.now()
 
-    def stop_recording(self,recording):
-        self.recorders[recording].stop
-        self.recorders[recording] = None
-        self.current_recordings[current_recordings.index(recording)] = None
+    def stop_recording(self,tuner):
+        self.recorders[tuner].stop()
+        self.recorders[tuner] = None
+        self.current_recordings[current_recordings.index(tuner)] = None
 
     def start_next_recording(self):
-        next_recording = Scheduler.upcoming_recordings.pop(0)
-        available_slot = self.current_recordings.find_index(None)
-        if available_slot:
-            recorder = Recorder(available_slot, next_recording)
-            self.current_recordings[available_slot] = next_recording
-            self.recorders[next_recording] = recorder
-            recorder.start()
+        print "Start next recording"
+        if len(Scheduler.upcoming_recordings) > 0:
+            next_recording = Scheduler.upcoming_recordings.pop(0)
+            logger().info("Next recording {}".format(next_recording))
+
+            if None in self.current_recordings:
+                available_slot = self.current_recordings.index(None)
+                recorder = Recorder(available_slot, next_recording)
+                self.current_recordings[available_slot] = next_recording
+                self.recorders[next_recording] = recorder
+                recorder.start()
 

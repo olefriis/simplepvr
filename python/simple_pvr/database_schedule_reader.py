@@ -1,8 +1,3 @@
-##require File.dirname(__FILE__) + '/pvr_initializer'
-##require File.dirname(__FILE__) + '/model/database_initializer'
-##require File.dirname(__FILE__) + '/recording_planner'
-
-from sqlalchemy.orm import sessionmaker
 from .server import db
 
 class DatabaseScheduleReader():

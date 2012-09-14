@@ -23,8 +23,6 @@ app = Flask(__name__, static_folder= os.path.join(basedir, '../public/static'), 
 app.config.from_object(__name__)
 db = SQLAlchemy(app)
 
-from .pvr_initializer import pvr_initializer
-
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
 
@@ -84,7 +82,7 @@ def add_schedule():
         logger().info("Channel is None")
         result = Schedule.add_specification(title)
 
-    reload_schedules
+    reload_schedules()
     return jsonify(result)
 
 @app.route('/api/schedules/<sched_id>', methods=['DELETE'])
@@ -101,8 +99,10 @@ def delete_schedule(sched_id):
 
 @app.route('/api/upcoming_recordings', methods=['GET'])
 def upcoming_recordings():
+    from .pvr_initializer import scheduler
+
     recordings = []
-    upcoming_recordings = pvr_initializer().scheduler().get_upcoming_recordings()
+    upcoming_recordings = scheduler().get_upcoming_recordings()
 
     for recording in upcoming_recordings:
         subtitle = None
@@ -119,7 +119,7 @@ def upcoming_recordings():
             'description': description
 
         })
-    return json.dumps(recordings)#jsonify(recordings)
+    return json.dumps(recordings)
 
 @app.route('/api/schedules/reload', methods=['POST'])
 def schedules_reload():
@@ -143,6 +143,7 @@ def get_channels():
 @app.route('/api/channels/<channel_id>/programme_listings/<date_string>', methods=['GET'])
 def get_programmes( channel_id, date_string ):
     from .master_import import Channel, Programme
+    from .pvr_initializer import scheduler
 
 #    get '/channels/:channel_id/programme_listings/:date' do |channel_id, date_string|
     if date_string == 'today':
@@ -169,7 +170,7 @@ def get_programmes( channel_id, date_string ):
                 'id': programme.id,
                 'start_time': programme.startTime.strftime("%H:%M"),
                 'title': programme.title,
-                'scheduled': pvr_initializer().scheduler().is_scheduled(programme)
+                'scheduled': scheduler().is_scheduled(programme)
             }))
         myDict.update({'programmes': dailyProgrammes} )
         days.append(myDict) # ISO 8601 date format YYYY-mm-dd
@@ -264,7 +265,8 @@ def record_on_channel( prog_id):
     return jsonify(programme_hash(programme))
 
 def programme_hash( programme):
-    is_scheduled = pvr_initializer().scheduler().is_scheduled(programme)
+    from .pvr_initializer import scheduler
+    is_scheduled = scheduler().is_scheduled(programme)
     return {
         'id': programme.id,
         'channel': { 'id': programme.channel.id, 'name': programme.channel.name },
@@ -277,9 +279,9 @@ def programme_hash( programme):
 
 @app.route('/api/shows', methods=['GET'])
 def get_shows():
-
+    from .pvr_initializer import recording_manager
     result = []
-    shows = pvr_initializer().recording_manager().shows()
+    shows = recording_manager().shows()
     for show in shows:
         result.append({
             'id': show,
@@ -289,22 +291,22 @@ def get_shows():
 
 @app.route('/api/shows/<show_id>', methods=['GET'])
 def get_show( show_id):
-
-    shows = pvr_initializer().recording_manager().shows
+    from .pvr_initializer import recording_manager
+    shows = recording_manager().shows()
     idx = shows.index(show_id)
     return jsonify({'id': show_id, 'name': shows[idx]})
 
 @app.route('/api/shows/<show_id>', methods=['DELETE'])
 def delete_show( show_id):
-
-    pvr_initializer().recording_manager().delete_show(show_id)
+    from .pvr_initializer import recording_manager
+    recording_manager().delete_show(show_id)
     return ''
 
 @app.route('/api/shows/<show_id>/recordings', methods=['GET'])
 def get_show_recordings( show_id):
-
+    from .pvr_initializer import recording_manager
     result = []
-    recordings = pvr_initializer().recording_manager().episodes_of(show_id)
+    recordings = recording_manager().episodes_of(show_id)
     for recording in recordings:
         result.append({
             'id': recording.episode,
@@ -319,15 +321,15 @@ def get_show_recordings( show_id):
 
 @app.route('/api/shows/<show_id>/recordings/<episode>', methods=['DELETE'])
 def delete_episode( show_id, episode):
-
-    pvr_initializer().recording_manager().delete_show_episode(show_id, episode)
+    from .pvr_initializer import recording_manager
+    recording_manager().delete_show_episode(show_id, episode)
     return ''
 
 @app.route('/api/status', methods=['GET'])
 def status( ):
-
+    from .pvr_initializer import scheduler
     return jsonify({
-        'status_text': pvr_initializer().scheduler().status_text()
+        'status_text': scheduler().status_text()
     })
 
 
@@ -338,8 +340,8 @@ def reload_schedules():
         database_schedule_reader = DatabaseScheduleReader()
     database_schedule_reader.read()
 
-def run():
+def startServer():
     app.run(debug=True)
 
 if __name__ == "__main__":
-    run()
+    startServer()
