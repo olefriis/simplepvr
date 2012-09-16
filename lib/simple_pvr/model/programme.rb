@@ -5,8 +5,8 @@ module SimplePvr
       storage_names[:default] = 'programmes'
     
       property :id, Serial
-      property :title, String, index: true
-      property :subtitle, String
+      property :title, String, index: true, :length => 255
+      property :subtitle, String, :length => 255
       property :description, Text
       property :start_time, DateTime
       property :duration, Integer
