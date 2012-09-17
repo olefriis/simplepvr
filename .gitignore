@@ -6,3 +6,5 @@
 /spec/resources/recordings
 *.sqlite
 *.pyc
+*.yaml
+epg.xml
