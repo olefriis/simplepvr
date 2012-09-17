@@ -9,6 +9,7 @@ Why?
 MythTV stopped working for me and my HDHomeRun box in the 0.25 release. And even though MythTV has loads
 of merits, I just have no idea what to do when it stops working - I am not in control of my media center.
 
+
 During the last couple of years, I have spent a substantial amount of time on bugs that suddenly appeared
 in MythTV and suddenly went away. I really don't like using systems this brittle.
 
