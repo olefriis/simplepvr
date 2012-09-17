@@ -13,10 +13,11 @@ module SimplePvr
     end
     
     def read(input)
-      Model::Programme.clear
       doc = Nokogiri::XML.parse(input)
 
-      Model::Programme.transaction do
+      Programme.transaction do
+        Programme.clear
+
         doc.xpath('/tv/programme').each do |programme|
           process_programme(programme)
         end
