@@ -1,3 +1,4 @@
+.idea
 .bundle
 /channels.txt
 /channel_mappings.yaml
@@ -7,4 +8,5 @@
 *.sqlite
 *.pyc
 *.yaml
+*.iml
 epg.xml
