@@ -1,3 +1,4 @@
+import os
 from threading import Thread, Lock
 import threading
 import datetime
@@ -19,7 +20,7 @@ def synchronized(lock):
     return wrap
 
 myLock = Lock()
-class Scheduler():
+class Scheduler(threading.Thread):
     upcoming_recordings = []
 
     def __init__(self):
@@ -27,14 +28,21 @@ class Scheduler():
         Scheduler.upcoming_recordings = []
         self.current_recordings = [None, None]
         self.recorders = {}
+        threading.Thread.__init__(self)
+
+    def run(self):
+        super(Scheduler, self).run()
+        self.process()
 
     @synchronized(myLock)
     def recordings(self,recordings):
         
         Scheduler.upcoming_recordings = sorted(recordings, key=lambda rec: rec.start_time)
         for upcoming in Scheduler.upcoming_recordings:
-            if upcoming.expired:
-               del(Scheduler.upcoming_recordings[Scheduler.upcoming_recordings.index(upcoming)])
+            if upcoming.expired():
+               recordings_index = Scheduler.upcoming_recordings.index(upcoming)
+               logger().info("Upcoming recording idx: {}".format(recordings_index))
+               del(Scheduler.upcoming_recordings[recordings_index])
 #        Scheduler.upcoming_recordings = recordings.sort_by {|r| r.start_time }.find_all {|r| !r.expired? }
         logger().info("Scheduling upcoming recordings: {0}".format(Scheduler.upcoming_recordings))
 
@@ -57,10 +65,7 @@ class Scheduler():
                 status_texts.append("Tuner {} is recording '{}' on channel '{}'".format(count, recording.show_name, recording.channel.name))
             count = count + 1
 
-        if len(status_texts) > 0:
-            return 'Recording ' + ", ".join(status_texts)
-        else:
-            return "Not recording"
+        return 'Recording ' + ", ".join(status_texts)
 
     def get_upcoming_recordings(self):
         return Scheduler.upcoming_recordings
@@ -135,4 +140,18 @@ class Scheduler():
                 self.current_recordings[available_slot] = next_recording
                 self.recorders[next_recording] = recorder
                 recorder.start()
+
+                ## TODO: fork here
+#                r, w = os.pipe()
+#                pid = os.fork()
+#                if pid == 0:
+#                    ## parent process
+#                    os.close(w)
+#                    r = os.fdopen(r) # turn r into a file object
+#                else:
+#                    os.close(r)
+#                    w = os.fdopen(w, 'w') # turn w into writable file object
+#                    ## child ~ recorder process
+
+
 

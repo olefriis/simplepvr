@@ -22,7 +22,8 @@ def hdhomerun():
 def setup():
     from .master_import import Channel
 
-    __scheduler.process() #Process will run itself over and over using a threading.Timer
+    __scheduler.setDaemon(True)
+    __scheduler.start()
 
     if not Channel.query.all():
         __hdhomerun.scan_for_channels()

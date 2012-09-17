@@ -103,8 +103,11 @@ class HDHomeRun:
 
     def _spawn_recorder_process(self, tuner, directory):
         open(self._tuner_control_file(tuner), "a") ## Touch file
-        subprocess.call([os.curdir + '"/hdhomerun_save.sh"', self.device_id, str(tuner), '"'+ directory +'/stream.ts"', '"'+ directory +'/hdhomerun_save.log"', '"'+ self._tuner_control_file(tuner)+'"'], shell=True)
-        return os.curdir + str(tuner)
+
+        command =  "{}/hdhomerun_save.sh {} {} {} {} {}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts', directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
+        r = subprocess.call(command, shell=True)
+        print r
+        return os.path.dirname(__file__) + "/" + str(tuner)
 
     def _reset_tuner_frequency(self, tuner):
         system(self._hdhr_config_prefix() + " set /tuner{0}/channel none".format(tuner))
@@ -112,7 +115,7 @@ class HDHomeRun:
     def _send_control_c_to_process(self, tuner, pid):
         self._deleteFileIfExists(self._tuner_control_file(tuner))
 #        FileUtils.rm(tuner_control_file(tuner))
-        os.waitpid(pid)
+        os.waitpid(pid, os.WNOHANG)
 
     def _tuner_control_file(self, tuner):
         return os.curdir + "/tuner{0}.lock".format(tuner)

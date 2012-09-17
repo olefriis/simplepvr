@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime,timedelta
 
 
 class Recording:
@@ -20,8 +20,7 @@ class Recording:
         return "'{0}' from '{1}' at '{2}'".format(self.show_name, self.channel, self.start_time)
 
     def expired(self):
-        return
-        start_time + datetime.timedelta(seconds = duration) < datetime.now
+        return (self.start_time + timedelta(seconds = self.duration)) < datetime.now()
 
     def inspect(self):
         return "'{0}' from '{1}' at '{2}'".format(self.show_name, self.channel, self.start_time)
