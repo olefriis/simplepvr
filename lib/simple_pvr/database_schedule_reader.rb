@@ -8,7 +8,7 @@ module SimplePvr
       @recording_planner = RecordingPlanner.new
       
       Model::Schedule.all.each do |schedule|
-        @recording_planner.specification(title: schedule.title, channel: schedule.channel)
+        @recording_planner.specification(title: schedule.title, channel: schedule.channel, start_time: schedule.start_time)
       end
       
       @recording_planner.finish
