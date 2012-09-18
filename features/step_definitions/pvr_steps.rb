@@ -56,6 +56,12 @@ Then /I should see the schedule "(.*)"/ do |text|
   end
 end
 
+Then /I should see the timed schedule "(.*)"/ do |text|
+  within('#schedules') do
+    page.should have_content(text + " at ")
+  end
+end
+
 Then /I should not see the schedule "(.*)"/ do |text|
   within('#schedules') do
     page.should_not have_content(text)

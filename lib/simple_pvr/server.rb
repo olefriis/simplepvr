@@ -24,7 +24,8 @@ module SimplePvr
         {
           id: schedule.id,
           title: schedule.title,
-          channel: schedule.channel ? { id: schedule.channel.id, name: schedule.channel.name } : nil
+          channel: schedule.channel ? { id: schedule.channel.id, name: schedule.channel.name } : nil,
+          start_time: schedule.start_time
         }
       end.to_json
     end
@@ -165,6 +166,14 @@ module SimplePvr
     post '/api/programmes/:id/record_on_this_channel' do |id|
       programme = Model::Programme.get(id.to_i)
       Model::Schedule.add_specification(title: programme.title, channel: programme.channel)
+      reload_schedules
+      programme_hash(programme).to_json
+    end
+
+    post '/api/programmes/:id/record_just_this_programme' do |id|
+      puts "Record just this programme #{id}"
+      programme = Model::Programme.get(id.to_i)
+      Model::Schedule.add_specification(title: programme.title, channel: programme.channel, start_time: programme.start_time)
       reload_schedules
       programme_hash(programme).to_json
     end

@@ -63,7 +63,11 @@ function ProgrammeCtrl($scope, $routeParams, $http, Programme) {
 		// I wish Angular could let me define this operation on the Programme object
 		post('/api/programmes/' + $scope.programme.id + '/record_on_any_channel');
 	}
-	
+	$scope.recordJustThisProgramme = function() {
+		// I wish Angular could let me define this operation on the Programme object
+		post('/api/programmes/' + $scope.programme.id + '/record_just_this_programme');
+	}
+
 	loadProgramme();
 }
 

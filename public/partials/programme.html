@@ -8,8 +8,11 @@
 			<p>This programme is being recorded.</p>
 		</div>
 		<div ng-hide="programme.is_scheduled">
-			<p><button class="btn btn-primary" type="button" ng-click="recordOnThisChannel()">Record on this channel</button>
-			<button class="btn btn-primary" type="button" ng-click="recordOnAnyChannel()">Record on any channel</button></p>
+			<p>
+				<button class="btn btn-primary" type="button" ng-click="recordOnThisChannel()">Record on this channel</button>
+				<button class="btn btn-primary" type="button" ng-click="recordOnAnyChannel()">Record on any channel</button>
+				<button class="btn btn-primary" type="button" ng-click="recordJustThisProgramme()">Record just this programme</button>
+			</p>
 		</div>
 	</div>
 </div>
