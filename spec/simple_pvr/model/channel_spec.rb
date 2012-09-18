@@ -1,20 +1,20 @@
-require 'simple_pvr/model/database_initializer'
+require 'simple_pvr'
 
 describe SimplePvr::Model::Channel do
   include SimplePvr::Model
   
   before :all do
-    DatabaseInitializer.prepare_for_test
+    SimplePvr::Model::DatabaseInitializer.prepare_for_test
   end
   
   before :each do
-    DatabaseInitializer.clear
+    SimplePvr::Model::DatabaseInitializer.clear
   end
   
   it 'can insert channels' do
-    3.times {|i| Channel.add("Channel #{i}", 23000000, 1098) }
-  
-    Channel.all.length.should == 3
+    3.times {|i| SimplePvr::Model::Channel.add("Channel #{i}", 23000000, 1098) }
+
+    SimplePvr::Model::Channel.all.length.should == 3
   end
 
   it 'can clear channels' do

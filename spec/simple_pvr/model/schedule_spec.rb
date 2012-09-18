@@ -1,4 +1,4 @@
-require 'simple_pvr/model/database_initializer'
+require 'simple_pvr'
 
 describe SimplePvr::Model::Schedule do
   include SimplePvr::Model

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tv generator-info-name="www.ontv.dk/xmltv">
+	<channel id="www.ontv.dk/tv/1">
+		<display-name lang="dk">DR1 DK</display-name>
+	</channel>
+	<channel id="www.ontv.dk/tv/2">
+		<display-name lang="dk">DR2 DK</display-name>
+	</channel>
+	
+	<programme channel="www.ontv.dk/tv/1" start="20120717060000 +0200" stop="20120717061000 +0200">
+		<title lang="dk">Noddy</title>
+		<sub-title lang="dk">Bare vær dig selv, Noddy.</sub-title>
+		<desc lang="dk">Tegnefilm.
+Her kommer Noddy - så kom ud og leg! Den lille dreng af træ har altid travlt med at køre sine venner rundt i Legebyen - og du kan altid høre, når han er på vej!</desc>
+		<category lang="EN">kids</category>
+		<category lang="EN">serie</category>
+		<icon src="http://ontv.dk//imgs/print_img.php?sti=/imgs/epg/channel/2012-07-17/1/11342497600.jpg&amp;height=300&amp;width=300"/>
+	</programme>
+	<programme channel="www.ontv.dk/tv/1" start="20120717061000 +0200" stop="20120717062000 +0200">
+		<title lang="dk">Sprutte-Patruljen</title>
+		<desc lang="dk">Spruttepatruljen og algesuppen.</desc>
+		<category lang="EN">kids</category>
+		<category lang="EN">serie</category>
+	</programme>
+	<programme channel="www.ontv.dk/tv/1" start="20120717062000 +0200" stop="20120717064000 +0200">
+		<title lang="dk">Kære Sebastian</title>
+		<sub-title lang="dk">Geparden skal have kød.</sub-title>
+		<desc lang="dk">Zoo's vildeste dyr. Sebastian Klein overfaldes og skubbes omkuld af en af zoo's vildeste dyr - gederne. Det er mad tid og de er sultne.</desc>
+		<category lang="EN">kids</category>
+		<category lang="EN">serie</category>
+	</programme>
+	<programme channel="www.ontv.dk/tv/1" start="20120717064000 +0200" stop="20120717065000 +0200">
+		<title lang="dk">Rasmus Klump på Nordpolen</title>
+		<desc lang="dk">Vi tager atter med Rasmus Klump og hans venner på  eventyr.</desc>
+		<category lang="EN">kids</category>
+	</programme>
+	<programme channel="www.ontv.dk/tv/1" start="20120717065000 +0200" stop="20120717070000 +0200">
+		<title lang="dk">Olivia</title>
+		<sub-title lang="dk">Olivia på scenen.</sub-title>
+		<desc lang="dk">Animation med dansk tale.
+Slå griseører og øjne ud, for modige Olivia er klar til at tage verden med storm! Den skæve, skøre og sjove gris Olivia er god til alt muligt, bl.a. at gøre folk rigtig trætte. Olivia kan nemlig som ingen anden prøve tøj fra skabet eller male billeder på væggen. Olivia har også startet sit eget band og sågar optrådt i cirkus.</desc>
+		<category lang="EN">kids</category>
+		<category lang="EN">serie</category>
+		<icon src="http://ontv.dk//imgs/print_img.php?sti=/imgs/epg/channel/2012-07-17/1/11342500600.jpg&amp;height=300&amp;width=300"/>
+	</programme>
+	
+	<programme channel="www.ontv.dk/tv/2" start="20120717080500 +0200" stop="20120717120000 +0200">
+		<title lang="dk">Morgenandagten på DR2</title>
+		<desc lang="dk">DR2 samsender med P2 Klassisk: Morgenandagten fra Københavns Domkirke. Den direkte radiotransmission af Morgenandagten ledsages af stemningsfulde billeder fra kirken samt kobbertryk af billedkunstneren Robert Jacobsen i anledning af 100-året for hans fødsel. Der er mulighed for at følge med i tekstlæsninger og salmesang, idet andagten tekstes.
+www.dr.dk/tro</desc>
+	</programme>
+	<programme channel="www.ontv.dk/tv/2" start="20120717120000 +0200" stop="20120717123000 +0200">
+		<title lang="dk">Black Business</title>
+		<desc lang="dk">Hvis du har den rigtige idé, mod og eventyrlyst, kan du gøre store forretninger og tjene mange penge i Afrika. For Afrika er økonomisk set blandt de hurtigste voksende regioner i verden. Det sker lige nu, og det gælder om at komme først. Esben Sørensen er en rødhåret dansker på 30 år, der er vokset op delvist i Afrika og delvist i Danmark. Han har et pladeselskab, hvor han indtil nu kun har udgivet en enkelt plade - med sig selv. Drømmen er at Caravan Records bliver det største pladeselskab i Østafrika, og det er absolut ikke urealistisk, for Østafrika er fyldt med musikalsk talent, markedet er gigantisk og afrikanernes købekraft stiger.
+Sendt første gang 25.01.11</desc>
+		<category lang="EN">documentary</category>
+		<category lang="EN">serie</category>
+		<episode-num system="xmltv_ns"> .1/4. </episode-num>
+	</programme>
+	<programme channel="www.ontv.dk/tv/2" start="20120717123000 +0200" stop="20120717130000 +0200">
+		<title lang="dk">Solens mad</title>
+		<desc lang="dk">Vi skal med på en rejse til madens og vinens Italien, vi skal på besøg hos nogle af de mange bønder i landet, som ikke går på kompromis med den gode smag og som tilhører den stadigt voksende bevægelse af producenter, der har en stor forståelse for, at miljø, klima og bæredygtighed er hjørnesten i alle produkter.
+Overgødning og miljøgifte har ødelagt mange af Europas indsøer. I dag skal vi til Trasimeno-søen i Umbrien, den fjerdestørste indsø i Italien. Her lever fiskere og bønder side om side, begge parter meget bevidste om at bevare vandet og jorden her i landets grønne hjerte.
+Nordvision fra Sverige.</desc>
+		<category lang="EN">entertainment</category>
+		<category lang="EN">serie</category>
+		<episode-num system="xmltv_ns"> .2/6. </episode-num>
+	</programme>
+	<programme channel="www.ontv.dk/tv/2" start="20120717130000 +0200" stop="20120717133000 +0200">
+		<title lang="dk">Øl i Frilandshaven</title>
+		<desc lang="dk">Sommerens bedste bryg bliver lavet over åben ild, og i udekøkkenet står menuen på kalvehaler i mørkt øl og jordbær i balsamico.
+Sendt første gang 16.08.06</desc>
+		<category lang="EN">entertainment</category>
+		<credits>
+			<actor role="Organizer">Jørgen Skouboe</actor>
+			<actor role="Organizer">Anne Hjernøe</actor>
+		</credits>
+	</programme>
+	<programme channel="www.ontv.dk/tv/2" start="20120717133000 +0200" stop="20120717142500 +0200">
+		<title lang="dk">Intelligence - i hemmelig tjeneste</title>
+		<sub-title lang="dk">Italiensk actionserie fra 2009.</sub-title>
+		<desc lang="dk">Den tidligere jægersoldat Marco Tancredis hustru, Lidia, er blevet skudt. Marco er sikker på, at det var overlagt mord, og han er parat til at gøre hvad som helst for at finde ud af, hvem der står bag. Snart gør han en forbløffende opdagelse - nemlig at Lidia arbejdede for den italienske efterretningstjeneste. Men hvad arbejdede hun på? Og hvorfor skulle hun slås ihjel?</desc>
+		<category lang="EN">serie</category>
+		<episode-num system="xmltv_ns"> .1/12. </episode-num>
+		<icon src="http://ontv.dk//imgs/print_img.php?sti=/imgs/epg/channel/2012-07-17/2/21342524600.jpg&amp;height=300&amp;width=300"/>
+	</programme>
+	<programme channel="www.ontv.dk/tv/2" start="20120717142500 +0200" stop="20120717152000 +0200">
+		<title lang="dk">Intelligence - i hemmelig tjeneste</title>
+		<sub-title lang="dk">Italiensk actionserie fra 2009.</sub-title>
+		<desc lang="dk">Den tidligere jægersoldat Marco Tancredis hustru er blevet myrdet. Marco har opdaget, at hun arbejdede for den italienske efterretningstjeneste, og nu har han selv ladet sig ansætte som efterretningsagent for at finde frem til sandheden om hendes død. Marcos jagt på svar bringer ham til Rumænien - og ansigt til ansigt med en kvinde, der er ude på sit eget private hævntogt.</desc>
+		<category lang="EN">serie</category>
+		<episode-num system="xmltv_ns"> .2/12. </episode-num>
+		<icon src="http://ontv.dk//imgs/print_img.php?sti=/imgs/epg/channel/2012-07-17/2/21342527900.jpg&amp;height=300&amp;width=300"/>
+	</programme>
+</tv>
