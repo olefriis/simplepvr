@@ -58,7 +58,7 @@ end
 
 Then /I should see the timed schedule "(.*)"/ do |text|
   within('#schedules') do
-    page.should have_content(text + " at ")
+    page.text.should =~ /#{text} .* \d+, \d{4} at \d?\d:\d\d/
   end
 end
 
