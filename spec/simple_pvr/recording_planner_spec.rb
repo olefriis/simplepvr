@@ -12,15 +12,6 @@ describe SimplePvr::RecordingPlanner do
     @recording_planner = SimplePvr::RecordingPlanner.new
   end
   
-  it 'can set up simple recording' do
-    @scheduler.should_receive(:recordings=).with([
-      SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes)
-    ])
-
-    @recording_planner.simple('Borgias', @dr_k, Time.local(2012, 7, 10, 20, 48), 67.minutes)
-    @recording_planner.finish
-  end
-  
   it 'can set up schedules from channel and program title' do
     @programme_1 = double(channel:@dr_k, start_time: Time.local(2012, 7, 10, 20, 50), duration: 60.minutes)
     @programme_2 = double(channel:@dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)

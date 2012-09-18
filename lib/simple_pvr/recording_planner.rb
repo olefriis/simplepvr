@@ -6,10 +6,6 @@ module SimplePvr
       @recordings = []
     end
     
-    def simple(title, channel, start_time, duration)
-      add_recording(title, channel, start_time, duration)
-    end
-    
     def specification(options)
       title, channel = options[:title], options[:channel]
       if channel
