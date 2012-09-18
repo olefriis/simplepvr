@@ -1,7 +1,7 @@
 require 'active_support/all'
 
 module SimplePvr
-  RecordingMetadata = Struct.new(:show_name, :episode, :channel, :subtitle, :description, :start_time, :duration)
+  RecordingMetadata = Struct.new(:has_thumbnail, :show_name, :episode, :channel, :subtitle, :description, :start_time, :duration)
   
   class RecordingManager
     def initialize(recordings_directory=nil)
@@ -18,14 +18,12 @@ module SimplePvr
     
     def episodes_of(show_name)
       episodes = Dir.new(directory_for_show(show_name)).entries - ['.', '..']
-      result = episodes.map do |episode|
+      episodes.map do |episode|
         metadata_for(show_name, episode)
       end
-      result
     end
     
     def delete_show_episode(show_name, episode)
-      puts "Fjerner #{@recordings_directory + '/' + show_name + '/' + episode}"
       FileUtils.rm_rf(@recordings_directory + '/' + show_name + '/' + episode)
     end
 
@@ -65,8 +63,12 @@ module SimplePvr
     def metadata_for(show_name, episode)
       metadata_file_name = directory_for_show_and_episode(show_name, episode) + '/metadata.yml'
       metadata = File.exists?(metadata_file_name) ? YAML.load_file(metadata_file_name) : {}
+
+      thumbnail_file_name = directory_for_show_and_episode(show_name, episode) + '/thumbnail.png'
+      has_thumbnail = File.exists?(thumbnail_file_name)
       
       RecordingMetadata.new(
+        has_thumbnail,
         show_name,
         episode,
         metadata[:channel],

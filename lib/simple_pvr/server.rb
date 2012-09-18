@@ -17,7 +17,10 @@ module SimplePvr
       PvrLogger.info('Beware: Unsecured server. Do not expose to the rest of the world!')
     end
 
-    settings.public_folder = File.dirname(__FILE__) + '/../../public/'
+    configure do
+      set :public_folder, File.dirname(__FILE__) + '/../../public/'
+      mime_type :webm, 'video/webm'
+    end
 
     get '/api/schedules/?' do
       Model::Schedule.all.map do |schedule|
@@ -223,7 +226,8 @@ module SimplePvr
           subtitle: recording.subtitle,
           description: recording.description,
           start_time: recording.start_time,
-          channel_name: recording.channel
+          channel_name: recording.channel,
+          has_thumbnail: recording.has_thumbnail
         }
       end.to_json
     end
@@ -234,11 +238,13 @@ module SimplePvr
     end
     
     get '/api/shows/:show_id/recordings/:recording_id/thumbnail.png' do |show_id, recording_id|
-      puts "Hejsa hejsa hejsa!!!"
       path = PvrInitializer.recording_manager.directory_for_show_and_episode(show_id, recording_id)
-      puts "Path: #{path}"
-      Ffmpeg.ensure_thumbnail_exists(path)
       send_file File.join(path, 'thumbnail.png')
+    end
+
+    get '/api/shows/:show_id/recordings/:recording_id/stream.ts' do |show_id, recording_id|
+      path = PvrInitializer.recording_manager.directory_for_show_and_episode(show_id, recording_id)
+      send_file File.join(path, 'stream.ts')
     end
 
     get '/api/status' do

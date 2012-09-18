@@ -6,10 +6,11 @@
 <div class="row" ng-repeat="recordingChunk in recordings | chunk:2">
 	<div class="span6" ng-repeat="recording in recordingChunk">
    		<h2>{{recording.episode}}</h2>
-		<img class="thumbnail" ng-src="/api/shows/{{show.name}}/recordings/{{recording.episode}}/thumbnail.png">
+		<img ng-show="recording.has_thumbnail" class="thumbnail" ng-src="/api/shows/{{show.name}}/recordings/{{recording.episode}}/thumbnail.png">
 		<p>{{recording.subtitle}}</p>
 		<p>{{recording.start_time | date:'fullDate'}} at {{recording.start_time | date:'HH:mm'}} from channel {{recording.channel_name}}.</p>
 		<p>{{recording.description}}</p>
+		<p><a ng-href="/api/shows/{{show.name}}/recordings/{{recording.episode}}/stream.ts">Stream</a></p>
 		<p><button class="btn" type="button" ng-click="deleteRecording(recording)">Delete recording</button></p>
 	</div>
 </div>
