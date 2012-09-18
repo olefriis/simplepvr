@@ -103,7 +103,7 @@ module SimplePvr
       end
   
       {
-        channel: { id: channel.id, name: channel.name },
+        channel: { id: channel.id, name: channel.name,  icon_url: channel.icon_url },
         previous_date: previous_date.to_s(:programme_date),
         this_date: this_date.to_s(:programme_date),
         next_date: next_date.to_s(:programme_date),
