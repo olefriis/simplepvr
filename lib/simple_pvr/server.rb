@@ -222,6 +222,14 @@ module SimplePvr
       PvrInitializer.recording_manager.delete_show_episode(show_id, episode)
       ''
     end
+    
+    get '/api/shows/:show_id/recordings/:recording_id/thumbnail.png' do |show_id, recording_id|
+      puts "Hejsa hejsa hejsa!!!"
+      path = PvrInitializer.recording_manager.directory_for_show_and_episode(show_id, recording_id)
+      puts "Path: #{path}"
+      Ffmpeg.ensure_thumbnail_exists(path)
+      send_file File.join(path, 'thumbnail.png')
+    end
 
     get '/api/status' do
       {

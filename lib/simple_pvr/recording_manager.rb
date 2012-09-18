@@ -41,17 +41,16 @@ module SimplePvr
 
       recording_directory
     end
+    
+    def directory_for_show_and_episode(show_name, episode)
+      directory_for_show(show_name) + '/' + episode
+    end
 
     private
     def directory_for_show(show_name)
       sanitized_directory_name = show_name.gsub(/\"|\'|\*|\.|\/|\\|:/, '')
-      puts "Sanitized: #{sanitized_directory_name}"
       directory_name = sanitized_directory_name.present? ? sanitized_directory_name : 'Unnamed'
       @recordings_directory + '/' + directory_name
-    end
-    
-    def directory_for_show_and_episode(show_name, episode)
-      directory_for_show(show_name) + '/' + episode
     end
     
     def ensure_directory_exists(directory)
