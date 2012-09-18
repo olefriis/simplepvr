@@ -31,4 +31,17 @@ describe SimplePvr::Model::Schedule do
     schedules[0].title.should == 'Sports'
     schedules[0].channel.name.should == 'DR 1'
   end
+
+  it 'can save a schedule with a title and a channel and a start_time' do
+    start_time = Time.local(2012, 7, 10, 20, 50)
+    Schedule.add_specification(title: 'Sports', channel: @dr_1, start_time: start_time)
+
+    schedules = Schedule.all
+    schedules.length.should == 1
+    schedules[0].type.should == :specification
+    schedules[0].title.should == 'Sports'
+    schedules[0].channel.name.should == 'DR 1'
+    schedules[0].start_time.should == start_time
+
+  end
 end

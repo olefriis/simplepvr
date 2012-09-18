@@ -7,6 +7,7 @@ module SimplePvr
       property :id, Serial
       property :type, Enum[:specification]
       property :title, String
+      property :start_time, DateTime
 
       belongs_to :channel, required: false
     
@@ -14,7 +15,8 @@ module SimplePvr
         Schedule.create(
           type: :specification,
           title: options[:title],
-          channel: options[:channel])
+          channel: options[:channel],
+          start_time: options[:start_time])
       end
     end
   end
