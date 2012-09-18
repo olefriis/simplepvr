@@ -21,9 +21,10 @@ describe SimplePvr::Recorder do
     @recorder.start!
   end
   
-  it 'can stop recording as well' do
+  it 'can stop recording as well, and creates a thumbnail' do
     @hdhomerun.stub(:start_recording)
     @hdhomerun.should_receive(:stop_recording).with(1)
+    SimplePvr::Ffmpeg.should_receive(:create_thumbnail_for).with('recording directory')
   
     @recorder.start!
     @recorder.stop!

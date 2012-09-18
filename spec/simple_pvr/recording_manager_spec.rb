@@ -56,6 +56,21 @@ describe SimplePvr::RecordingManager do
     episodes[1].duration == 10.minutes
   end
   
+  it 'knows when no thumbnail exists' do
+    episodes = @manager.episodes_of('series 1')
+
+    episodes[0].has_thumbnail.should == false
+  end
+
+  it 'knows when thumbnail exists' do
+    FileUtils.touch(@recording_dir + "/series 1/1/thumbnail.png")
+    episodes = @manager.episodes_of('series 1')
+
+    episodes[0].show_name.should == 'series 1'
+    episodes[0].episode.should == '1'
+    episodes[0].has_thumbnail.should == true
+  end
+
   it 'can delete an episode of a given show' do
     @manager.delete_show_episode('series 1', '3')
     File.exists?(@recording_dir + '/series 1/3').should be_false
