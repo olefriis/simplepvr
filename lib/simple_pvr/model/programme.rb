@@ -34,7 +34,11 @@ module SimplePvr
       def self.on_channel_with_title(channel, title)
         Programme.all(channel: channel, title: title, order: :start_time)
       end
-      
+
+      def self.on_channel_with_title_and_start_time(channel, title, start_time)
+        Programme.all(channel: channel, title: title, start_time: start_time)
+      end
+
       def self.titles_containing(text)
         # Maybe there's a smarter way to do substring search than constructing "%#{text}%"? I'd like
         # a version where the original input is escaped properly. However, this method is not

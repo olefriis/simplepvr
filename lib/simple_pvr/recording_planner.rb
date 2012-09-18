@@ -7,8 +7,10 @@ module SimplePvr
     end
     
     def specification(options)
-      title, channel = options[:title], options[:channel]
-      if channel
+      title, channel, start_time = options[:title], options[:channel], options[:start_time]
+      if channel && start_time
+        schedule_programmes(title, Model::Programme.on_channel_with_title_and_start_time(channel, title, start_time))
+      elsif channel
         schedule_programmes(title, Model::Programme.on_channel_with_title(channel, title))
       else
         schedule_programmes(title, Model::Programme.with_title(title))
