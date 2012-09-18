@@ -11,7 +11,7 @@
 <div class="row" ng-repeat="channelChunk in channels | orderBy:name | filter:shouldShowChannel | filter:channelFilter | chunk:3">
 	<div ng-repeat="channel in channelChunk" class="span4">
 		<div>
-			<img class="channel-icon" ng-src="{{channel.icon_url}}" />
+			<img ng-show="channel.icon_url" class="channel-icon" ng-src="{{channel.icon_url}}" />
 			<span class="channel-name">
 				{{channel.name}}
 			</span>
