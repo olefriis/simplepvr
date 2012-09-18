@@ -67,7 +67,8 @@ module SimplePvr
         {
           id: channel.id,
           name: channel.name,
-          hidden: channel.hidden
+          hidden: channel.hidden,
+          icon_url: channel.icon_url
         }
       end.to_json
     end
