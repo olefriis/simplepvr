@@ -40,6 +40,9 @@ Also, Nokogori might be problematic on some platforms, but importing XMLTV is th
 Nokogiri than with the built-in REXML (counting the whole process of importing XMLTV, not just reading the
 XML).
 
+If you'd like thumbnails for the recorded shows, you need FFMPEG on the command-line. Install it using
+MacPorts, Homebrew, or whatever.
+
 Running the web GUI
 ===================
 Start the server by running
@@ -114,7 +117,6 @@ are the only means you have for speeding things up. This includes:
 * Duplication detection.
 * Visualize conflicts in upcoming recordings.
 * XMLTV import:
-  * Needs more speed!
   * Let SimplePVR itself fetch XMLTV URLs at specified times of day.
   * Set-up of matching XMLTV IDs to channels could make good use of a GUI.
   * Parse and make use of channel icons, programme icons, episode numbers, etc.
