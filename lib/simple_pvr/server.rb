@@ -181,19 +181,6 @@ module SimplePvr
       programme_hash(programme).to_json
     end
 
-    def programme_hash(programme)
-      is_scheduled = PvrInitializer.scheduler.is_scheduled?(programme)
-      {
-        id: programme.id,
-        channel: { id: programme.channel.id, name: programme.channel.name },
-        title: programme.title,
-        subtitle: programme.subtitle,
-        description: programme.description,
-        start_time: programme.start_time,
-        is_scheduled: is_scheduled
-      }
-    end
-
     get '/api/shows' do
       shows = PvrInitializer.recording_manager.shows
       shows.map do |show|
@@ -218,18 +205,12 @@ module SimplePvr
 
     get '/api/shows/:show_id/recordings/?' do |show_id|
       recordings = PvrInitializer.recording_manager.episodes_of(show_id)
-      recordings.map do |recording|
-        {
-          id: recording.episode,
-          show_id: show_id,
-          episode: recording.episode,
-          subtitle: recording.subtitle,
-          description: recording.description,
-          start_time: recording.start_time,
-          channel_name: recording.channel,
-          has_thumbnail: recording.has_thumbnail
-        }
-      end.to_json
+      recordings.map {|recording| recording_hash(show_id, recording) }.to_json
+    end
+
+    get '/api/shows/:show_id/recordings/:recording_id/?' do |show_id, recording_id|
+      recording = PvrInitializer.recording_manager.metadata_for(show_id, recording_id)
+      recording_hash(show_id, recording).to_json
     end
 
     delete '/api/shows/:show_id/recordings/:episode' do |show_id, episode|
@@ -245,6 +226,17 @@ module SimplePvr
     get '/api/shows/:show_id/recordings/:recording_id/stream.ts' do |show_id, recording_id|
       path = PvrInitializer.recording_manager.directory_for_show_and_episode(show_id, recording_id)
       send_file File.join(path, 'stream.ts')
+    end
+
+    get '/api/shows/:show_id/recordings/:recording_id/stream.webm' do |show_id, recording_id|
+      path = PvrInitializer.recording_manager.directory_for_show_and_episode(show_id, recording_id)
+      send_file File.join(path, 'stream.webm'), type: :webm
+    end
+
+    post '/api/shows/:show_id/recordings/:recording_id/transcode' do |show_id, recording_id|
+      path = PvrInitializer.recording_manager.directory_for_show_and_episode(show_id, recording_id)
+      Ffmpeg.transcode_to_webm(path)
+      ''
     end
 
     get '/api/status' do
@@ -263,6 +255,33 @@ module SimplePvr
 
     def reload_schedules
       DatabaseScheduleReader.read
+    end
+
+    def programme_hash(programme)
+      is_scheduled = PvrInitializer.scheduler.is_scheduled?(programme)
+      {
+        id: programme.id,
+        channel: { id: programme.channel.id, name: programme.channel.name },
+        title: programme.title,
+        subtitle: programme.subtitle,
+        description: programme.description,
+        start_time: programme.start_time,
+        is_scheduled: is_scheduled
+      }
+    end
+
+    def recording_hash(show_id, recording)
+      {
+        id: recording.episode,
+        show_id: show_id,
+        episode: recording.episode,
+        subtitle: recording.subtitle,
+        description: recording.description,
+        start_time: recording.start_time,
+        channel_name: recording.channel,
+        has_thumbnail: recording.has_thumbnail,
+        has_webm: recording.has_webm
+      }
     end
   end
 end

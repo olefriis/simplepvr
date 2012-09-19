@@ -10,7 +10,12 @@
 		<p>{{recording.subtitle}}</p>
 		<p>{{recording.start_time | date:'fullDate'}} at {{recording.start_time | date:'HH:mm'}} from channel {{recording.channel_name}}.</p>
 		<p>{{recording.description}}</p>
-		<p><a ng-href="/api/shows/{{show.name}}/recordings/{{recording.episode}}/stream.ts">Stream</a></p>
+		<p>
+			<a target="_self" ng-href="/api/shows/{{show.name}}/recordings/{{recording.episode}}/stream.ts">Raw stream</a>
+			-
+			<a ng-show="recording.has_webm" target="_self" ng-href="/api/shows/{{show.name}}/recordings/{{recording.episode}}/stream.webm">View in browser (Firefox/Chrome)</a>
+			<button ng-hide="recording.has_webm" class="btn" type="button" ng-click="startTranscoding(recording)">Prepare for playing in Firefox/Chrome</button>
+		</p>
 		<p><button class="btn" type="button" ng-click="deleteRecording(recording)">Delete recording</button></p>
 	</div>
 </div>

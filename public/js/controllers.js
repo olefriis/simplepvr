@@ -85,7 +85,7 @@ function ShowsCtrl($scope, $http, Show) {
 	loadShows();
 }
 
-function ShowCtrl($scope, $routeParams, Show, Recording) {
+function ShowCtrl($scope, $routeParams, $http, Show, Recording) {
 	var loadRecordings = function() {
 		$scope.recordings = Recording.query({showId: $routeParams.showId});
 	}
@@ -94,6 +94,11 @@ function ShowCtrl($scope, $routeParams, Show, Recording) {
 		if (confirm("Really delete recording\n" + recording.episode + "\nof show\n" + $scope.show.name + "\n?")) {
 			recording.$delete(loadRecordings);
 		}
+	}
+
+	$scope.startTranscoding = function(recording) {
+		// I wish Angular could let me define this operation on the Programme object
+		$http.post('/api/shows/' + $routeParams.showId + '/recordings/' + recording.id + '/transcode').success(loadRecordings);
 	}
 
 	$scope.show = Show.get({id: $routeParams.showId});

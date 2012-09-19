@@ -1,7 +1,7 @@
 require 'active_support/all'
 
 module SimplePvr
-  RecordingMetadata = Struct.new(:has_thumbnail, :show_name, :episode, :channel, :subtitle, :description, :start_time, :duration)
+  RecordingMetadata = Struct.new(:has_thumbnail, :has_webm, :show_name, :episode, :channel, :subtitle, :description, :start_time, :duration)
   
   class RecordingManager
     def initialize(recordings_directory=nil)
@@ -23,6 +23,28 @@ module SimplePvr
       end
     end
     
+    def metadata_for(show_name, episode)
+      metadata_file_name = directory_for_show_and_episode(show_name, episode) + '/metadata.yml'
+      metadata = File.exists?(metadata_file_name) ? YAML.load_file(metadata_file_name) : {}
+
+      thumbnail_file_name = directory_for_show_and_episode(show_name, episode) + '/thumbnail.png'
+      has_thumbnail = File.exists?(thumbnail_file_name)
+
+      webm_file_name = directory_for_show_and_episode(show_name, episode) + '/stream.webm'
+      has_webm = File.exists?(webm_file_name)
+
+      RecordingMetadata.new(
+        has_thumbnail,
+        has_webm,
+        show_name,
+        episode,
+        metadata[:channel],
+        metadata[:subtitle],
+        metadata[:description],
+        metadata[:start_time],
+        metadata[:duration])
+    end
+
     def delete_show_episode(show_name, episode)
       FileUtils.rm_rf(@recordings_directory + '/' + show_name + '/' + episode)
     end
@@ -58,24 +80,6 @@ module SimplePvr
     def next_sequence_number_for(base_directory)
       largest_current_sequence_number = Dir.new(base_directory).map {|dir_name| dir_name.to_i }.max
       1 + largest_current_sequence_number
-    end
-    
-    def metadata_for(show_name, episode)
-      metadata_file_name = directory_for_show_and_episode(show_name, episode) + '/metadata.yml'
-      metadata = File.exists?(metadata_file_name) ? YAML.load_file(metadata_file_name) : {}
-
-      thumbnail_file_name = directory_for_show_and_episode(show_name, episode) + '/thumbnail.png'
-      has_thumbnail = File.exists?(thumbnail_file_name)
-      
-      RecordingMetadata.new(
-        has_thumbnail,
-        show_name,
-        episode,
-        metadata[:channel],
-        metadata[:subtitle],
-        metadata[:description],
-        metadata[:start_time],
-        metadata[:duration])
     end
     
     def create_metadata(directory, recording)
