@@ -119,7 +119,7 @@ are the only means you have for speeding things up. This includes:
 * XMLTV import:
   * Let SimplePVR itself fetch XMLTV URLs at specified times of day.
   * Set-up of matching XMLTV IDs to channels could make good use of a GUI.
-  * Parse and make use of programme icons, episode numbers, etc.
+  * Parse and make use of programme icons etc.
 * Searching for tuners and scanning for channels would be nice through a GUI.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.
