@@ -130,13 +130,15 @@ describe SimplePvr::RecordingManager do
     end
     
     it 'stores extensive metadata if programme information exists' do
-      @recording.programme = SimplePvr::Model::Programme.new(subtitle: 'A subtitle', description: "A description,\nspanning several lines")
-      @manager.create_directory_for_recording(@recording)
+      start_time = Time.local(2012, 7, 23, 15, 30, 15)
+      recording = SimplePvr::Recording.new(double(name: 'Channel 4'), 'Extensive Metadata', start_time, 50.minutes)
+      recording.programme = SimplePvr::Model::Programme.new(subtitle: 'A subtitle', description: "A description,\nspanning several lines")
+      @manager.create_directory_for_recording(recording)
     
-      metadata = YAML.load_file(@recording_dir + '/Star Trek/1/metadata.yml')
-      metadata[:title].should == 'Star Trek'
+      metadata = YAML.load_file(@recording_dir + '/Extensive Metadata/1/metadata.yml')
+      metadata[:title].should == 'Extensive Metadata'
       metadata[:channel].should == 'Channel 4'
-      metadata[:start_time].should == @start_time
+      metadata[:start_time].should == start_time
       metadata[:duration].should == 50.minutes
       metadata[:subtitle].should == 'A subtitle'
       metadata[:description].should == "A description,\nspanning several lines"
