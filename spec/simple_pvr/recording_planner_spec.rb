@@ -17,8 +17,8 @@ describe SimplePvr::RecordingPlanner do
     @programme_2 = double(channel:@dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
     SimplePvr::Model::Programme.stub(:on_channel_with_title).with(@dr_k, 'Borgias').and_return([@programme_1, @programme_2])
     @scheduler.should_receive(:recordings=).with([
-      SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes, @programme_1),
-      SimplePvr::Recording.new(@dr_k,'Borgias',  Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
+      SimplePvr::Model::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes, @programme_1),
+      SimplePvr::Model::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
     ])
 
     @recording_planner.specification(title: 'Borgias', channel: @dr_k)
@@ -36,7 +36,7 @@ describe SimplePvr::RecordingPlanner do
     SimplePvr::Model::Programme.stub(:on_channel_with_title_and_start_time).with(@dr_k, programme_title, start_time_2).and_return([@programme_to_be_recorded])
 
     @scheduler.should_receive(:recordings=).with([
-         SimplePvr::Recording.new(@dr_k, programme_title, start_time_2.advance(minutes: -2), 2.minutes + programme_duration + 5.minutes, @programme_to_be_recorded)
+         SimplePvr::Model::Recording.new(@dr_k, programme_title, start_time_2.advance(minutes: -2), 2.minutes + programme_duration + 5.minutes, @programme_to_be_recorded)
     ])
 
     @recording_planner.specification(title: 'Borgias', channel: @dr_k, start_time: start_time_2)
@@ -48,8 +48,8 @@ describe SimplePvr::RecordingPlanner do
     @programme_2 = double(channel: @dr_k, start_time: Time.local(2012, 7, 17, 20, 50), duration: 60.minutes)
     SimplePvr::Model::Programme.stub(:with_title).with('Borgias').and_return([@programme_1, @programme_2])
     @scheduler.should_receive(:recordings=).with([
-      SimplePvr::Recording.new(@dr_1, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes, @programme_1),
-      SimplePvr::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', Time.local(2012, 7, 10, 20, 48), 67.minutes, @programme_1),
+      SimplePvr::Model::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
     ])
 
     @recording_planner.specification(title: 'Borgias')

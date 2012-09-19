@@ -2,18 +2,6 @@ require File.dirname(__FILE__) + '/recorder'
 require File.dirname(__FILE__) + '/pvr_logger'
 
 module SimplePvr
-  Recording = Struct.new(:channel, :show_name, :start_time, :duration, :programme)
-
-  class Recording
-    def expired?
-      start_time.advance(seconds: duration) < Time.now
-    end
-    
-    def inspect
-      "'#{show_name}' from '#{channel.name}' at '#{start_time}'"
-    end
-  end
-
   class Scheduler
     attr_reader :upcoming_recordings
     

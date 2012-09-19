@@ -31,7 +31,7 @@ module SimplePvr
     end
     
     def add_recording(title, channel, start_time, duration, programme=nil)
-      @recordings << Recording.new(channel, title, start_time, duration, programme)
+      @recordings << SimplePvr::Model::Recording.new(channel, title, start_time, duration, programme)
     end
   end
 end

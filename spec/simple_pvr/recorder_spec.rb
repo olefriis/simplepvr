@@ -1,9 +1,9 @@
-require 'simple_pvr/recorder'
+require 'simple_pvr'
 
 describe SimplePvr::Recorder do
   before do
     @channel = SimplePvr::Model::Channel.new(frequency: 282000000, channel_id: 1098)
-    @recording = SimplePvr::Recording.new(@channel, 'Star Trek', 'start time', 'duration')
+    @recording = SimplePvr::Model::Recording.new(@channel, 'Star Trek', 'start time', 'duration')
 
     @hdhomerun = double('HDHomeRun')
     SimplePvr::PvrInitializer.stub(hdhomerun: @hdhomerun)

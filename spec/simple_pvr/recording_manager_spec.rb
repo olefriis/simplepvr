@@ -90,7 +90,7 @@ describe SimplePvr::RecordingManager do
   context 'when creating recording directories' do
     before do
       @start_time = Time.local(2012, 7, 23, 15, 30, 15)
-      @recording = SimplePvr::Recording.new(double(name: 'Channel 4'), 'Star Trek', @start_time, 50.minutes)
+      @recording = SimplePvr::Model::Recording.new(double(name: 'Channel 4'), 'Star Trek', @start_time, 50.minutes)
     end
     
     it 'records to directory with number 1 if nothing exists' do
@@ -142,7 +142,7 @@ describe SimplePvr::RecordingManager do
     
     it 'stores extensive metadata if programme information exists' do
       start_time = Time.local(2012, 7, 23, 15, 30, 15)
-      recording = SimplePvr::Recording.new(double(name: 'Channel 4'), 'Extensive Metadata', start_time, 50.minutes)
+      recording = SimplePvr::Model::Recording.new(double(name: 'Channel 4'), 'Extensive Metadata', start_time, 50.minutes)
       recording.programme = SimplePvr::Model::Programme.new(subtitle: 'A subtitle', description: "A description,\nspanning several lines")
       @manager.create_directory_for_recording(recording)
     
