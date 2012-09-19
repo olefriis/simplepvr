@@ -23,16 +23,16 @@ describe SimplePvr::Model::Programme do
   end
 
   it 'can clear all programmes' do
-    3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+    3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes, nil) }
     Programme.clear
   
     Programme.all.length.should == 0
   end
 
   it 'can find all programmes with a certain title' do
-    Programme.add(@dr_2, 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add(@dr_1, 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    Programme.add(@dr_1, 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_2, 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_1, 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_1, 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
 
     programmes = Programme.with_title('Interesting')
     programmes.length.should == 2
@@ -50,10 +50,10 @@ describe SimplePvr::Model::Programme do
   end
 
   it 'can find all programmes with a certain title for a specific channel' do
-    Programme.add(@dr_1, 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add(@dr_1, 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    Programme.add(@dr_2, 'Interesting', '...but on wrong channel...', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add(@dr_1, 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'Interesting', 'Second', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_1, 'Interesting', 'First', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_2, 'Interesting', '...but on wrong channel...', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_1, 'Uninteresting', 'Subtitle', 'Description', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
   
     programmes = Programme.on_channel_with_title(@dr_1, 'Interesting')
     programmes.length.should == 2
@@ -68,41 +68,41 @@ describe SimplePvr::Model::Programme do
   end
   
   it 'can find titles containing a certain string' do
-    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    Programme.add(@dr_1, 'Uninteresting', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_1, 'Uninteresting', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
     
     titles = Programme.titles_containing('programme')
     titles.should == ['First programme', 'Second programme']
   end
   
   it 'gives no duplicates as title search' do
-    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes)
+    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes, nil)
     
     titles = Programme.titles_containing('programme')
     titles.should == ['First programme', 'Second programme']
   end
   
   it 'finds at most 8 titles containing a certain string' do
-    20.times {|i| Programme.add(@dr_1, "Programme #{i}", '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes) }
+    20.times {|i| Programme.add(@dr_1, "Programme #{i}", '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil) }
 
     titles = Programme.titles_containing('programme')
     titles.length.should == 8
   end
   
   it 'can find programmes with titles containing a certain string, ordered by start time' do
-    first_programme = Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
-    second_programme = Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes)
-    Programme.add(@dr_1, 'Uninteresting', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes)
+    first_programme = Programme.add(@dr_1, 'First programme', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
+    second_programme = Programme.add(@dr_2, 'Second programme', '', '', Time.local(2012, 7, 17, 20, 30), 50.minutes, nil)
+    Programme.add(@dr_1, 'Uninteresting', '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil)
     
     titles = Programme.with_title_containing('programme')
     titles.should == [second_programme, first_programme]
   end
   
   it 'finds at most 20 programmes with titles containing a certain string' do
-    30.times {|i| Programme.add(@dr_1, "Programme #{i}", '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes) }
+    30.times {|i| Programme.add(@dr_1, "Programme #{i}", '', '', Time.local(2012, 7, 24, 20, 30), 50.minutes, nil) }
 
     titles = Programme.with_title_containing('programme')
     titles.length.should == 20
