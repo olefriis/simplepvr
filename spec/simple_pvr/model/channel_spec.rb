@@ -45,6 +45,23 @@ describe SimplePvr::Model::Channel do
     expect { Channel.with_name('unknown') }.to raise_error "Unknown channel: 'unknown'"
   end
   
+  it 'can fetch a channel along with the current and next 3 programmes' do
+    channel = Channel.add('Channel 1', 23000000, 1098)
+
+    now = Time.now
+    ten_minutes = 10.minutes.to_i
+    current = Programme.create(channel: channel, title: 'Current programme on channel 1', subtitle: 'Current programme subtitle', start_time: now.advance(minutes: -3), duration: ten_minutes)
+    programme_2 = Programme.create(channel: channel, title: 'Next programme', subtitle: 'Next programme subtitle', start_time: now.advance(minutes: 7), duration: ten_minutes)
+    programme_3 = Programme.create(channel: channel, title: 'Programme 3', start_time: now.advance(minutes: 17), duration: ten_minutes)
+    programme_4 = Programme.create(channel: channel, title: 'Programme 4', start_time: now.advance(minutes: 27), duration: ten_minutes)
+
+    channel_and_programmes = Channel.with_current_programmes(channel.id)
+
+    channel_and_programmes[:channel].should == channel
+    channel_and_programmes[:current_programme].should == current
+    channel_and_programmes[:upcoming_programmes].should == [programme_2, programme_3, programme_4]
+  end
+
   it 'can fetch all channels, along with the current and next 3 programmes' do
     channel_1 = Channel.add('Channel 1', 23000000, 1098)
     channel_2 = Channel.add('Channel 2', 23000000, 1098)
@@ -62,7 +79,7 @@ describe SimplePvr::Model::Channel do
 
     old_programme_on_channel_3 = Programme.create(channel: channel_2, title: 'Obsolete programme', start_time: now.advance(minutes: -20), duration: ten_minutes)
 
-    channels = Channel.with_current_programmes
+    channels = Channel.all_with_current_programmes
     channels.length.should == 3
 
     channels[0][:channel].should == channel_1

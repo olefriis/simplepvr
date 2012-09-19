@@ -67,38 +67,35 @@ module SimplePvr
     end
 
     get '/api/channels/?' do
-      Model::Channel.with_current_programmes.map do |channel_with_current_programmes|
-        channel = channel_with_current_programmes[:channel]
-        current_programme = channel_with_current_programmes[:current_programme]
-        upcoming_programmes = channel_with_current_programmes[:upcoming_programmes]
-
-        current_programme_map = current_programme ?
-          {
-            id: current_programme.id,
-            title: current_programme.title,
-            subtitle: current_programme.subtitle,
-            start_time: current_programme.start_time
-          } :
-          nil
-        upcoming_programmes_map = upcoming_programmes.map do |programme|
-          {
-            id: programme.id,
-            title: programme.title,
-            subtitle: programme.subtitle,
-            start_time: programme.start_time
-          }
-        end
-
-        {
-          id: channel.id,
-          name: channel.name,
-          hidden: channel.hidden,
-          icon_url: channel.icon_url,
-          current_programme: channel,
-          current_programme: current_programme_map,
-          upcoming_programmes: upcoming_programmes_map
-        }
+      Model::Channel.all_with_current_programmes.map do |channel_with_current_programmes|
+        channel_with_current_programmes_hash(channel_with_current_programmes)
       end.to_json
+    end
+
+    get '/api/channels/:id' do |id|
+      channel_with_current_programmes_hash(Model::Channel.with_current_programmes(id)).to_json
+    end
+
+    post '/api/channels/:id/hide' do |id|
+      channel = Model::Channel.get(id)
+      channel.hidden = true
+      channel.save
+      {
+        id: channel.id,
+        name: channel.name,
+        hidden: channel.hidden
+      }.to_json
+    end
+
+    post '/api/channels/:id/show' do |id|
+      channel = Model::Channel.get(id)
+      channel.hidden = false
+      channel.save
+      {
+        id: channel.id,
+        name: channel.name,
+        hidden: channel.hidden
+      }.to_json
     end
 
     get '/api/channels/:channel_id/programme_listings/:date/?' do |channel_id, date_string|
@@ -136,37 +133,6 @@ module SimplePvr
         this_date: this_date.to_s(:programme_date),
         next_date: next_date.to_s(:programme_date),
         days: days
-      }.to_json
-    end
-
-    get '/api/channels/:id' do |id|
-      channel = Model::Channel.get(id)
-      {
-        id: channel.id,
-        name: channel.name,
-        hidden: channel.hidden
-      }.to_json
-    end
-
-    post '/api/channels/:id/hide' do |id|
-      channel = Model::Channel.get(id)
-      channel.hidden = true
-      channel.save
-      {
-        id: channel.id,
-        name: channel.name,
-        hidden: channel.hidden
-      }.to_json
-    end
-
-    post '/api/channels/:id/show' do |id|
-      channel = Model::Channel.get(id)
-      channel.hidden = false
-      channel.save
-      {
-        id: channel.id,
-        name: channel.name,
-        hidden: channel.hidden
       }.to_json
     end
 
@@ -306,6 +272,39 @@ module SimplePvr
         channel_name: recording.channel,
         has_thumbnail: recording.has_thumbnail,
         has_webm: recording.has_webm
+      }
+    end
+
+    def channel_with_current_programmes_hash(channel_with_current_programmes)
+      channel = channel_with_current_programmes[:channel]
+      current_programme = channel_with_current_programmes[:current_programme]
+      upcoming_programmes = channel_with_current_programmes[:upcoming_programmes]
+
+      current_programme_map = current_programme ?
+        {
+          id: current_programme.id,
+          title: current_programme.title,
+          subtitle: current_programme.subtitle,
+          start_time: current_programme.start_time
+        } :
+        nil
+      upcoming_programmes_map = upcoming_programmes.map do |programme|
+        {
+          id: programme.id,
+          title: programme.title,
+          subtitle: programme.subtitle,
+          start_time: programme.start_time
+        }
+      end
+
+      {
+        id: channel.id,
+        name: channel.name,
+        hidden: channel.hidden,
+        icon_url: channel.icon_url,
+        current_programme: channel,
+        current_programme: current_programme_map,
+        upcoming_programmes: upcoming_programmes_map
       }
     end
   end

@@ -18,6 +18,8 @@
 						<span class="channel-name">
 							{{channel.name}}
 						</span>
+						<a ng-href="channels" ng-hide="channel.hidden" class="icon-remove pull-right" ng-click="hideChannel(channel)" title="Hide channel" ></a>
+						<a ng-href="channels" ng-show="channel.hidden" class="icon-ok pull-right" ng-click="showChannel(channel)" title="Show channel"></a>
 					</th>
 				</tr>
 			</thead>
@@ -30,9 +32,7 @@
 					<td><a ng-href="/programmes/{{upcomingProgramme.id}}">{{upcomingProgramme.title}}</a></td></tr>
 				<tr>
 					<td colspan="2">
-						<a ng-href="/channels/{{channel.id}}/programmeListings/today" class="btn">View programmes</a>
-						<button class="btn" type="button" ng-click="hideChannel(channel)" ng-hide="channel.hidden">Hide channel</button>
-						<button class="btn" type="button" ng-click="showChannel(channel)" ng-show="channel.hidden">Show channel</button>
+						<a ng-href="/channels/{{channel.id}}/programmeListings/today" class="pull-right">...</a>
 					</td>
 				</tr>
 			</tbody>
