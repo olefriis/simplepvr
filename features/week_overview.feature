@@ -36,3 +36,4 @@ Scenario: I can go to the previous week
 Scenario: I can go to the programme description
   Given I follow "Bonderøven"
   Then I should see "Danish documentary"
+  And I should see "Episode 23/40"

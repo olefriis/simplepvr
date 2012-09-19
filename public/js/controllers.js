@@ -49,7 +49,7 @@ function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
 
 function ProgrammeCtrl($scope, $routeParams, $http, Programme) {
 	var loadProgramme = function() {
-		$scope.programme = Programme.get({id: $routeParams.programmeId})
+		$scope.programme = Programme.get({id: $routeParams.programmeId});
 	}
 	var post = function(url) {
 		$http.post(url).success(loadProgramme);

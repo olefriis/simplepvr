@@ -4,6 +4,8 @@
 		<p>{{programme.start_time | date:'fullDate'}} at {{programme.start_time | date:'HH:mm'}} on channel {{programme.channel.name}}.</p>
 		<p>{{programme.subtitle}}</p>
 		<p>{{programme.description}}</p>
+
+        <div ng-show="programme.episode_num">Episode {{programme.episode_num | formatEpisode}}</div>
 		<div ng-show="programme.is_scheduled">
 			<p>This programme is being recorded.</p>
 		</div>

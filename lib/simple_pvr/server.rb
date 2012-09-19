@@ -266,7 +266,8 @@ module SimplePvr
         subtitle: programme.subtitle,
         description: programme.description,
         start_time: programme.start_time,
-        is_scheduled: is_scheduled
+        is_scheduled: is_scheduled,
+        episode_num: programme.episode_num
       }
     end
 

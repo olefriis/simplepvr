@@ -8,7 +8,7 @@ Given /the following programmes\:/ do |programme_table|
     channel = find_or_create_channel_with_name(programme['channel'] || 'Channel 1')
     air_time = Time.now.advance(days: (programme['day'] || '0').to_i)
     SimplePvr::Model::Programme.add(channel, programme['title'] || '', programme['subtitle'] || '',
-      programme['description'] || '', air_time, 60.minutes, nil)
+      programme['description'] || '', air_time, 60.minutes, ' .23/40. ')
   end
 end
 

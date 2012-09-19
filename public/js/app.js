@@ -60,6 +60,11 @@ filter('chunk', function() {
 	return result;
   }
 }).
+filter('formatEpisode', function() {
+    return function(episodeNum) {
+        return episodeNum ? episodeNum.replace(' .', '').replace('. ', '') : "";
+    }
+}).
 config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix('');
 
