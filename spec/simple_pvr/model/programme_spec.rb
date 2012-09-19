@@ -1,4 +1,4 @@
-require 'simple_pvr/model/database_initializer'
+require 'simple_pvr'
 
 describe SimplePvr::Model::Programme do
   include SimplePvr::Model
@@ -17,7 +17,7 @@ describe SimplePvr::Model::Programme do
   end
   
   it 'can insert programmes' do
-    3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes) }
+    3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes, ' .4/12. ') }
   
     Programme.all.length.should == 3
   end

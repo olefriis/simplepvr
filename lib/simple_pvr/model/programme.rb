@@ -3,28 +3,30 @@ module SimplePvr
     class Programme
       include DataMapper::Resource
       storage_names[:default] = 'programmes'
-    
+
       property :id, Serial
       property :title, String, index: true, :length => 255
       property :subtitle, String, :length => 255
       property :description, Text
       property :start_time, DateTime
       property :duration, Integer
-    
+      property :episode_num, String, index: true
+
       belongs_to :channel
 
       def self.clear
         Programme.destroy
       end
 
-      def self.add(channel, title, subtitle, description, start_time, duration)
+      def self.add(channel, title, subtitle, description, start_time, duration, episode_num)
         channel.programmes.create(
           channel: channel,
           title: title,
           subtitle: subtitle,
           description: description,
           start_time: start_time,
-          duration: duration.to_i)
+          duration: duration.to_i,
+          episode_num: episode_num)
       end
 
       def self.with_title(title)
@@ -46,7 +48,7 @@ module SimplePvr
         # wildcard.
         Programme.all(:title.like => "%#{text}%", fields: [:title], order: :title, limit: 8, unique: true).map {|programme| programme.title }
       end
-      
+
       def self.with_title_containing(text)
         # Same "LIKE" comments as above...
         Programme.all(:title.like => "%#{text}%", order: :start_time, limit: 20)
