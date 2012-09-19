@@ -20,7 +20,8 @@ describe SimplePvr::XmltvReader do
       'Bare vær dig selv, Noddy.',
       "Tegnefilm.\nHer kommer Noddy - så kom ud og leg! Den lille dreng af træ har altid travlt med at køre sine venner rundt i Legebyen - og du kan altid høre, når han er på vej!",
       Time.new(2012, 7, 17, 6, 0, 0, "+02:00"),
-      10.minutes)
+      10.minutes,
+      ' .2/12. ')
     
     @xmltv_reader.read(File.new(File.dirname(__FILE__) + '/../resources/programs.xmltv'))
   end

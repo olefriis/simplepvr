@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <tv generator-info-name="www.ontv.dk/xmltv">
 	<channel id="www.ontv.dk/tv/1">
 		<display-name lang="dk">DR1 DK</display-name>
@@ -16,6 +16,7 @@
 Her kommer Noddy - så kom ud og leg! Den lille dreng af træ har altid travlt med at køre sine venner rundt i Legebyen - og du kan altid høre, når han er på vej!</desc>
 		<category lang="EN">kids</category>
 		<category lang="EN">serie</category>
+		<episode-num system="xmltv_ns"> .2/12. </episode-num>
 		<icon src="http://ontv.dk//imgs/print_img.php?sti=/imgs/epg/channel/2012-07-17/1/11342497600.jpg&amp;height=300&amp;width=300"/>
 	</programme>
 	<programme channel="www.ontv.dk/tv/1" start="20120717061000 +0200" stop="20120717062000 +0200">
