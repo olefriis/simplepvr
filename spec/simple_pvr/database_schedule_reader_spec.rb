@@ -20,7 +20,7 @@ describe SimplePvr::DatabaseScheduleReader do
   
   it 'creates recordings with titles' do
     SimplePvr::Model::Schedule.stub(all: [SimplePvr::Model::Schedule.new(title: 'Sports')])
-    @recording_planner.should_receive(:specification).with(title: 'Sports', channel: nil)
+    @recording_planner.should_receive(:specification).with(title: 'Sports', channel: nil, start_time: nil)
     @recording_planner.should_receive(:finish)
     
     SimplePvr::DatabaseScheduleReader.read
@@ -28,7 +28,7 @@ describe SimplePvr::DatabaseScheduleReader do
   
   it 'creates recordings with titles and channels' do
     SimplePvr::Model::Schedule.stub(all: [SimplePvr::Model::Schedule.new(title: 'Sports', channel: @dr_k)])
-    @recording_planner.should_receive(:specification).with(title: 'Sports', channel: @dr_k)
+    @recording_planner.should_receive(:specification).with(title: 'Sports', channel: @dr_k, start_time: nil)
     @recording_planner.should_receive(:finish)
     
     SimplePvr::DatabaseScheduleReader.read
