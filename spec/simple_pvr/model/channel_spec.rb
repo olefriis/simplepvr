@@ -45,15 +45,36 @@ describe SimplePvr::Model::Channel do
     expect { Channel.with_name('unknown') }.to raise_error "Unknown channel: 'unknown'"
   end
   
-  it 'can fetch all channels alphabetically' do
-    Channel.add('Channel 2', 23000000, 1098)
-    Channel.add('Channel 1', 23000000, 1098)
-    Channel.add('Channel 3', 23000000, 1098)
+  it 'can fetch all channels, along with the current and next 3 programmes' do
+    channel_1 = Channel.add('Channel 1', 23000000, 1098)
+    channel_2 = Channel.add('Channel 2', 23000000, 1098)
+    channel_3 = Channel.add('Channel 3', 23000000, 1098)
     
-    channels = Channel.sorted_by_name
+    now = Time.now
+    ten_minutes = 10.minutes.to_i
+    current_on_channel_1 = Programme.create(channel: channel_1, title: 'Current programme on channel 1', subtitle: 'Current programme subtitle', start_time: now.advance(minutes: -3), duration: ten_minutes)
+    programme_2_on_channel_1 = Programme.create(channel: channel_1, title: 'Next programme', subtitle: 'Next programme subtitle', start_time: now.advance(minutes: 7), duration: ten_minutes)
+    programme_3_on_channel_1 = Programme.create(channel: channel_1, title: 'Programme 3', start_time: now.advance(minutes: 17), duration: ten_minutes)
+    programme_4_on_channel_1 = Programme.create(channel: channel_1, title: 'Programme 4', start_time: now.advance(minutes: 27), duration: ten_minutes)
+    programme_5_on_channel_1 = Programme.create(channel: channel_1, title: 'Programme 5', start_time: now.advance(minutes: 37), duration: ten_minutes)
+
+    programme_1_on_channel_2 = Programme.create(channel: channel_2, title: 'Next programme on channel 2', start_time: now.advance(minutes: 17), duration: ten_minutes)
+
+    old_programme_on_channel_3 = Programme.create(channel: channel_2, title: 'Obsolete programme', start_time: now.advance(minutes: -20), duration: ten_minutes)
+
+    channels = Channel.with_current_programmes
     channels.length.should == 3
-    channels[0].name.should == 'Channel 1'
-    channels[1].name.should == 'Channel 2'
-    channels[2].name.should == 'Channel 3'
+
+    channels[0][:channel].should == channel_1
+    channels[0][:current_programme].should == current_on_channel_1
+    channels[0][:upcoming_programmes].should == [programme_2_on_channel_1, programme_3_on_channel_1, programme_4_on_channel_1]
+
+    channels[1][:channel].should == channel_2
+    channels[1][:current_programme].should be_nil
+    channels[1][:upcoming_programmes].should == [programme_1_on_channel_2]
+
+    channels[2][:channel].should == channel_3
+    channels[2][:current_programme].should be_nil
+    channels[2][:upcoming_programmes].should == []
   end
 end

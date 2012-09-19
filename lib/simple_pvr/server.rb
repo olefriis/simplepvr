@@ -67,12 +67,36 @@ module SimplePvr
     end
 
     get '/api/channels/?' do
-      Model::Channel.sorted_by_name.map do |channel|
+      Model::Channel.with_current_programmes.map do |channel_with_current_programmes|
+        channel = channel_with_current_programmes[:channel]
+        current_programme = channel_with_current_programmes[:current_programme]
+        upcoming_programmes = channel_with_current_programmes[:upcoming_programmes]
+
+        current_programme_map = current_programme ?
+          {
+            id: current_programme.id,
+            title: current_programme.title,
+            subtitle: current_programme.subtitle,
+            start_time: current_programme.start_time
+          } :
+          nil
+        upcoming_programmes_map = upcoming_programmes.map do |programme|
+          {
+            id: programme.id,
+            title: programme.title,
+            subtitle: programme.subtitle,
+            start_time: programme.start_time
+          }
+        end
+
         {
           id: channel.id,
           name: channel.name,
           hidden: channel.hidden,
-          icon_url: channel.icon_url
+          icon_url: channel.icon_url,
+          current_programme: channel,
+          current_programme: current_programme_map,
+          upcoming_programmes: upcoming_programmes_map
         }
       end.to_json
     end

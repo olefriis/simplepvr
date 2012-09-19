@@ -10,16 +10,27 @@ Background:
     | Channel 2 |
     | Animals   |
   And the following programmes:
-    | title          | subtitle                        | channel   |
-    | Bonderøven     | Danish documentary              | Channel 1 |
-    | Blood and Bone | American action movie from 2009 | Channel 1 |
-    | Noddy          | Children's programme            | Channel 2 |
+    | title           | subtitle                        | channel   | day |
+	| Blast from past | Prehistoric documentary         | Channel 1 |  -1 |
+    | Bonderøven      | Danish documentary              | Channel 1 |   0 |
+    | Blood and Bone  | American action movie from 2009 | Channel 1 |   0 |
+    | Noddy           | Children's programme            | Channel 2 |   0 |
 
-Scenario: Channel overview
+Scenario: Channel overview shows channel names
   Given I am on the channel overview page
   Then I should see "Channel 1"
   And I should see "Channel 2"
   And I should see "Animals"
+
+Scenario: Channel overview shows upcoming programmes
+  Given I am on the channel overview page
+  Then I should see "Bonderøven"
+  But I should not see "Blast from past"
+
+Scenario: Clicking on an upcoming programme reveals more programme information
+  Given I am on the channel overview page
+  And I follow "Bonderøven"
+  Then I should see "Danish documentary"
 
 Scenario: Channel filtering
   Given I am on the channel overview page
