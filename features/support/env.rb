@@ -11,6 +11,7 @@ SimplePvr::DatabaseScheduleReader.read
 
 Capybara.app = SimplePvr::Server
 Capybara.default_driver = :selenium
+Capybara.default_wait_time = 5
 
 class SimplePvrWorld
   include Capybara::DSL

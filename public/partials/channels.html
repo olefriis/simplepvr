@@ -10,16 +10,32 @@
 </div>
 <div class="row" ng-repeat="channelChunk in channels | orderBy:name | filter:shouldShowChannel | filter:channelFilter | chunk:3">
 	<div ng-repeat="channel in channelChunk" class="span4">
-		<div>
-			<img ng-show="channel.icon_url" class="channel-icon" ng-src="{{channel.icon_url}}" />
-			<span class="channel-name">
-				{{channel.name}}
-			</span>
-		</div>
-		<p>
-			<a ng-href="/channels/{{channel.id}}/programmeListings/today" class="btn">View programmes</a>
-				<button class="btn" type="button" ng-click="hideChannel(channel)" ng-hide="channel.hidden">Hide channel</button>
-				<button class="btn" type="button" ng-click="showChannel(channel)" ng-show="channel.hidden">Show channel</button>
-		</p>
+		<table class="table table-condensed">
+			<thead>
+				<tr>
+					<th colspan="2">
+						<img ng-show="channel.icon_url" class="channel-icon" ng-src="{{channel.icon_url}}" />
+						<span class="channel-name">
+							{{channel.name}}
+						</span>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-show="channel.current_programme">
+					<td class="span1">{{channel.current_programme.start_time | date:'HH:mm'}}</td>
+					<td><a ng-href="/programmes/{{channel.current_programme.id}}">{{channel.current_programme.title}}</td></tr>
+				<tr ng-repeat="upcomingProgramme in channel.upcoming_programmes">
+					<td class="span1">{{upcomingProgramme.start_time | date:'HH:mm'}}</td>
+					<td><a ng-href="/programmes/{{upcomingProgramme.id}}">{{upcomingProgramme.title}}</a></td></tr>
+				<tr>
+					<td colspan="2">
+						<a ng-href="/channels/{{channel.id}}/programmeListings/today" class="btn">View programmes</a>
+						<button class="btn" type="button" ng-click="hideChannel(channel)" ng-hide="channel.hidden">Hide channel</button>
+						<button class="btn" type="button" ng-click="showChannel(channel)" ng-show="channel.hidden">Show channel</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </div>
