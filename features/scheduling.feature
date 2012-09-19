@@ -12,7 +12,7 @@ Background:
     | Bonderøven     | Danish documentary   | Channel 1 |   3 |
     | Noddy          | Children's programme | Channel 1 |   1 |
 
-Scenario: Nothing is scheduled by defult
+Scenario: Nothing is scheduled by default
   Given I am on the schedules page
   Then there should be 0 upcoming recordings
 
