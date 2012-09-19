@@ -29,6 +29,7 @@ First of all, you need a computer and an HDHomeRun tuner box. On your computer, 
 
 You need Ruby 1.9.2 (or newer - 1.9.0 or newer is probably enough). Running the tests are not supported 
 on Ruby 1.9.3, so for now, stick with 1.9.2.
+
 Dump this source somewhere, and run
 
         gem install bundler
@@ -38,16 +39,13 @@ It might not always be completely straightforward... we use DataMapper, which in
 which compiles some native stuff. So on MacOS, you need to install XCode and its command-line utilities, or
 get "make" in some other way. On Linux, it should just work. Don't know about Windows.
 
-Also, Nokogori might be problematic on some platforms, but importing XMLTV is three times faster with
-Nokogiri than with the built-in REXML (counting the whole process of importing XMLTV, not just reading the
-XML).
+If you'd like thumbnails for the recorded shows and ability to transcode recordings to WebM (so you can view
+them directly in your browser), you need FFMPEG on the command-line. Install it using MacPorts, Homebrew,
+"apt-get", or whatever.
 
-If you'd like thumbnails for the recorded shows, you need FFMPEG on the command-line. Install it using
-MacPorts, Homebrew, or whatever.
-
-Running the web GUI
+Starting the server
 ===================
-Start the server by running
+Run
 
         bundle exec ruby pvr_server.rb
 
@@ -99,6 +97,8 @@ Inside the numbered directories are these files:
 * hdhomerun_save.log: The output from the actual recording command.
 * metadata.yml: Recording time, title, channel, etc.
 
+...and a few other files (thumbnails, transcoded version of the recording, etc.).
+
 Future?
 =======
 This projects needs to be a nice, readable, hackable, tested system. No pull requests are
@@ -110,11 +110,9 @@ are the only means you have for speeding things up. This includes:
 * "Gemify" the stuff, so installation becomes a breeze.
 * Web interface:
   * Better overview of recordings.
-  * Playback of recordings (also on mobile devices).
   * Some better overview pages, e.g. "all children programmes", "all movies this week".
   * Possibility to set up schedules defined by a channel, a start time, and a duration (and a name,
     probably), so that the web GUI is usable even without XMLTV.
-* Record specific programmes, not only "record all with this title".
 * Exclude specific programmes from "all with this title".
 * Duplication detection.
 * Visualize conflicts in upcoming recordings.
