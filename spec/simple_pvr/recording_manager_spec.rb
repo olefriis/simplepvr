@@ -1,4 +1,4 @@
-require 'simple_pvr/recording_manager'
+require 'simple_pvr'
 require 'yaml'
 
 describe SimplePvr::RecordingManager do
