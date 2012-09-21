@@ -46,7 +46,7 @@ describe SimplePvr::Model::Channel do
   end
   
   it 'can fetch a channel along with the current and next 3 programmes' do
-    channel = Channel.add('Channel 1', 23000000, 1098)
+    channel = Channel.create(name: 'Channel 1')
 
     now = Time.now
     ten_minutes = 10.minutes.to_i
@@ -60,6 +60,23 @@ describe SimplePvr::Model::Channel do
     channel_and_programmes[:channel].should == channel
     channel_and_programmes[:current_programme].should == current
     channel_and_programmes[:upcoming_programmes].should == [programme_2, programme_3, programme_4]
+  end
+  
+  it 'does not fetch programmes for hidden channels' do
+    channel = Channel.create(name: 'Channel 1')
+    channel.hidden = true
+    channel.save!
+
+    now = Time.now
+    ten_minutes = 10.minutes.to_i
+    current = Programme.create(channel: channel, title: 'Current programme on channel 1', subtitle: 'Current programme subtitle', start_time: now.advance(minutes: -3), duration: ten_minutes)
+    programme_2 = Programme.create(channel: channel, title: 'Next programme', subtitle: 'Next programme subtitle', start_time: now.advance(minutes: 7), duration: ten_minutes)
+
+    channel_and_programmes = Channel.with_current_programmes(channel.id)
+
+    channel_and_programmes[:channel].should == channel
+    channel_and_programmes[:current_programme].should be_nil
+    channel_and_programmes[:upcoming_programmes].should == []
   end
 
   it 'can fetch all channels, along with the current and next 3 programmes' do

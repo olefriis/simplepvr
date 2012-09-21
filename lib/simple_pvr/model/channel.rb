@@ -54,12 +54,18 @@ module SimplePvr
       end
 
       def self.current_programme_for(channel, now)
-        result = Programme.all(:channel => channel, :start_time.lt => now, order: :start_time.desc, limit: 1)[0]
-        result if result && result.start_time.advance(seconds: result.duration) >= now
+        unless channel.hidden
+          result = Programme.all(:channel => channel, :start_time.lt => now, order: :start_time.desc, limit: 1)[0]
+          result if result && result.start_time.advance(seconds: result.duration) >= now
+        end
       end
 
       def self.upcoming_programmes_for(channel, limit, now)
-        Programme.all(:channel => channel, :start_time.gte => now, order: :start_time, limit: limit)
+        if channel.hidden
+          []
+        else
+          Programme.all(:channel => channel, :start_time.gte => now, order: :start_time, limit: limit)
+        end
       end
     end
   end
