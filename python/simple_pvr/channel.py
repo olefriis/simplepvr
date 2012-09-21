@@ -8,12 +8,12 @@ class Channel(db.Model):
     __tablename__ = 'channels'
 
     id = db.Column(Integer, primary_key=True)
-    name = db.Column(String)
+    name = db.Column(String, index=True)
     frequency = db.Column(Integer)
-    channel_id = db.Column(Integer)
+    channel_id = db.Column(Integer, index=True)
     hidden = db.Column(Boolean, nullable = False, default=False)
 
-#    programmes = relationship("Programme", primaryjoin="Channel.id==Programme.channel_id", backref="parent")
+#    programmes = db.relationship("Programme", primaryjoin="Channel.id==Programme.channel_id", backref="channels")
 #    has n, :programmes
 
     def __init__(self, name, frequency, channel_id, hidden=False):
@@ -22,8 +22,8 @@ class Channel(db.Model):
         self.channel_id = channel_id
         self.hidden = hidden
 
-    def add(self, name, frequency, id):
-        channel = Channel(name, frequency, id)
+    def add(self, name, frequency, channel_id, hidden=False):
+        channel = Channel(name, frequency, channel_id, hidden)
         db.session.add(channel)
         db.session.flush()
         db.session.commit()
@@ -33,6 +33,7 @@ class Channel(db.Model):
     @staticmethod
     def sorted_by_name():
         return Channel.query.\
+            filter(Channel.hidden == 0).\
             order_by(Channel.name).all()
 
     def clear(self):

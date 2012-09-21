@@ -1,4 +1,5 @@
 from datetime import datetime,timedelta
+import time
 
 
 class Recording:
@@ -25,3 +26,12 @@ class Recording:
     def inspect(self):
         return "'{0}' from '{1}' at '{2}'".format(self.show_name, self.channel, self.start_time)
 
+    def __cmp__(self, other):
+        if self is other:
+            return 0
+        if other is None:
+            return 1
+        return (self.start_time - other.start_time).total_seconds()
+
+    def __hash__(self):
+        return hash((self.show_name, self.start_time, self.programme))

@@ -20,6 +20,9 @@ width = 60
 def update_progress(progress):
     hashes = progress * width /100
     spaces = width-hashes
+    if (t is None or t.height is None):
+        print ('[{0}{1}] {2}%'.format('#'* hashes, ' '* spaces, progress))
+        return ''
     with t.location(0, t.height - 1):
         sys.stdout.write('[{0}{1}] {2}%'.format('#'* hashes, ' '* spaces, progress))
         sys.stdout.flush()
@@ -38,7 +41,7 @@ class XmltvReader:
     def read(self, file_name):
 
         logger().debug("Clearing programmes table")
-        Programme.clear
+        Programme.clear()
 
         logger().debug("Parsing EPG")
         start = time.time()
@@ -46,10 +49,8 @@ class XmltvReader:
         finish = time.time()
         logger().info("Parsed EPG in {} seconds".format((finish-start)))
 
-        # Programme.transaction
-        #with db.session.begin():
-        #admin = User('admin')
-        #db.session.add(admin)
+        categories = tree.getroot().getiterator("category")
+        self._process_categories(categories)
 
         programmes = tree.getroot().findall("./programme")
         total = len(programmes)
@@ -59,18 +60,53 @@ class XmltvReader:
         doCommit = False
 
         try:
+            progress_value = 0
             for programme in programmes:
                 if programme == programmes[-1]:
                     doCommit = True
 
                 self._process_programme(programme, doCommit)
                 current += 1
-                update_progress(100*current/total)
+                progress = (100 * current) / total
+                if ((progress - progress_value) > 0):
+                    update_progress(progress)
+                progress_value = progress
         finally:
             #Clear the progress bar from the terminal when done
+            if t is None or t.height is None:
+                return
             with t.location(0, t.height - 1):
                 sys.stdout.write('{}'.format(' '* (width + 7)))
                 sys.stdout.flush()
+
+    def _process_categories(self, categoryNodes):
+        from .master_import import Category
+        categories = set()
+        start_nodes = time.time()
+        for category in categoryNodes:
+            categories.add(category.text)
+        end_nodes = time.time()
+        print "Added all categories in {} seconds".format((end_nodes-start_nodes))
+        last_elem = list(categories)[-1]
+
+        print "Adding categories to database"
+        start_cat_db = time.time()
+        for cat_txt in categories:
+            cat = Category(cat_txt)
+            if cat_txt == last_elem:
+                start_commit = time.time()
+                cat.add(commit=True)
+                end_commit = time.time()
+                print "Committed categories to db in {} seconds".format((end_commit-start_commit))
+            else:
+                cat.add(commit=False)
+        end_cat_db = time.time()
+        print "Added categories to database in {} seconds".format((end_cat_db-start_cat_db))
+
+    def unique(self, seq): # Dave Kirby
+        # Order preserving
+        seen = set()
+        return [x for x in seq if x not in seen and not seen.add(x)]
 
    # private
     def _process_programme(self, programmeNode, doCommit=False):
@@ -97,6 +133,16 @@ class XmltvReader:
         subtitle_node = programmeNode.find("./sub-title")
         description_node = programmeNode.find("desc")
 
+        serie = False
+        categories = []
+        for category in programmeNode.findall("./category"):
+            category_text = category.text
+            if category_text == 'serie':
+                serie = True
+            else:
+                ## Only add category when it is not 'serie' as serie is handled in a dedicated field
+                categories.append(category_text)
+
         title = title_node.text
         subtitle = subtitle_node.text if subtitle_node is not None else ''
         description = description_node.text if description_node is not None else ''
@@ -107,9 +153,9 @@ class XmltvReader:
 
         channel = self._channel_from_name(channelName)
 
-        prg = Programme(channel, title, subtitle, description, start_time, duration)
+        prg = Programme(channel, title, subtitle, description, start_time, duration, serie, categories)
         prg.add(doCommit)
-#        Programme.add(prg, channel, title, subtitle, description, start_time, duration)
+
 
     def _channel_from_name(self, channel_name):
         channel = self.channel_from_name[safe_value(channel_name)]

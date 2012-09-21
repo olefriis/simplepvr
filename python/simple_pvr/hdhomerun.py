@@ -43,9 +43,12 @@ class HDHomeRun:
 
     def scan_for_channels(self, file_name = 'channels.txt'):
         from .master_import import Channel
-
-        self._scan_channels_with_tuner(file_name)
-        Channel.query.all().delete()
+        file_path = os.path.join(os.path.curdir, file_name)
+        if not os.path.isfile(file_path):
+            self._scan_channels_with_tuner(file_name)
+        else:
+            logger().info("Using existing file for reading channels. To force a new scan on the device, delete the '{}' file".format(file_path))
+        Channel.query.delete()
         self._read_channels_file(file_name)
 
     def start_recording(self, tuner, frequency, program_id, directory):
@@ -92,8 +95,14 @@ class HDHomeRun:
             elif program_search:
                 channel_id = int(program_search.group(1))
                 channel_name = program_search.group(2).strip()
-                channel = Channel(channel_name, channel_frequency, channel_id)
-                Channel.add(channel, channel_name, channel_frequency, channel_id)
+                hidden = False
+                if channel_name.find('encrypted') != -1 or \
+                    channel_name.find("[$]") != -1 or \
+                    channel_name.find("DR P") != -1:
+                    logger().info("Channel name containing keyword matching auto hide list - hiding channel '{}'".format(channel_name))
+                    hidden = True
+                channel = Channel(channel_name, channel_frequency, channel_id, hidden)
+                Channel.add(channel, channel_name, channel_frequency, channel_id, hidden)
 
     def _set_tuner_to_frequency(self, tuner, frequency):
         system(self._hdhr_config_prefix() + " set /tuner{}/channel auto:{}".format(tuner, frequency))

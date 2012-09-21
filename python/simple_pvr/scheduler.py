@@ -1,7 +1,11 @@
+import Queue
+import bisect
 import os
 from threading import Thread, Lock
 import threading
-import datetime
+#import datetime
+from datetime import datetime,timedelta
+import time
 
 from .master_import import Recorder
 from .pvr_logger import logger
@@ -19,7 +23,19 @@ def synchronized(lock):
         return newFunction
     return wrap
 
+class RecordingsQueue(Queue.Queue):
+    "Thread-safe recordings queue, sorted by start_time"
+
+    def _put(self, item):
+        #sorted(self.queue, key=lambda rec: rec.start_time, reverse=False)
+        # insert in order, note self.queue must be sorted for this to work
+        bisect.insort(self.queue, item)
+
+#
+# try it
+
 myLock = Lock()
+recordings_queue = RecordingsQueue()
 class Scheduler(threading.Thread):
     upcoming_recordings = []
 
@@ -32,7 +48,10 @@ class Scheduler(threading.Thread):
 
     def run(self):
         super(Scheduler, self).run()
-        self.process()
+        while True:
+            self.process()
+            time.sleep(10)
+
 
     @synchronized(myLock)
     def recordings(self,recordings):
@@ -72,11 +91,9 @@ class Scheduler(threading.Thread):
 
     @synchronized(myLock)
     def process(self):
-        logger().info("Scheduler doing processing of recordings queue")
+        logger().info("Scheduler '{}' doing processing of recordings queue".format(self.name))
         self.check_expiration_of_current_recordings()
         self.check_start_of_coming_recordings()
-        ## Schedule new run of process in 30 seconds
-        threading.Timer(30, self.process).start()
 
     def _is_recording(self):
         for recording in self.current_recordings:
@@ -121,7 +138,19 @@ class Scheduler(threading.Thread):
         next_recording = None
         if len(Scheduler.upcoming_recordings) > 0:
             next_recording = Scheduler.upcoming_recordings[0]
-        return next_recording is not None and next_recording.start_time <= datetime.datetime.now()
+            if next_recording is not None:
+                start_time = next_recording.start_time
+                now = datetime.now()
+                if start_time <= now and (start_time + timedelta(seconds = 60) > now):
+                    return True
+                elif start_time > now and (start_time - timedelta(seconds = 60)) <= now:
+                    return True
+                elif start_time < now:
+                    logger().warn("Scheduled recording {} did not get recorded - tuners did not start in time".format(next_recording) )
+                    del(Scheduler.upcoming_recordings[0]) ## upcoming recording expired
+
+        return False
+
 
     def stop_recording(self,tuner):
         self.recorders[tuner].stop()
@@ -132,6 +161,7 @@ class Scheduler(threading.Thread):
         print "Start next recording"
         if len(Scheduler.upcoming_recordings) > 0:
             next_recording = Scheduler.upcoming_recordings.pop(0)
+            print "Popped recording: {} from upcoming_recordings".format(type(next_recording))
             logger().info("Next recording {}".format(next_recording))
 
             if None in self.current_recordings:
