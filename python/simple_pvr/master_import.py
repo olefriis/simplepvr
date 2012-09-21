@@ -1,5 +1,6 @@
 from .database_schedule_reader import DatabaseScheduleReader
 
+from string import maketrans
 
 from .server import db
 
@@ -12,6 +13,7 @@ from .scheduler import Scheduler
 from .hdhomerun import HDHomeRun
 
 from .channel import Channel
+from .category import Category
 from .programme import Programme
 from .schedule import Schedule
 
@@ -37,7 +39,5 @@ def safe_replace(to_translate, chars_to_replace = u'\\\"\'*./:', translate_to=u'
             for char in chars_to_replace)
     else:
         assert isinstance(to_translate, str)
-        translate_table = string.maketrans(chars_to_replace,
-                                           translate_to
-                                           *len(chars_to_replace))
+        translate_table = maketrans(chars_to_replace, translate_to*len(chars_to_replace))
     return to_translate.translate(translate_table)

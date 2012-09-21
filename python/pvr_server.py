@@ -1,8 +1,11 @@
 import sys
 from simple_pvr.pvr_initializer import setup
 from simple_pvr import DatabaseScheduleReader
+from simple_pvr.database_initializer import *
 
 def main(argv=None):
+    db.create_all()
+
     print "pvr initializer setup"
     setup()
 
