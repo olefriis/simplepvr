@@ -91,7 +91,7 @@ class Scheduler(threading.Thread):
 
     @synchronized(myLock)
     def process(self):
-        logger().info("Scheduler '{}' doing processing of recordings queue".format(self.name))
+        logger().debug("Scheduler '{}' doing processing of recordings queue".format(self.name))
         self.check_expiration_of_current_recordings()
         self.check_start_of_coming_recordings()
 
