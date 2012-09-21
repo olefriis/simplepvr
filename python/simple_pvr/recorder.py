@@ -1,6 +1,6 @@
 from .pvr_logger import logger
 
-class Recorder:
+class Recorder(object):
     def __init__(self, tuner, recording):
         self.tuner = tuner
         self.recording = recording
@@ -18,3 +18,6 @@ class Recorder:
         hdhomerun().stop_recording(self.tuner)
 
         logger().info("Stopped recording {0}".format(self.recording.show_name))
+
+    def __hash__(self):
+        return hash((self.tuner, self.recording))
