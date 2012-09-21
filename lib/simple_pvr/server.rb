@@ -121,7 +121,7 @@ module SimplePvr
               id: programme.id,
               start_time: programme.start_time,
               title: programme.title,
-              scheduled: PvrInitializer.scheduler.is_scheduled?(programme)
+              is_scheduled: PvrInitializer.scheduler.is_scheduled?(programme)
             }
           end
         }
@@ -284,14 +284,16 @@ module SimplePvr
         {
           id: current_programme.id,
           title: current_programme.title,
-          start_time: current_programme.start_time
+          start_time: current_programme.start_time,
+          is_scheduled: PvrInitializer.scheduler.is_scheduled?(current_programme)
         } :
         nil
       upcoming_programmes_map = upcoming_programmes.map do |programme|
         {
           id: programme.id,
           title: programme.title,
-          start_time: programme.start_time
+          start_time: programme.start_time,
+          is_scheduled: PvrInitializer.scheduler.is_scheduled?(programme)
         }
       end
 

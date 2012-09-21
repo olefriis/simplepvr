@@ -24,6 +24,9 @@ function ChannelsCtrl($scope, $http, Channel) {
 	$scope.channels = Channel.query();
 	$scope.showHiddenChannels = false;
 	
+	$scope.classForProgrammeLine = function(programme) {
+		return programme != null && programme.is_scheduled ? 'success' : '';
+	}
 	$scope.hideChannel = function(channel) {
 		// I wish Angular could let me define this operation on the Channel object
 		$http.post('/api/channels/' + channel.id + '/hide').success(function() { channel.$get(); });
@@ -43,7 +46,7 @@ function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
 	$scope.programmeListing = ProgrammeListing.get({channelId: $scope.channelId, date: $scope.date});
 	
 	$scope.classForProgrammeLine = function(programme) {
-		return programme.scheduled ? "success" : "";
+		return programme.is_scheduled ? 'success' : '';
 	}
 }
 
