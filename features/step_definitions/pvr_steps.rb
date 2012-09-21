@@ -21,13 +21,13 @@ end
 Given /I have navigated to the week overview for channel "(.*)"/ do |channel|
   visit path_to('the channel overview page')
   fill_in('channel_filter', :with => channel)
-  click_link('View programmes')
+  click_link('...')
 end
 
 Given /I have navigated to the programme page for "(.*)" on channel "(.*)"/ do |title, channel|
   visit path_to('the channel overview page')
   fill_in('channel_filter', :with => channel)
-  click_link('View programmes')
+  click_link('...')
   click_link(title)
 end
 

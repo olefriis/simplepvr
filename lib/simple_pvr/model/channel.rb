@@ -55,7 +55,7 @@ module SimplePvr
 
       def self.current_programme_for(channel, now)
         unless channel.hidden
-          result = Programme.all(:channel => channel, :start_time.lt => now, order: :start_time.desc, limit: 1)[0]
+          result = Programme.all(:channel => channel, :start_time.lt => now, fields: [:id, :title, :start_time, :duration], order: :start_time.desc, limit: 1)[0]
           result if result && result.start_time.advance(seconds: result.duration) >= now
         end
       end
@@ -64,7 +64,7 @@ module SimplePvr
         if channel.hidden
           []
         else
-          Programme.all(:channel => channel, :start_time.gte => now, order: :start_time, limit: limit)
+          Programme.all(:channel => channel, :start_time.gte => now, fields: [:id, :title, :start_time], order: :start_time, limit: limit)
         end
       end
     end

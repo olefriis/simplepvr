@@ -284,7 +284,6 @@ module SimplePvr
         {
           id: current_programme.id,
           title: current_programme.title,
-          subtitle: current_programme.subtitle,
           start_time: current_programme.start_time
         } :
         nil
@@ -292,7 +291,6 @@ module SimplePvr
         {
           id: programme.id,
           title: programme.title,
-          subtitle: programme.subtitle,
           start_time: programme.start_time
         }
       end

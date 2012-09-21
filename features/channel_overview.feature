@@ -42,7 +42,7 @@ Scenario: Channel filtering
 Scenario: I can go to a week overview for a given channel
   Given I am on the channel overview page
   And I fill in "channel_filter" with "Channel 1"
-  And I follow "View programmes"
+  And I follow "..."
   Then I should see "Bonderøven"
   And I should see "Blood and Bone"
   But I should not see "Noddy"
