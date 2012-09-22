@@ -72,6 +72,14 @@ Then /there should be (\d*) upcoming recordings/ do |upcoming_recordings|
   find('#upcoming_recordings').all('h2').length.should == upcoming_recordings.to_i
 end
 
+Then /^there should be a conflict$/ do
+  page.text.should have_content('(Conflicting)')
+end
+
+Then /^there should be no conflicts$/ do
+  page.text.should_not have_content('(Conflicting)')
+end
+
 Then /I wait (\d*) seconds/ do |seconds|
   sleep seconds.to_i
 end

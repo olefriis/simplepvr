@@ -10,10 +10,6 @@ function SchedulesCtrl($scope, Schedule, UpcomingRecording, Channel) {
 	$scope.channels = Channel.query();
 	updateView();
 	
-	$scope.headlineStyleFor = function(recording) {
-		return recording.is_conflicting ? {background: 'red'} : {};
-	}
-	
 	$scope.createSchedule = function() {
 		var schedule = new Schedule({ title: $scope.newSchedule.title, channel_id: $scope.newSchedule.channelId })
 		schedule.$save(updateView);
