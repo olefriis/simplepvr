@@ -35,7 +35,7 @@ Scenario: Schedule a specific programme
   Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
   And I press "Record just this programme"
   And I am on the schedules page
-  But I should see the timed schedule "Bonderøven on Channel 1"
+  Then I should see the timed schedule "Bonderøven on Channel 1"
   And there should be 1 upcoming recordings
 
 Scenario: Set up schedule manually
