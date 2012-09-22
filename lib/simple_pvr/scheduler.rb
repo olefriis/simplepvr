@@ -6,7 +6,8 @@ module SimplePvr
     attr_reader :upcoming_recordings
     
     def initialize
-      @upcoming_recordings, @current_recordings, @recorders = [], [nil, nil], {}
+      @number_of_tuners = 2
+      @upcoming_recordings, @current_recordings, @recorders = [], [nil] * @number_of_tuners, {}
       @mutex = Mutex.new
     end
 
@@ -27,6 +28,7 @@ module SimplePvr
         @scheduled_programmes = programme_ids_from(@upcoming_recordings)
         stop_current_recordings_not_relevant_anymore
         @upcoming_recordings = remove_current_recordings(@upcoming_recordings)
+        mark_conflicting_recordings(@upcoming_recordings)
       end
     end
     
@@ -49,6 +51,15 @@ module SimplePvr
     end
     
     private
+    def mark_conflicting_recordings(recordings)
+      concurrent_recordings = active_recordings
+      recordings.each do |recording|
+        concurrent_recordings = concurrent_recordings.reject {|r| r.expired_at(recording.start_time) }
+        recording.conflicting = concurrent_recordings.size >= @number_of_tuners
+        concurrent_recordings << recording unless recording.conflicting?
+      end
+    end
+    
     def is_recording?
       !active_recordings.empty?
     end

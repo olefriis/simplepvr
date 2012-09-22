@@ -16,6 +16,24 @@ describe SimplePvr::Scheduler do
     @scheduler.process
   end
   
+  it 'marks conflicting future recordings' do
+    first_start_time = Time.now.advance(days: 1)
+    second_start_time = Time.now.advance(days: 1, minutes: 10)
+    third_start_time = Time.now.advance(days: 1, minutes: 20)
+    fourth_start_time = Time.now.advance(days: 2)
+    first_recording = SimplePvr::Model::Recording.new(@channel, 'Borgia', first_start_time, 60.minutes)
+    second_recording = SimplePvr::Model::Recording.new(@channel, 'Borgia', second_start_time, 60.minutes)
+    third_recording = SimplePvr::Model::Recording.new(@channel, 'Borgia', third_start_time, 60.minutes)
+    fourth_recording = SimplePvr::Model::Recording.new(@channel, 'Borgia', fourth_start_time, 60.minutes)
+
+    @scheduler.recordings = [first_recording, third_recording, second_recording]
+    
+    first_recording.should_not be_conflicting
+    second_recording.should_not be_conflicting
+    third_recording.should be_conflicting
+    fourth_recording.should_not be_conflicting
+  end
+  
   it 'starts recordings at start time' do
     start_time = Time.local(2012, 7, 15, 20, 15, 30)
     starting_recording = SimplePvr::Model::Recording.new(@channel, 'Borgia', start_time, 60.minutes)
@@ -53,7 +71,7 @@ describe SimplePvr::Scheduler do
     @scheduler.process
   end
   
-  it 'rejects third recording at once' do
+  it 'rejects third recording at once, and marks the third recording as conflicting' do
     first_start_time = Time.local(2012, 7, 15, 19, 45, 30)
     second_start_time = Time.local(2012, 7, 15, 20, 15, 30)
     third_start_time = Time.local(2012, 7, 15, 20, 20, 0)
@@ -68,6 +86,10 @@ describe SimplePvr::Scheduler do
 
     @scheduler.recordings = [recording_in_progress, starting_recording, rejected_recording]
     @scheduler.process
+    
+    recording_in_progress.should_not be_conflicting
+    starting_recording.should_not be_conflicting
+    rejected_recording.should be_conflicting
   end
   
   it 'ends recordings at end time' do
