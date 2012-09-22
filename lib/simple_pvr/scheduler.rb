@@ -29,11 +29,16 @@ module SimplePvr
         stop_current_recordings_not_relevant_anymore
         @upcoming_recordings = remove_current_recordings(@upcoming_recordings)
         mark_conflicting_recordings(@upcoming_recordings)
+        @conflicting_programmes = programme_ids_from(@upcoming_recordings.find_all {|r| r.conflicting? })
       end
     end
     
     def is_scheduled?(programme)
       @scheduled_programmes[programme.id] != nil
+    end
+    
+    def is_conflicting?(programme)
+      @conflicting_programmes[programme.id] != nil
     end
     
     def status_text

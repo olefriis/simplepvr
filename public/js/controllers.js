@@ -10,6 +10,10 @@ function SchedulesCtrl($scope, Schedule, UpcomingRecording, Channel) {
 	$scope.channels = Channel.query();
 	updateView();
 	
+	$scope.headlineStyleFor = function(recording) {
+		return recording.is_conflicting ? {background: 'red'} : {};
+	}
+	
 	$scope.createSchedule = function() {
 		var schedule = new Schedule({ title: $scope.newSchedule.title, channel_id: $scope.newSchedule.channelId })
 		schedule.$save(updateView);
@@ -25,7 +29,10 @@ function ChannelsCtrl($scope, $http, Channel) {
 	$scope.showHiddenChannels = false;
 	
 	$scope.classForProgrammeLine = function(programme) {
-		return programme != null && programme.is_scheduled ? 'success' : '';
+		if (programme == null) {
+			return '';
+		}
+		return programme.is_conflicting ? 'error' : (programme.is_scheduled ? 'success' : '');
 	}
 	$scope.hideChannel = function(channel) {
 		// I wish Angular could let me define this operation on the Channel object
@@ -46,7 +53,7 @@ function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
 	$scope.programmeListing = ProgrammeListing.get({channelId: $scope.channelId, date: $scope.date});
 	
 	$scope.classForProgrammeLine = function(programme) {
-		return programme.is_scheduled ? 'success' : '';
+		return programme.is_conflicting ? 'error' : (programme.is_scheduled ? 'success' : '');
 	}
 }
 

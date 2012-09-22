@@ -29,7 +29,7 @@
 		<h1>Upcoming recordings</h1>
 		<div class="row" ng-repeat="recording in upcomingRecordings">
 	    	<div class="span6">
-		    	<h2>{{recording.show_name}}</h2>
+		    	<h2 ng-style="headlineStyleFor(recording)">{{recording.show_name}}</h2>
 				<p>{{recording.start_time | date:'fullDate'}} at {{recording.start_time | date:'HH:mm'}} on {{recording.channel.name}}</p>
 				<p ng-show="recording.subtitle">{{recording.subtitle}}</p>
 				<p><a ng-href="/programmes/{{recording.programme_id}}">View details</a></p>

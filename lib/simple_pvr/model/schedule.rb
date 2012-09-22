@@ -6,7 +6,7 @@ module SimplePvr
       
       property :id, Serial
       property :type, Enum[:specification]
-      property :title, String
+      property :title, String, :length => 255
       property :start_time, DateTime
 
       belongs_to :channel, required: false
