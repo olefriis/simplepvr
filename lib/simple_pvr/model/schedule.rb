@@ -5,8 +5,10 @@ module SimplePvr
       storage_names[:default] = 'schedules'
       
       property :id, Serial
-      property :type, Enum[:specification]
+      property :type, Enum[:specification, :exception]
       property :title, String, :length => 255
+      # If specified (and channel is specified too), this schedule is for a specific
+      # programme at a specific channel at a specific time
       property :start_time, DateTime
 
       belongs_to :channel, required: false

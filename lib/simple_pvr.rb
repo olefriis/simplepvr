@@ -1,7 +1,7 @@
 require 'active_support/all'
 require File.dirname(__FILE__) + '/simple_pvr/pvr_initializer'
+require File.dirname(__FILE__) + '/simple_pvr/recording_planner'
 require File.dirname(__FILE__) + '/simple_pvr/scheduler'
-require File.dirname(__FILE__) + '/simple_pvr/database_schedule_reader'
 require File.dirname(__FILE__) + '/simple_pvr/recording_manager'
 require File.dirname(__FILE__) + '/simple_pvr/ffmpeg'
 require File.dirname(__FILE__) + '/simple_pvr/xmltv_reader'
