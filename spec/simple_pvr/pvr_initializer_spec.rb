@@ -1,4 +1,4 @@
-require 'simple_pvr/pvr_initializer'
+require 'simple_pvr'
 
 describe SimplePvr::PvrInitializer do
   before do

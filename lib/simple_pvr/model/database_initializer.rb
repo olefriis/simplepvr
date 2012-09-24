@@ -4,6 +4,7 @@ require 'active_support/time_with_zone'
 require File.dirname(__FILE__) + '/channel'
 require File.dirname(__FILE__) + '/programme'
 require File.dirname(__FILE__) + '/schedule'
+require File.dirname(__FILE__) + '/recording'
 
 DataMapper.finalize
 

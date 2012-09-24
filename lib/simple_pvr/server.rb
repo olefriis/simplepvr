@@ -36,7 +36,6 @@ module SimplePvr
     post '/api/schedules/?' do
       parameters = JSON.parse(request.body.read)
       title, channel_id, channel = parameters['title'], parameters['channel_id'].to_i, nil
-      puts "Title: #{title}, channel: #{channel_id}"
       channel = Model::Channel.get(channel_id) if channel_id > 0
       result = Model::Schedule.add_specification(title: title, channel: channel)
       reload_schedules
@@ -158,7 +157,6 @@ module SimplePvr
     end
 
     post '/api/programmes/:id/record_just_this_programme' do |id|
-      puts "Record just this programme #{id}"
       programme = Model::Programme.get(id.to_i)
       Model::Schedule.add_specification(title: programme.title, channel: programme.channel, start_time: programme.start_time)
       reload_schedules

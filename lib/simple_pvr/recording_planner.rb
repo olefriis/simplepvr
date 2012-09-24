@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/model/programme'
-
 module SimplePvr
   class RecordingPlanner
     def self.read

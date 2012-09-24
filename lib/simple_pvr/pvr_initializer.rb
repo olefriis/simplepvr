@@ -1,8 +1,3 @@
-require File.dirname(__FILE__) + '/hdhomerun'
-require File.dirname(__FILE__) + '/scheduler'
-require File.dirname(__FILE__) + '/recording_manager'
-require File.dirname(__FILE__) + '/model/database_initializer'
-
 module SimplePvr
   class PvrInitializer
     def self.setup

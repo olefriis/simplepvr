@@ -1,6 +1,3 @@
-require File.dirname(__FILE__) + '/recorder'
-require File.dirname(__FILE__) + '/pvr_logger'
-
 module SimplePvr
   class Scheduler
     attr_reader :upcoming_recordings
@@ -23,7 +20,6 @@ module SimplePvr
     def recordings=(recordings)
       @mutex.synchronize do
         @upcoming_recordings = recordings.sort_by {|r| r.start_time }.find_all {|r| !r.expired? }
-        PvrLogger.info("Scheduling upcoming recordings: #{@upcoming_recordings}")
 
         @scheduled_programmes = programme_ids_from(@upcoming_recordings)
         stop_current_recordings_not_relevant_anymore
