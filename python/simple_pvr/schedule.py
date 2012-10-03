@@ -8,11 +8,9 @@ class Schedule(db.Model):
     __tablename__ = 'schedules'
 
     id = db.Column(Integer, primary_key=True)
-    title = db.Column(String(255))
-
-    #TODO: type #Enum(VIDEO, AUDIO, AUDIO_DESC, CAPTIONS, name="type"), nullable=False
     type = db.Column(Enum('specification'), nullable=False)
-    #    type, Enum[:specification]
+    title = db.Column(String(255))
+    start_time = db.Column(db.DateTime)
 
     channel_id = db.Column(db.Integer, db.ForeignKey('channels.id'))
     channel = db.relationship('Channel', primaryjoin="Schedule.channel_id == Channel.id",
@@ -20,21 +18,29 @@ class Schedule(db.Model):
 
 #    belongs_to :channel, :required => false
 
-    def __init__(self, title, type, channel):
+    def __init__(self, title, type = 'specification', start_time=None, channel=None):
         #from .master_import import Channel
         self.title = title
         self.type = type
+        self.start_time = start_time
 
         if channel is not None:
             self.channel_id = channel.id
             self.channel = channel#Channel.query.filter(Channel.id == channelId).first()
 
+    def add(self, commit = False):
+        db.session.add(self)
+        if commit:
+#            db.session.flush()
+            db.session.commit()
+        return {'id': self.id}
+
     @staticmethod
-    def add_specification(title, channel=None):
+    def add_specification(title, start_time=None, channel=None):
         type = 'specification'
-        schedule = Schedule(title, type, channel)
+        schedule = Schedule(title, type, start_time, channel)
         db.session.add(schedule)
-        db.session.flush()
+#        db.session.flush()
         db.session.commit()
         return {'id': schedule.id }
 
@@ -50,10 +56,3 @@ class Schedule(db.Model):
             'title': safe_value(self.title),
             'channel'  : self.channel.serialize if self.channel is not None else None
         }
-#    @property
-#    def serialize_many2many(self):
-#        """
-#        Return object's relations in easily serializeable format.
-#        NB! Calls many2many's serialize property.
-#        """
-#        return [ item.serialize for item in self.many2many]
