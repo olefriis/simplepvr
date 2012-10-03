@@ -10,10 +10,12 @@ class RecordingPlanner:
         self._add_recording(self, title, channel, start_time, duration)
 
     
-    def specification(self, title, channel):
+    def specification(self, title, channel, start_time=None):
         from .master_import import Programme
       #title, channel = options[:title], options[:channel]
-        if channel:
+        if channel and start_time:
+            self._schedule_programmes(title, Programme.on_channel_with_title_and_start_time(channel, title, start_time))
+        elif channel:
             self._schedule_programmes(title, Programme.on_channel_with_title(channel, title))
         else:
             self._schedule_programmes(title, Programme.with_title(title))
@@ -25,7 +27,7 @@ class RecordingPlanner:
     #private
     def _schedule_programmes(self, title, programmes):
         for programme in programmes:
-            start_time = programme.startTime - timedelta(minutes = 2)
+            start_time = programme.start_time - timedelta(minutes = 2)
             duration = programme.duration + timedelta(minutes = 7).seconds
             self._add_recording(title, programme.channel, start_time, duration, programme)
 
