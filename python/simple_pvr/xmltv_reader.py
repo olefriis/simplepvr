@@ -31,7 +31,6 @@ unmapped_channel_ids = []
 
 class XmltvReader:
 
-
     def __init__(self, mapping_to_channels):
         self.mapping_to_channels = mapping_to_channels
         self.channel_from_name = {}
@@ -51,6 +50,9 @@ class XmltvReader:
 
         categories = tree.getroot().getiterator("category")
         self._process_categories(categories)
+
+        channels = tree.getroot().findall("./channel")
+        self._process_channels(channels)
 
         programmes = tree.getroot().findall("./programme")
         total = len(programmes)
@@ -103,6 +105,22 @@ class XmltvReader:
         end_cat_db = time.time()
         print "Added categories to database in {} seconds".format((end_cat_db-start_cat_db))
 
+    def _process_channels(self, channels):
+        for channelNode in channels:
+            channel_id = channelNode.attrib['id']
+            icon_node = channelNode.find("./icon")
+            icon_url = icon_node.attrib['src'] if icon_node is not None else None
+            str_channel_id = str(channel_id)
+            if str_channel_id in self.mapping_to_channels:
+                channelName = self.mapping_to_channels[str(channel_id)]
+            else:
+                logger().error("Channel id '{}' is not in mappings file - channel data can not be imported till a mapping for {} is added to 'channel_mappings.yaml'".format(str_channel_id, str_channel_id))
+                continue
+
+            channel = Channel.with_name(channelName)
+            channel.icon_url = icon_url
+            channel.save()
+
     def unique(self, seq): # Dave Kirby
         # Order preserving
         seen = set()
@@ -132,6 +150,7 @@ class XmltvReader:
         title_node = programmeNode.find("./title")
         subtitle_node = programmeNode.find("./sub-title")
         description_node = programmeNode.find("desc")
+        episodenum_node = programmeNode.find("episode-num")
 
         serie = False
         categories = []
@@ -146,6 +165,8 @@ class XmltvReader:
         title = title_node.text
         subtitle = subtitle_node.text if subtitle_node is not None else ''
         description = description_node.text if description_node is not None else ''
+        episode_number = episodenum_node.text if episodenum_node is not None else ''
+
 
         start_time = parse(programmeNode.attrib['start'])
         stop_time = parse(programmeNode.attrib['stop'])
@@ -153,7 +174,7 @@ class XmltvReader:
 
         channel = self._channel_from_name(channelName)
 
-        prg = Programme(channel, title, subtitle, description, start_time, duration, serie, categories)
+        prg = Programme(channel, title, subtitle, description, start_time, stop_time, duration, episode_num=episode_number, series=serie, categories=categories)
         prg.add(doCommit)
 
 
