@@ -8,6 +8,27 @@ directive('pvrAutocomplete', function() {
 		});
 	}
 }).
+directive('navbarItem', function($location) {
+	return {
+		template: '<li><a ng-href="{{route}}" ng-transclude></a></li>',
+		restrict: 'E',
+		transclude: true,
+		replace: true,
+		scope: { route:'@route' },
+		link: function(scope, element, attributes, controller) {
+			scope.$on('$routeChangeSuccess', function() {
+				var path = $location.path();
+				var isSamePath = path == scope.route;
+				var isSubpath = path.indexOf(scope.route + '/') == 0;
+				if (isSamePath || isSubpath) {
+					element.addClass('active');
+				} else {
+					element.removeClass('active');
+				}
+			});
+		}
+	};
+}).
 filter('chunk', function() {
   function chunkArray(array, chunkSize) {
     var result = [];
@@ -38,6 +59,11 @@ filter('chunk', function() {
 	defineHashKeys(result);
 	return result;
   }
+}).
+filter('formatEpisode', function() {
+    return function(episodeNum) {
+        return episodeNum ? episodeNum.replace(' .', '').replace('. ', '') : "";
+    }
 }).
 config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix('');
