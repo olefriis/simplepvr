@@ -7,13 +7,12 @@ import os
 
 from .master_import import Schedule, Programme, Channel, Category, db
 
-db.create_all()
 
 class DatabaseInitializer():
 
     def setup(self, database_file_name = None):
         if not database_file_name:
-            database_file_name = os.pardir() + "/database.sqlite"
+            db.create_all()
 
 
     def clear(self):
