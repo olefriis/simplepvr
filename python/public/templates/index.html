@@ -4,6 +4,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<base href="/">
 	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/simplepvr.css') }}" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 60px;
@@ -25,10 +26,10 @@
           <a class="brand" href="about">SimplePVR</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li><a ng-href="schedules">Schedules</a></li>
-              <li><a ng-href="channels">Channels</a></li>
-              <li><a ng-href="shows">Recordings</a></li>
-              <li><a ng-href="status">Status</a></li>
+              <navbar-item route="/schedules">Schedules</navbar-item>
+              <navbar-item route="/channels">Channels</navbar-item>
+              <navbar-item route="/shows">Recordings</navbar-item>
+              <navbar-item route="/status">Status</navbar-item>
             </ul>
 			<form class="navbar-form pull-right" ng-controller="SearchProgrammesCtrl" ng-submit="search()">
 			  <input pvr-autocomplete class="span2" id="programme-search-query" type="text" placeholder="Search programmes...">

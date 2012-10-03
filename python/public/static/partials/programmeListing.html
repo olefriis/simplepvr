@@ -2,6 +2,8 @@
 	<a ng-href="/channels/{{programmeListing.channel.id}}/programmeListings/{{programmeListing.previous_date}}">&lt;&lt;</a>
 	<a ng-href="/channels/{{programmeListing.channel.id}}/programmeListings/{{programmeListing.next_date}}">&gt;&gt;</a>
 	<input type="text" placeholder="Filter..." ng-model="programmeFilter">
+	<img class="channel-icon" src="{{programmeListing.channel.icon_url}}" />
+	<span class="channel-name">{{programmeListing.channel.name}}</span>
 </p>
 <div class="row" ng-repeat="dayChunk in programmeListing.days | chunk:3">
 	<div class="span4" ng-repeat="day in dayChunk">

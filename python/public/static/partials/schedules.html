@@ -3,7 +3,9 @@
 		<h1>Existing schedules</h1>
 		<div class="row" ng-repeat="schedule in schedules">
 			<div class="span6">
-				<p>{{schedule.title}} <span ng-show="schedule.channel">on {{schedule.channel.name}}</span></p>
+				<p>{{schedule.title}}
+					<span ng-show="schedule.channel">on {{schedule.channel.name}}</span>
+					<span ng-show="schedule.start_time">{{schedule.start_time | date:'fullDate'}} at {{schedule.start_time | date:'HH:mm'}}</span></p>
 				<p><a ng-click="deleteSchedule(schedule)" class="btn">Delete</a></p>
 			</div>
 		</div>
