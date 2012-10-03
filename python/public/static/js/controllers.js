@@ -49,7 +49,7 @@ function ProgrammeListingCtrl($scope, $routeParams, ProgrammeListing) {
 
 function ProgrammeCtrl($scope, $routeParams, $http, Programme) {
 	var loadProgramme = function() {
-		$scope.programme = Programme.get({id: $routeParams.programmeId})
+		$scope.programme = Programme.get({id: $routeParams.programmeId});
 	}
 	var post = function(url) {
 		$http.post(url).success(loadProgramme);
@@ -63,7 +63,11 @@ function ProgrammeCtrl($scope, $routeParams, $http, Programme) {
 		// I wish Angular could let me define this operation on the Programme object
 		post('/api/programmes/' + $scope.programme.id + '/record_on_any_channel');
 	}
-	
+	$scope.recordJustThisProgramme = function() {
+		// I wish Angular could let me define this operation on the Programme object
+		post('/api/programmes/' + $scope.programme.id + '/record_just_this_programme');
+	}
+
 	loadProgramme();
 }
 
@@ -81,7 +85,7 @@ function ShowsCtrl($scope, $http, Show) {
 	loadShows();
 }
 
-function ShowCtrl($scope, $routeParams, Show, Recording) {
+function ShowCtrl($scope, $routeParams, $http, Show, Recording) {
 	var loadRecordings = function() {
 		$scope.recordings = Recording.query({showId: $routeParams.showId});
 	}
@@ -90,6 +94,11 @@ function ShowCtrl($scope, $routeParams, Show, Recording) {
 		if (confirm("Really delete recording\n" + recording.episode + "\nof show\n" + $scope.show.name + "\n?")) {
 			recording.$delete(loadRecordings);
 		}
+	}
+
+	$scope.startTranscoding = function(recording) {
+		// I wish Angular could let me define this operation on the Programme object
+		$http.post('/api/shows/' + $routeParams.showId + '/recordings/' + recording.id + '/transcode').success(loadRecordings);
 	}
 
 	$scope.show = Show.get({id: $routeParams.showId});
