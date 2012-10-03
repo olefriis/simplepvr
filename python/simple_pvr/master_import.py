@@ -31,6 +31,29 @@ def safe_value(x):
             print("safe_value unable to handle " + x)
             return "TODO - fix encoding!!!"
 
+
+def json_friendly_tuple(x):
+    from collections import namedtuple
+    from datetime import datetime, date
+
+    if not x:
+        return None
+
+#    ProgrammeInformationTuple = namedtuple('ProgrammeInformation', x.keys())
+    ProgrammeInformationTuple = namedtuple('ProgrammeInformation', ['id', 'title', 'start_time', 'duration'])
+
+    ## Convert datetime.datetime and datetime.date instances to strings - datetime.datetime is not JSON serializable
+    tmp_dict = dict.fromkeys(x.keys())
+    for idx, key in enumerate(x.keys()):
+        if isinstance(x[idx], datetime) or isinstance(x[idx], date):
+            tmp_dict[key] = x[idx].isoformat()
+        else:
+            tmp_dict[key] = x[idx]
+
+    return ProgrammeInformationTuple(tmp_dict['id'], tmp_dict['title'], tmp_dict['start_time'], tmp_dict['duration'])
+
+
+
 def safe_replace(to_translate, chars_to_replace = u'\\\"\'*./:', translate_to=u'_'):
     #chars_to_replace = u'!"#%\'()*+,-./:;<=>?@[\]^_`{|}~'
 
