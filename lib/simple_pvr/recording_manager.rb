@@ -1,5 +1,3 @@
-require 'active_support/all'
-
 module SimplePvr
   RecordingMetadata = Struct.new(:has_thumbnail, :has_webm, :show_name, :episode, :channel, :subtitle, :description, :start_time, :duration)
   

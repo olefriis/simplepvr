@@ -1,12 +1,10 @@
-require File.dirname(__FILE__) + '/recorder'
-require File.dirname(__FILE__) + '/pvr_logger'
-
 module SimplePvr
   class Scheduler
     attr_reader :upcoming_recordings
     
     def initialize
-      @upcoming_recordings, @current_recordings, @recorders = [], [nil, nil], {}
+      @number_of_tuners = 2
+      @upcoming_recordings, @current_recordings, @recorders = [], [nil] * @number_of_tuners, {}
       @mutex = Mutex.new
     end
 
@@ -22,16 +20,21 @@ module SimplePvr
     def recordings=(recordings)
       @mutex.synchronize do
         @upcoming_recordings = recordings.sort_by {|r| r.start_time }.find_all {|r| !r.expired? }
-        PvrLogger.info("Scheduling upcoming recordings: #{@upcoming_recordings}")
 
         @scheduled_programmes = programme_ids_from(@upcoming_recordings)
         stop_current_recordings_not_relevant_anymore
         @upcoming_recordings = remove_current_recordings(@upcoming_recordings)
+        mark_conflicting_recordings(@upcoming_recordings)
+        @conflicting_programmes = programme_ids_from(@upcoming_recordings.find_all {|r| r.conflicting? })
       end
     end
     
     def is_scheduled?(programme)
       @scheduled_programmes[programme.id] != nil
+    end
+    
+    def is_conflicting?(programme)
+      @conflicting_programmes[programme.id] != nil
     end
     
     def status_text
@@ -49,6 +52,15 @@ module SimplePvr
     end
     
     private
+    def mark_conflicting_recordings(recordings)
+      concurrent_recordings = active_recordings
+      recordings.each do |recording|
+        concurrent_recordings = concurrent_recordings.reject {|r| r.expired_at(recording.start_time) }
+        recording.conflicting = concurrent_recordings.size >= @number_of_tuners
+        concurrent_recordings << recording unless recording.conflicting?
+      end
+    end
+    
     def is_recording?
       !active_recordings.empty?
     end

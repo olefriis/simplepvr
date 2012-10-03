@@ -1,7 +1,4 @@
-def find_or_create_channel_with_name(name)
-  channel = SimplePvr::Model::Channel.first(name: name)
-  channel ? channel : SimplePvr::Model::Channel.add(name, 0, 0)
-end
+require 'timeout'
 
 Given /the following programmes\:/ do |programme_table|
   programme_table.hashes.each do |programme|
@@ -41,37 +38,50 @@ When /I search for programmes with title "(.*)"/ do |query|
 end
 
 Then /I should see the programme title suggestion "(.*)"/ do |suggestion|
-  page.should have_content(suggestion)
+  page.wait_until { page.text.include? suggestion }
 end
 
 Then /I should see "(.*)" in the page contents/ do |text|
   within('#contents') do
-    page.should have_content(text)
+    page.wait_until { page.text.include? text }
   end
 end
 
 Then /I should see the schedule "(.*)"/ do |text|
   within('#schedules') do
-    page.should have_content(text)
+    page.wait_until { page.text.include? text }
   end
 end
 
 Then /I should see the timed schedule "(.*)"/ do |text|
   within('#schedules') do
-    page.text.should =~ /#{text} .* \d+, \d{4} at \d?\d:\d\d/
+    page.wait_until { page.text =~ /#{text} .* \d+, \d{4} at \d?\d:\d\d/ }
   end
 end
 
 Then /I should not see the schedule "(.*)"/ do |text|
   within('#schedules') do
-    page.should_not have_content(text)
+    page.wait_until { !(page.text.include? text) }
   end
 end
 
 Then /there should be (\d*) upcoming recordings/ do |upcoming_recordings|
-  find('#upcoming_recordings').all('h2').length.should == upcoming_recordings.to_i
+  page.wait_until { find('#upcoming_recordings').all('h2').length == upcoming_recordings.to_i }
+end
+
+Then /^there should be a conflict$/ do
+  page.wait_until { page.text.include? '(Conflicting)' }
+end
+
+Then /^there should be no conflicts$/ do
+  page.wait_until { !(page.text.include? '(Conflicting)') }
 end
 
 Then /I wait (\d*) seconds/ do |seconds|
   sleep seconds.to_i
+end
+
+def find_or_create_channel_with_name(name)
+  channel = SimplePvr::Model::Channel.first(name: name)
+  channel ? channel : SimplePvr::Model::Channel.add(name, 0, 0)
 end

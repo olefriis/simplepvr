@@ -7,7 +7,7 @@ require File.join(File.dirname(__FILE__), '../../lib/simple_pvr')
 require File.join(File.dirname(__FILE__), '../../lib/simple_pvr/server')
 
 SimplePvr::PvrInitializer.setup_for_integration_test
-SimplePvr::DatabaseScheduleReader.read
+SimplePvr::RecordingPlanner.read
 
 Capybara.app = SimplePvr::Server
 Capybara.default_driver = :selenium

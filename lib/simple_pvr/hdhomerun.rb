@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/pvr_logger'
-
 module SimplePvr
   #
   # Simple fake version of HDHomeRun class. Makes it possible to run integration tests.

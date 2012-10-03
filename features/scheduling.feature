@@ -35,9 +35,8 @@ Scenario: Schedule a specific programme
   Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
   And I press "Record just this programme"
   And I am on the schedules page
-  But I should see the timed schedule "Bonderøven on Channel 1"
+  Then I should see the timed schedule "Bonderøven on Channel 1"
   And there should be 1 upcoming recordings
-
 
 Scenario: Set up schedule manually
   Given I am on the schedules page
@@ -63,3 +62,20 @@ Scenario: Remove schedule
   And I follow "Delete"
   Then I should not see the schedule "Bonderøven on Channel 1"
   And there should be 0 upcoming recordings
+
+Scenario: Defining conflicting schedules
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I press "Record on any channel"
+  And I have navigated to the programme page for "Noddy" on channel "Channel 1"
+  And I press "Record on this channel"
+  When I am on the schedules page
+  Then there should be a conflict
+
+Scenario: Fixing conflicts by removing a schedule
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I press "Record on any channel"
+  And I have navigated to the programme page for "Noddy" on channel "Channel 1"
+  And I press "Record on this channel"
+  When I am on the schedules page
+  And I follow "Delete"
+  Then there should be no conflicts

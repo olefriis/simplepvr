@@ -1,7 +1,7 @@
 module SimplePvr
   module Model
     class Recording
-      attr_accessor :channel, :show_name, :start_time, :duration, :programme
+      attr_accessor :channel, :show_name, :start_time, :duration, :programme, :conflicting
 
       def initialize(channel, show_name, start_time, duration, programme=nil)
         @channel = channel
@@ -12,7 +12,15 @@ module SimplePvr
       end
 
       def expired?
-        @start_time.advance(seconds: duration) < Time.now
+        expired_at(Time.now)
+      end
+      
+      def expired_at(time)
+        end_time < time
+      end
+      
+      def conflicting?
+        conflicting
       end
 
       def inspect
@@ -26,6 +34,11 @@ module SimplePvr
         other.start_time == @start_time &&
         other.duration == @duration &&
         other.programme == @programme
+      end
+      
+      private
+      def end_time
+        @start_time.advance(seconds: duration)
       end
     end
   end

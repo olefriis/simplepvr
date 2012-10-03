@@ -36,7 +36,6 @@ module SimplePvr
     post '/api/schedules/?' do
       parameters = JSON.parse(request.body.read)
       title, channel_id, channel = parameters['title'], parameters['channel_id'].to_i, nil
-      puts "Title: #{title}, channel: #{channel_id}"
       channel = Model::Channel.get(channel_id) if channel_id > 0
       result = Model::Schedule.add_specification(title: title, channel: channel)
       reload_schedules
@@ -57,7 +56,7 @@ module SimplePvr
           start_time: recording.start_time,
           channel: { id: recording.channel.id, name: recording.channel.name },
           subtitle: recording.programme ? recording.programme.subtitle : nil,
-          description: recording.programme ? recording.programme.description : nil
+          is_conflicting: PvrInitializer.scheduler.is_conflicting?(recording.programme)
         }
       end.to_json
     end
@@ -116,14 +115,7 @@ module SimplePvr
 
         {
           date: from_date.to_s(:programme_date),
-          programmes: programmes.map do |programme|
-            {
-              id: programme.id,
-              start_time: programme.start_time,
-              title: programme.title,
-              scheduled: PvrInitializer.scheduler.is_scheduled?(programme)
-            }
-          end
+          programmes: programme_summaries_hash(programmes)
         }
       end
   
@@ -164,7 +156,6 @@ module SimplePvr
     end
 
     post '/api/programmes/:id/record_just_this_programme' do |id|
-      puts "Record just this programme #{id}"
       programme = Model::Programme.get(id.to_i)
       Model::Schedule.add_specification(title: programme.title, channel: programme.channel, start_time: programme.start_time)
       reload_schedules
@@ -244,7 +235,7 @@ module SimplePvr
     end
 
     def reload_schedules
-      DatabaseScheduleReader.read
+      RecordingPlanner.read
     end
 
     def programme_hash(programme)
@@ -280,20 +271,8 @@ module SimplePvr
       current_programme = channel_with_current_programmes[:current_programme]
       upcoming_programmes = channel_with_current_programmes[:upcoming_programmes]
 
-      current_programme_map = current_programme ?
-        {
-          id: current_programme.id,
-          title: current_programme.title,
-          start_time: current_programme.start_time
-        } :
-        nil
-      upcoming_programmes_map = upcoming_programmes.map do |programme|
-        {
-          id: programme.id,
-          title: programme.title,
-          start_time: programme.start_time
-        }
-      end
+      current_programme_map = current_programme ? programme_summary_hash(current_programme) : nil
+      upcoming_programmes_map = programme_summaries_hash(upcoming_programmes)
 
       {
         id: channel.id,
@@ -303,6 +282,20 @@ module SimplePvr
         current_programme: channel,
         current_programme: current_programme_map,
         upcoming_programmes: upcoming_programmes_map
+      }
+    end
+    
+    def programme_summaries_hash(programmes)
+      programmes.map {|programme| programme_summary_hash(programme) }
+    end
+    
+    def programme_summary_hash(programme)
+      {
+        id: programme.id,
+        title: programme.title,
+        start_time: programme.start_time,
+        is_scheduled: PvrInitializer.scheduler.is_scheduled?(programme),
+        is_conflicting: PvrInitializer.scheduler.is_conflicting?(programme)
       }
     end
   end
