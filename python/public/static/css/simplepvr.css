@@ -1,0 +1,11 @@
+img.channel-icon {
+    width: 70px;
+    padding-left: 3px;
+    max-height: 36px;
+}
+
+span.channel-name {
+    font-size: 25px;
+    vertical-align: middle;
+    line-height: 35px;
+}
