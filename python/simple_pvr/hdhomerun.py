@@ -101,8 +101,8 @@ class HDHomeRun:
                     channel_name.find("DR P") != -1:
                     logger().info("Channel name containing keyword matching auto hide list - hiding channel '{}'".format(channel_name))
                     hidden = True
-                channel = Channel(channel_name, channel_frequency, channel_id, hidden)
-                Channel.add(channel, channel_name, channel_frequency, channel_id, hidden)
+                channel = Channel(channel_name, channel_frequency, channel_id, hidden=hidden)
+                channel.add(commit=True)
 
     def _set_tuner_to_frequency(self, tuner, frequency):
         system(self._hdhr_config_prefix() + " set /tuner{}/channel auto:{}".format(tuner, frequency))
