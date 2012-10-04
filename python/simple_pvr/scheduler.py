@@ -40,6 +40,7 @@ class Scheduler(threading.Thread):
     upcoming_recordings = []
 
     def __init__(self):
+        self.number_of_tuners = 2
         self.scheduled_programmes = []
         Scheduler.upcoming_recordings = []
         self.current_recordings = [None, None]
@@ -62,15 +63,19 @@ class Scheduler(threading.Thread):
                recordings_index = Scheduler.upcoming_recordings.index(upcoming)
                logger().info("Upcoming recording idx: {}".format(recordings_index))
                del(Scheduler.upcoming_recordings[recordings_index])
-#        Scheduler.upcoming_recordings = recordings.sort_by {|r| r.start_time }.find_all {|r| !r.expired? }
         logger().info("Scheduling upcoming recordings: {0}".format(Scheduler.upcoming_recordings))
 
         self.scheduled_programmes = self.programme_ids_from(Scheduler.upcoming_recordings)
         self.stop_current_recordings_not_relevant_anymore()
         Scheduler.upcoming_recordings = self.remove_current_recordings(Scheduler.upcoming_recordings)
+        self._mark_conflicting_recordings(Scheduler.upcoming_recordings)
+        self.conflicting_programmes = []#self.programme_ids_from() # TODO: find conflicting programmes
 
     def is_scheduled(self, programme):
         return programme.id in self.scheduled_programmes
+
+    def is_conflicting(self, programme):
+        return programme.id in self.conflicting_programmes
 
     @synchronized(myLock)
     def status_text(self):
@@ -95,15 +100,26 @@ class Scheduler(threading.Thread):
         self.check_expiration_of_current_recordings()
         self.check_start_of_coming_recordings()
 
+    def _mark_conflicting_recordings(self, recordings):
+        concurrent_recordings = self._active_recordings()
+        for rec in recordings:
+            concurrent_recordings[:] = [recording for recording in concurrent_recordings if recording.expired_at(rec.start_time)]
+            rec.conflicting = len(concurrent_recordings) >= self.number_of_tuners
+
+
     def _is_recording(self):
-        for recording in self.current_recordings:
-            if recording is not None:
-                return True
-        return False
+        if not self._active_recordings():
+            return False
+        else:
+            return True
 
     # Does not do anything, refactor-error maybe
-    #def _active_recordings(self):
-    #    return self.current_recordings.find_all {|recording| recording }
+    def _active_recordings(self):
+        active_recs = []
+        for rec in self.current_recordings:
+            if rec is not None:
+                active_recs.append(rec)
+        return active_recs
 
     def programme_ids_from(self, recordings):
         result = {}
@@ -122,12 +138,14 @@ class Scheduler(threading.Thread):
     def stop_current_recordings_not_relevant_anymore(self):
         for recording in self.current_recordings:
             if recording and recording not in Scheduler.upcoming_recordings:
+                logger().info("Stopping recording '{}' no longer in upcoming recordings".format(recording.show_name))
                 self.stop_recording(recording)
 
 
     def check_expiration_of_current_recordings(self):
         for recording in self.current_recordings:
             if recording and recording.expired():
+                logger().info("stop_time reached for '{}' - stopping recording".format(recording.show_name))
                 self.stop_recording(recording)
 
     def check_start_of_coming_recordings(self):
@@ -146,8 +164,9 @@ class Scheduler(threading.Thread):
                 elif start_time > now and (start_time - timedelta(seconds = 60)) <= now:
                     return True
                 elif start_time < now:
-                    logger().warn("Scheduled recording {} did not get recorded - tuners did not start in time".format(next_recording) )
-                    del(Scheduler.upcoming_recordings[0]) ## upcoming recording expired
+                    logger().warn("Scheduled recording {} - tuners did not start in time".format(next_recording) )
+                    return True
+                    #del(Scheduler.upcoming_recordings[0]) ## upcoming recording expired
 
         return False
 
@@ -160,11 +179,11 @@ class Scheduler(threading.Thread):
     def start_next_recording(self):
         print "Start next recording"
         if len(Scheduler.upcoming_recordings) > 0:
-            next_recording = Scheduler.upcoming_recordings.pop(0)
-            print "Popped recording: {} from upcoming_recordings".format(type(next_recording))
-            logger().info("Next recording {}".format(next_recording))
 
             if None in self.current_recordings:
+                next_recording = Scheduler.upcoming_recordings.pop(0)
+                logger().info("Next recording {}".format(next_recording))
+
                 available_slot = self.current_recordings.index(None)
                 recorder = Recorder(available_slot, next_recording)
                 self.current_recordings[available_slot] = next_recording

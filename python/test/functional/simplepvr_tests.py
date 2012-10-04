@@ -368,10 +368,11 @@ class SimplePVRTestCase(unittest.TestCase):
     def test_show_recording_number(self):
         import shutil
 
+
         show_name = "TestShow"
         recording_number = "1"
 
-        recordings_dir = os.curdir + "/recordings"
+        recordings_dir = pvr.app.config['RECORDINGS_PATH'] #os.curdir + "/recordings"
         episode_dir = recordings_dir + "/{}/{}".format(show_name, recording_number)
 
         ## clear any files that might reside in the test recordings dir

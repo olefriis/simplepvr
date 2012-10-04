@@ -6,12 +6,15 @@ import yaml
 
 from .pvr_logger import logger
 
-
 RecordingMetadata = namedtuple('RecordingMetadata', ['show_name', 'episode', 'channel', 'subtitle', 'description', 'start_time', 'duration', 'has_thumbnail', 'has_webm'])
 
 class RecordingManager:
     def __init__(self, recordings_directory=None):
         self.recordings_directory = recordings_directory if recordings_directory is not None else os.curdir + "/recordings"
+        logger().info("Recordings will be saved to '{}'".format(self.recordings_directory))
+
+    def recordings_dir(self):
+        return self.recordings_directory
 
     def shows(self):
         if (os.path.exists(self.recordings_directory)):
@@ -31,9 +34,13 @@ class RecordingManager:
         return result
 
 
+
     def delete_show_episode(self, show_name, episode):
+        import shutil
         logger().info("Fjerner {}/{}/{}".format(self.recordings_directory, show_name, episode))
-        os.remove(self.recordings_directory + "/" + show_name + "/" + episode)
+        show_path = os.path.join(self.recordings_directory, show_name)
+        episode_path = os.path.join(show_path, episode)
+        shutil.rmtree(episode_path, ignore_errors=True)
 
     def create_directory_for_recording(self, recording):
         show_directory = self._directory_for_show(recording.show_name)
@@ -47,12 +54,11 @@ class RecordingManager:
 
         return recording_directory
 
-#private
+    # private
     def _directory_for_show(self, show_name):
         from .master_import import safe_replace
         sanitized_directory_name = safe_replace(show_name)
-        #logger().debug("Show name: {} vs sanitized name: {}".format(show_name, sanitized_directory_name))
-        directory_name = sanitized_directory_name #if os.path.exists(sanitized_directory_name) else 'Unnamed'
+        directory_name = sanitized_directory_name
         return self.recordings_directory + '/' + directory_name
 
     def _directory_for_show_and_episode(self, show_name, episode):
@@ -77,47 +83,35 @@ class RecordingManager:
         return 1 + largest_current_sequence_number
 
     def _metadata_for(self, show_name, episode):
-        metadata_file_name = self._directory_for_show_and_episode(show_name, str(episode)) + '/metadata.yml'
+        dir_for_episode = self._directory_for_show_and_episode(show_name, str(episode))
+        if not os.path.exists(dir_for_episode):
+            return None
+
+        metadata_file_name = os.path.join(dir_for_episode, 'metadata.yml')
+
+        thumbnail_file_path = os.path.join(dir_for_episode, 'thumbnail.png')
+        has_thumbnail = os.path.exists(thumbnail_file_path)
+
+        webm_file_path = os.path.join(dir_for_episode, 'stream.webm')
+        has_webm = os.path.exists(webm_file_path)
 
         if os.path.exists(metadata_file_name):
             stream = file(metadata_file_name, 'r')
 
             metadata = yaml.load(stream)
-
-            return RecordingMetadata(
-                show_name,
-                episode,
-                metadata['channel'],
-                metadata['subtitle'],
-                metadata['description'],
-                metadata['start_time'],
-                metadata['duration'],
-                False,
-                False)
         else:
-            logger().info(metadata_file_name + " does not exist - no episode metadata available")
-            return None
-            ##TODO
-            #metadata_file_name = directory_for_show_and_episode(show_name, episode) + '/metadata.yml'
-            #metadata = File.exists?(metadata_file_name) ? YAML.load_file(metadata_file_name) : {}
+            metadata = {'channel': None, 'subtitle': None, 'description': None, 'start_time': None, 'duration': None}
 
-            #thumbnail_file_name = directory_for_show_and_episode(show_name, episode) + '/thumbnail.png'
-            #has_thumbnail = File.exists?(thumbnail_file_name)
-
-            #webm_file_name = directory_for_show_and_episode(show_name, episode) + '/stream.webm'
-            #has_webm = File.exists?(webm_file_name)
-
-            #RecordingMetadata.new(
-            #    has_thumbnail,
-            #    has_webm,
-            #    show_name,
-            #    episode,
-            #    metadata[:channel],
-            #    metadata[:subtitle],
-            #    metadata[:description],
-            #    metadata[:start_time],
-            #    metadata[:duration])
-
+        return RecordingMetadata(
+            show_name,
+            episode,
+            metadata['channel'],
+            metadata['subtitle'],
+            metadata['description'],
+            metadata['start_time'],
+            metadata['duration'],
+            has_thumbnail,
+            has_webm)
 
     def _create_metadata(self, directory, recording):
         metadata = {

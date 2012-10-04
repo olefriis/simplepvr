@@ -11,3 +11,6 @@
 *.iml
 epg.xml
 
+python/build
+python/recordings
+build-bundle

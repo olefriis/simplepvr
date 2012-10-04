@@ -15,6 +15,7 @@ DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
+RECORDINGS_PATH = os.path.join(os.getcwd(), "recordings")
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, DATABASE)
 
 from contextlib import closing
@@ -23,6 +24,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__, static_folder= os.path.join(basedir, '../public/static'), template_folder= os.path.join(basedir, '../public/templates') )
 app.config.from_object(__name__)
+
 db = SQLAlchemy(app)
 
 def connect_db():
@@ -69,7 +71,7 @@ def show_schedules():
 def add_schedule():
     from .master_import import Schedule, Channel
     parameters = request.json
-    #parameters = JSON.parse(request.body.read)
+
     title = parameters['title']
     channel_id = int(parameters['channel_id'])
     if channel_id > 0:
@@ -100,6 +102,7 @@ def delete_schedule(sched_id):
     reload_schedules()
     return Response(status=204)
 
+
 @app.route('/api/upcoming_recordings', methods=['GET'])
 def upcoming_recordings():
     from .pvr_initializer import scheduler
@@ -120,7 +123,8 @@ def upcoming_recordings():
             'start_time': recording.start_time.isoformat(),
             'channel': { 'id': recording.channel.id, 'name': recording.channel.name, 'icon_url': recording.channel.icon_url },
             'subtitle': subtitle,
-            'description': description
+            'description': description,
+            'is_conflicting': scheduler().is_conflicting(recording.programme)
 
         })
     return json.dumps(recordings)
@@ -367,6 +371,17 @@ def get_recording_stream(show_name, recording_id):
     path =  recording_manager()._directory_for_show_and_episode(show_name, recording_id)
     return send_from_directory(path, 'stream.ts')
 
+@app.route('/api/shows/<show_name>/recordings/<recording_id>/stream.webm', methods=['GET'])
+def get_recording_stream_webm(show_name, recording_id):
+    from .pvr_initializer import recording_manager
+    path =  recording_manager()._directory_for_show_and_episode(show_name, recording_id)
+    return send_from_directory(path, 'stream.webm')
+
+#@app.route('/api/shows/<show_name>/recordings/<recording_id>/transcode', methods=['POST'])
+#def transcode(show_name, recording_id):
+
+
+
 @app.route('/api/status', methods=['GET'])
 def status( ):
     from .pvr_initializer import scheduler
@@ -375,13 +390,13 @@ def status( ):
     })
 
 
-database_schedule_reader = None
+recording_planner = None
 def reload_schedules():
-    global database_schedule_reader
-    from .master_import import DatabaseScheduleReader
-    if database_schedule_reader is None:
-        database_schedule_reader = DatabaseScheduleReader()
-    database_schedule_reader.read()
+    global recording_planner
+    from .master_import import RecordingPlanner
+    if recording_planner is None:
+        recording_planner = RecordingPlanner()
+    recording_planner.read()
 
 def programme_hash(programme):
     from .pvr_initializer import scheduler
@@ -404,7 +419,7 @@ def recording_hash(show_id, recording):
         'episode': recording.episode,
         'subtitle': recording.subtitle,
         'description': recording.description,
-        'start_time': recording.start_time.isoformat(),
+        'start_time': recording.start_time.isoformat() if recording.start_time else None,
         'channel_name': recording.channel,
         'has_thumbnail': recording.has_thumbnail,
         'has_webm': recording.has_webm
@@ -425,6 +440,19 @@ def channel_with_current_programmes_hash(channel_with_current_programmes):
         'channel': channel,
         'current_programme': current_programme,
         'upcoming_programmes': upcoming_programmes_map
+    }
+
+def programme_summaries_hash(programmes):
+    return programmes.map(programme_summary_hash, programmes)
+
+def programme_summary_hash(programme):
+    from .pvr_initializer import scheduler
+    return {
+               'id': programme.id,
+               'title': programme.title,
+               'start_time': programme.start_time,
+               'is_scheduled': scheduler().is_scheduled(programme),
+           'is_conflicting': scheduler().is_conflicting(programme)
     }
 
 

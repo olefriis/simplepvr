@@ -8,7 +8,7 @@ class Schedule(db.Model):
     __tablename__ = 'schedules'
 
     id = db.Column(Integer, primary_key=True)
-    type = db.Column(Enum('specification'), nullable=False)
+    type = db.Column(Enum('specification', 'exception'), nullable=False)
     title = db.Column(String(255))
     start_time = db.Column(db.DateTime)
 
@@ -38,7 +38,7 @@ class Schedule(db.Model):
     @staticmethod
     def add_specification(title, start_time=None, channel=None):
         type = 'specification'
-        schedule = Schedule(title, type, start_time, channel)
+        schedule = Schedule(title=title, type=type, start_time=start_time, channel=channel)
         db.session.add(schedule)
 #        db.session.flush()
         db.session.commit()
@@ -54,5 +54,6 @@ class Schedule(db.Model):
         return {
             'id'   : self.id,
             'title': safe_value(self.title),
+            'start_time': self.start_time.isoformat() if self.start_time is not None else None,
             'channel'  : self.channel.serialize if self.channel is not None else None
         }

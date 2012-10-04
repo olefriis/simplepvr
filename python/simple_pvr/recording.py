@@ -21,7 +21,10 @@ class Recording:
         return "'{0}' from '{1}' at '{2}'".format(self.show_name, self.channel, self.start_time)
 
     def expired(self):
-        return (self.start_time + timedelta(seconds = self.duration)) < datetime.now()
+        return self.expired_at(datetime.now()) #(self.start_time + timedelta(seconds = self.duration)) < datetime.now()
+
+    def expired_at(self, time):
+        return self._end_time() < time
 
     def inspect(self):
         return "'{0}' from '{1}' at '{2}'".format(self.show_name, self.channel, self.start_time)
@@ -35,3 +38,6 @@ class Recording:
 
     def __hash__(self):
         return hash((self.show_name, self.start_time, self.programme))
+
+    def _end_time(self):
+        return self.start_time + timedelta(seconds = self.duration)

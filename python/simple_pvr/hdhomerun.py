@@ -9,23 +9,42 @@ import codecs
 import re
 
 from threading import Timer
-from subprocess import Popen, PIPE
+from subprocess import PIPE, call, check_call
+import psutil
 
 from .pvr_logger import logger
 
-proc = None
-def kill_proc():
-    if proc:
-        proc.kill()
+def call_os(cmd, check=True):
+    logger().info("Executing '{}'".format(cmd))
+    if check:
+        return check_call(cmd, shell=True)
     else:
-        logger().warn("No process to kill")
+        return call(cmd, shell=True)
+
+
+def terminate_process(psutil_proc):
+    if psutil_proc:
+        logger().info("Killing process id {}".format(psutil_proc.pid))
+        psutil_proc.kill()
+        psutil_proc.wait(timeout=1)
 
 def system(cmd, timeout = 60):
+    global proc
     logger().info("Executing command '{}'".format(cmd))
-    proc = Popen(cmd, shell=True)
+    proc = psutil.Popen(cmd, shell=True)
+    logger().info("PID is {} for command '{}'".format(proc.pid, cmd))
     ## Kill process after timeout seconds.
-    t = Timer(timeout, kill_proc).start()
-    proc.wait() ## Wait for process to complete, increase timeout parameter if default 60 seconds is not enough
+    _timer = Timer(timeout, terminate_process, [proc])
+    _timer.start()
+    proc.wait(timeout=3) ## Wait for process to complete, increase timeout parameter if default 60 seconds is not enough
+    _timer.cancel()
+
+def device_online():
+    return call_os(HDHomeRun.HDHR_CONFIG + " discover", check=False) == 0
+
+def fail_if_no_device():
+    if not device_online():
+        raise Exception('No HDHomerun device available on the network')
 
 def wait_pid(pid):
     return os.waitpid(pid)
@@ -54,13 +73,14 @@ class HDHomeRun:
     def start_recording(self, tuner, frequency, program_id, directory):
         self._set_tuner_to_frequency(tuner, frequency)
         self._set_tuner_to_program(tuner, program_id)
-        self.tuner_pids[tuner] = self._spawn_recorder_process(tuner, directory)
-        logger().info("Process ID for recording on tuner {0}: {1}".format(tuner, self.tuner_pids[tuner]))
+        self.tuner_pids[tuner] = self._spawn_recorder_process_using_bash_script(tuner, directory)
+        logger().info("Process ID for recording on tuner {0}: {1}".format(tuner, self.tuner_pids[tuner].pid))
 
     def stop_recording(self, tuner):
-        pid = self.tuner_pids[tuner]
-        logger().info("Stopping process {0} for tuner {1}".format(pid, tuner))
-        self._send_control_c_to_process(tuner, pid)
+        psutil_process = self.tuner_pids[tuner]
+        if psutil_process and psutil_process.is_running():
+            logger().info("Stopping process {0} for tuner {1}".format(psutil_process.pid, tuner))
+            terminate_process(psutil_process)
         self._reset_tuner_frequency(tuner)
         self.tuner_pids[tuner] = None
 
@@ -73,7 +93,7 @@ class HDHomeRun:
                 logger().error("Exception: ",str(sys.exc_info()))
 
     def _discover(self):
-        return "ffffffff" ## If only HDHomerun on network, ffffffff will work as deviceid
+        return "ffffffff" ## If only one HDHomerun on network, ffffffff will work as deviceid
         #IO.popen('hdhomerun_config discover') do |pipe|
         #output = pipe.read
         #return $1 if output =~ /^hdhomerun device (.*) found at .*$/
@@ -81,7 +101,7 @@ class HDHomeRun:
         #raise Exception, "No device found: #{output}"
 
     def _scan_channels_with_tuner(self, file_name):
-        system(self._hdhr_config_prefix() + " scan /tuner0 {0}".format(file_name))
+        system(self._hdhr_config_prefix() + " scan /tuner0 {0}".format(file_name), timeout=600)
 
     def _read_channels_file(self, file_name):
         from .master_import import Channel
@@ -99,27 +119,33 @@ class HDHomeRun:
                 if channel_name.find('encrypted') != -1 or \
                     channel_name.find("[$]") != -1 or \
                     channel_name.find("DR P") != -1:
-                    logger().info("Channel name containing keyword matching auto hide list - hiding channel '{}'".format(channel_name))
+                    logger().debug("Channel name containing keyword matching auto hide list - hiding channel '{}'".format(channel_name))
                     hidden = True
                 channel = Channel(channel_name, channel_frequency, channel_id, hidden=hidden)
                 channel.add(commit=True)
 
     def _set_tuner_to_frequency(self, tuner, frequency):
-        system(self._hdhr_config_prefix() + " set /tuner{}/channel auto:{}".format(tuner, frequency))
+        return call_os(
+            self._hdhr_config_prefix() + " set /tuner{}/channel auto:{}".format(tuner, frequency))
 
     def _set_tuner_to_program(self, tuner, program_id):
-        system(self._hdhr_config_prefix() + " set /tuner{}/program {}".format(tuner, program_id))
+        return call_os(self._hdhr_config_prefix() + " set /tuner{}/program {}".format(tuner, program_id))
 
     def _spawn_recorder_process(self, tuner, directory):
+        save_cmd = self._hdhr_config_prefix() + " save /tuner/" + str(tuner) + " " + os.path.join(directory, 'stream.ts') + " > " + os.path.join(directory, 'hdhomerun_save.log')
+
+        return psutil.Popen(save_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    def _spawn_recorder_process_using_bash_script(self, tuner, directory):
         open(self._tuner_control_file(tuner), "a") ## Touch file
 
-        command =  "{}/hdhomerun_save.sh {} {} {} {} {}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts', directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
-        r = subprocess.call(command, shell=True)
-        print r
-        return os.path.dirname(__file__) + "/" + str(tuner)
+        command =  "{}/hdhomerun_save.sh {} {} {} {} {}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
+
+        my_hdhr_process = psutil.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return my_hdhr_process #os.path.dirname(__file__) + "/" + str(tuner)
 
     def _reset_tuner_frequency(self, tuner):
-        system(self._hdhr_config_prefix() + " set /tuner{0}/channel none".format(tuner))
+        return call_os(self._hdhr_config_prefix() + " set /tuner{0}/channel none".format(tuner))
 
     def _send_control_c_to_process(self, tuner, pid):
         self._deleteFileIfExists(self._tuner_control_file(tuner))
