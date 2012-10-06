@@ -50,10 +50,11 @@ class Schedule(db.Model):
     @property
     def serialize(self):
         from .master_import import safe_value
+        from dateutil.tz import tzlocal
         """Return object data in easily serializeable format"""
         return {
             'id'   : self.id,
             'title': safe_value(self.title),
-            'start_time': self.start_time.isoformat() if self.start_time is not None else None,
+            'start_time': self.start_time.replace(tzinfo=tzlocal()).isoformat() if self.start_time is not None else None,
             'channel'  : self.channel.serialize if self.channel is not None else None
         }

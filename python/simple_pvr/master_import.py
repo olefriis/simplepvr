@@ -35,6 +35,7 @@ def safe_value(x):
 def json_friendly_tuple(x):
     from collections import namedtuple
     from datetime import datetime, date
+    from dateutil.tz import tzlocal
 
     if not x:
         return None
@@ -46,7 +47,7 @@ def json_friendly_tuple(x):
     tmp_dict = dict.fromkeys(x.keys())
     for idx, key in enumerate(x.keys()):
         if isinstance(x[idx], datetime) or isinstance(x[idx], date):
-            tmp_dict[key] = x[idx].isoformat()
+            tmp_dict[key] = x[idx].replace(tzinfo=tzlocal()).isoformat()
         else:
             tmp_dict[key] = x[idx]
 

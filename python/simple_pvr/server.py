@@ -2,6 +2,7 @@ import os
 import sqlite3
 from datetime import datetime, timedelta
 from dateutil.parser import parse
+from dateutil.tz import tzlocal
 
 from .pvr_logger import logger
 
@@ -120,7 +121,7 @@ def upcoming_recordings():
         recordings.append({
             'programme_id': recording.programme.id,
             'show_name': recording.show_name,
-            'start_time': recording.start_time.isoformat(),
+            'start_time': recording.start_time.replace(tzinfo=tzlocal()).isoformat(),
             'channel': { 'id': recording.channel.id, 'name': recording.channel.name, 'icon_url': recording.channel.icon_url },
             'subtitle': subtitle,
             'description': description,
@@ -400,14 +401,20 @@ def reload_schedules():
 
 def programme_hash(programme):
     from .pvr_initializer import scheduler
+    from dateutil.tz import tzlocal
     is_scheduled = scheduler().is_scheduled(programme)
+
+    iso_start_time = programme.start_time.replace(tzinfo=tzlocal())
+    iso_stop_time = programme.stop_time.replace(tzinfo=tzlocal())
+
     return {
         'id': programme.id,
         'channel': { 'id': programme.channel.id, 'name': programme.channel.name },
         'title': programme.title,
         'subtitle': programme.subtitle,
         'description': programme.description,
-        'start_time': programme.start_time.isoformat(),
+        'start_time': iso_start_time.isoformat(),
+        'stop_time': iso_stop_time.isoformat(),
         'is_scheduled': is_scheduled,
         'episode_num': programme.episode_num
     }
@@ -419,7 +426,7 @@ def recording_hash(show_id, recording):
         'episode': recording.episode,
         'subtitle': recording.subtitle,
         'description': recording.description,
-        'start_time': recording.start_time.isoformat() if recording.start_time else None,
+        'start_time': recording.start_time.replace(tzinfo=tzlocal()).isoformat() if recording.start_time else None,
         'channel_name': recording.channel,
         'has_thumbnail': recording.has_thumbnail,
         'has_webm': recording.has_webm
@@ -450,7 +457,7 @@ def programme_summary_hash(programme):
     return {
                'id': programme.id,
                'title': programme.title,
-               'start_time': programme.start_time,
+               'start_time': programme.start_time.replace(tzinfo=tzlocal()).isoformat(),
                'is_scheduled': scheduler().is_scheduled(programme),
            'is_conflicting': scheduler().is_conflicting(programme)
     }

@@ -1,9 +1,7 @@
 import Queue
 import bisect
-import os
 from threading import Thread, Lock
 import threading
-#import datetime
 from datetime import datetime,timedelta
 import time
 
@@ -164,7 +162,8 @@ class Scheduler(threading.Thread):
                 elif start_time > now and (start_time - timedelta(seconds = 60)) <= now:
                     return True
                 elif start_time < now:
-                    logger().warn("Scheduled recording {} - tuners did not start in time".format(next_recording) )
+                    (now - start_time).min
+                    logger().warn("Scheduled recording {} - recording was started after the show had begun.".format(next_recording) )
                     return True
                     #del(Scheduler.upcoming_recordings[0]) ## upcoming recording expired
 
@@ -174,7 +173,7 @@ class Scheduler(threading.Thread):
     def stop_recording(self,tuner):
         self.recorders[tuner].stop()
         self.recorders[tuner] = None
-        self.current_recordings[current_recordings.index(tuner)] = None
+        self.current_recordings[self.current_recordings.index(tuner)] = None
 
     def start_next_recording(self):
         print "Start next recording"

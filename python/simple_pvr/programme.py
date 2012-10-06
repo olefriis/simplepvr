@@ -10,8 +10,8 @@ metadata = MetaData()
 
 association_table = db.Table('programmes_categories',
                           db.Column('programme_id', Integer, db.ForeignKey('programmes.id')),
-                          db.Column('category_id', Integer, db.ForeignKey('categories.id')),
-                          UniqueConstraint('programme_id', 'category_id', name='uix_1')
+                          db.Column('category_id', Integer, db.ForeignKey('categories.id'))#,
+                          #UniqueConstraint('programme_id', 'category_id', name='uix_1')
 )
 
 class Programme(db.Model):
@@ -141,6 +141,7 @@ class Programme(db.Model):
     @property
     def serialize(self):
         from .master_import import safe_value
+        from dateutil.tz import tzlocal
         """Return object data in easily serializeable format"""
 
         return {
@@ -148,9 +149,9 @@ class Programme(db.Model):
             'title': safe_value(self.title),
             'subtitle'  : safe_value(self.subtitle),
             'description'  : safe_value(self.description),
-            'start_time'  : self.start_time.isoformat(),
-            'startTime'  : self.start_time.isoformat(),
-            'stop_time'  : self.stop_time.isoformat(),
+            'start_time'  : self.start_time.replace(tzinfo=tzlocal()).isoformat(),
+            'startTime'  : self.start_time.replace(tzinfo=tzlocal()).isoformat(),
+            'stop_time'  : self.stop_time.replace(tzinfo=tzlocal()).isoformat(),
             'duration'  : self.duration,
             'channel'  : self.channel.serialize if self.channel is not None else None
         }
