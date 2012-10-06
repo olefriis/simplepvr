@@ -13,10 +13,12 @@ JARO_WINKLER_THRESHOLD = 0.75
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def read_channels_file(file_name):
-    file_exists(file_name, "Channels file '" + file_name + "' does not exist")
+def read_channels_file(fname):
+    file_path = os.path.join(os.path.dirname(__file__), fname)
+
+    file_exists(file_path, "Channels file '" + file_path + "' does not exist")
     channel_frequency = None
-    file = codecs.open(file_name, "r")
+    file = codecs.open(file_path, "r")
     count = 0
     for line in file:
         scanning_entry = re.search(r'^SCANNING: (\d*) .*$', line)
@@ -40,8 +42,9 @@ def getSafeLogString(maxIdx, maxValue, name__text):
         return "Using hdhr_ref {} for XMLTV channel"
 
 
-def read_xmltv(file_name):
-    element_tree = xml.parse(file_name)
+def read_xmltv(fname):
+    file_path = os.path.join(os.path.dirname(__file__), fname)
+    element_tree = xml.parse(file_path)
 
     for channel in element_tree.getroot().findall('channel'):
         found_match = False
@@ -61,10 +64,13 @@ def read_xmltv(file_name):
             except UnicodeEncodeError:
                 try:
                     safe_name_text = name__text if is_ascii(name__text) else name__text.decode(sys.stdout.encoding)
-                    logger.warn("Unable to do score for '{}' vs '{}'".format(safe_name_text, safe_hdhr_name))
+                    logger.warn(u"Unable to do score for '{}' vs '{}'".format(safe_name_text, safe_hdhr_name))
                 except UnicodeEncodeError:
                     ## Hvis vi heller ikke kan logge vores error pga. encoding, logger vi en ny error der er "sikker"
-                    logger.warn(name__text, " <-> ", hdhr_name, " isAscii: ", is_ascii(hdhr_name), " -- Safe version ", safe_name_text, " - ", safe_hdhr_name, " - sys encoding: ", sys.stdout.encoding)
+                    safe_hdhr_name = to_utf8(safe_hdhr_name)
+                    safe_name_text = to_utf8(safe_name_text)
+                    logger.warn(u"Unable to do score calculation for {} - {} - console encoding: {}".format(safe_name_text, safe_hdhr_name, sys.stdout.encoding))
+#                    logger.warn(name__text, " <-> ", hdhr_name, " isAscii: ", is_ascii(hdhr_name), " -- Safe version ", safe_name_text, " - ", safe_hdhr_name, " - sys encoding: ", sys.stdout.encoding)
 
             match_scores.append(score)
 
@@ -101,6 +107,21 @@ def read_xmltv(file_name):
     yaml.dump(channel_mappings, channelMappingFile, default_flow_style=False, encoding='utf-8')
 
     print("Done - results available in '" + yamlFile.name + "' and '"+ channelMappingFile.name+"'")
+
+def to_utf8(myStr):
+    if isinstance(myStr, basestring):
+        ## myStr is either str or unicode
+        if isinstance(myStr, str):
+            return myStr.decode('utf-8', errors='replace')
+        else:
+            return myStr
+
+def is_utf8(myStr):
+    try:
+        myStr.decode('utf-8')
+    except UnicodeDecodeError:
+        return False
+    return True
 
 def is_ascii(myStr):
     try:
