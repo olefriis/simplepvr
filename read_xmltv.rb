@@ -1,5 +1,4 @@
-require File.dirname(__FILE__) + '/lib/simple_pvr/pvr_initializer'
-require File.dirname(__FILE__) + '/lib/simple_pvr/xmltv_reader'
+require File.dirname(__FILE__) + '/lib/simple_pvr'
 require 'yaml'
 require 'open-uri'
 

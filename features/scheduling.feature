@@ -79,3 +79,12 @@ Scenario: Fixing conflicts by removing a schedule
   When I am on the schedules page
   And I follow "Delete"
   Then there should be no conflicts
+
+Scenario: Removing a specific recording from a schedule
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I press "Record on any channel"
+  And I am on the schedules page
+  Then there should be 3 upcoming recordings
+  When I follow "Do not record this specific show"
+  Then there should be 2 upcoming recordings
+  And I should see "Exception: Bonderøven"
