@@ -2,6 +2,7 @@ import codecs, sys
 from datetime import datetime
 import xml.etree.ElementTree as xml
 from dateutil.parser import parse
+from dateutil.tz import tzlocal
 import time
 from blessings import Terminal
 
@@ -60,7 +61,7 @@ class XmltvReader:
 
         current = 0
         doCommit = False
-
+        err = None
         try:
             progress_value = 0
             for programme in programmes:
@@ -73,10 +74,16 @@ class XmltvReader:
                 if ((progress - progress_value) > 0):
                     update_progress(progress)
                 progress_value = progress
+        except Exception, err:
+            raise err
         finally:
             #Clear the progress bar from the terminal when done
+            if err:
+                raise err
+
             if t is None or t.height is None:
                 return
+
             with t.location(0, t.height - 1):
                 sys.stdout.write('{}'.format(' '* (width + 7)))
                 sys.stdout.flush()
@@ -168,8 +175,8 @@ class XmltvReader:
         episode_number = episodenum_node.text if episodenum_node is not None else ''
 
 
-        start_time = parse(programmeNode.attrib['start'])
-        stop_time = parse(programmeNode.attrib['stop'])
+        start_time = parse(programmeNode.attrib['start']).astimezone(tz=tzlocal()) ## astimezone added to handle cases when epg dates are in utc, astimezone also handles offsets like +0200 nicely
+        stop_time = parse(programmeNode.attrib['stop']).astimezone(tz=tzlocal())
         duration = timestamp(stop_time) - timestamp(start_time)
 
         channel = self._channel_from_name(channelName)
