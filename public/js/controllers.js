@@ -1,6 +1,6 @@
 'use strict';
 
-function SchedulesCtrl($scope, Schedule, UpcomingRecording, Channel) {
+function SchedulesCtrl($scope, $http, Schedule, UpcomingRecording, Channel) {
 	var updateView = function() {
 		$scope.schedules = Schedule.query();
 		$scope.upcomingRecordings = UpcomingRecording.query();
@@ -17,6 +17,10 @@ function SchedulesCtrl($scope, Schedule, UpcomingRecording, Channel) {
 	
 	$scope.deleteSchedule = function(schedule) {
 		schedule.$delete(updateView);
+	}
+	
+	$scope.excludeRecording = function(recording) {
+		$http.post('/api/programmes/' + recording.programme_id + '/exclude').success(updateView);
 	}
 }
 

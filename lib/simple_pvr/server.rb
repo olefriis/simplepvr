@@ -28,7 +28,8 @@ module SimplePvr
           id: schedule.id,
           title: schedule.title,
           channel: schedule.channel ? { id: schedule.channel.id, name: schedule.channel.name } : nil,
-          start_time: schedule.start_time
+          start_time: schedule.start_time,
+          is_exception: schedule.type == :exception
         }
       end.to_json
     end
@@ -55,7 +56,7 @@ module SimplePvr
           show_name: recording.show_name,
           start_time: recording.start_time,
           channel: { id: recording.channel.id, name: recording.channel.name },
-          subtitle: recording.programme ? recording.programme.subtitle : nil,
+          subtitle: recording.programme.subtitle,
           is_conflicting: PvrInitializer.scheduler.is_conflicting?(recording.programme)
         }
       end.to_json
@@ -158,6 +159,13 @@ module SimplePvr
     post '/api/programmes/:id/record_just_this_programme' do |id|
       programme = Model::Programme.get(id.to_i)
       Model::Schedule.add_specification(title: programme.title, channel: programme.channel, start_time: programme.start_time)
+      reload_schedules
+      programme_hash(programme).to_json
+    end
+    
+    post '/api/programmes/:id/exclude' do |id|
+      programme = Model::Programme.get(id.to_i)
+      Model::Schedule.create(type: :exception, title: programme.title, channel: programme.channel, start_time: programme.start_time)
       reload_schedules
       programme_hash(programme).to_json
     end
