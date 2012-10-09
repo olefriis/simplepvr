@@ -55,17 +55,26 @@ class Scheduler(threading.Thread):
     @synchronized(myLock)
     def recordings(self,recordings):
         if recordings:
-            sorted_recordings = sorted(recordings, key=lambda rec: rec.start_time)
-            for rec in sorted_recordings:
-                if rec.expired():
-                    logger().info("Upcoming recording idx: '{}' has expired and will not be added to the queue".format(rec.show_name))
-                else:
-                    if rec not in Scheduler.upcoming_recordings:
-                        Scheduler.upcoming_recordings.append(rec)
-                    else:
-                        logger().debug("{} is already in upcoming recordings, ignoring".format(rec))
+            sorted_recordings = list(set(sorted(recordings, key=lambda rec: rec.start_time)))
+            #for idx, rec in enumerate(Scheduler.upcoming_recordings):
+            #    if rec not in sorted_recordings:
+            #        del Scheduler.upcoming_recordings[idx]
 
-        logger().info("Schedule updated with new recordings: {0}".format(Scheduler.upcoming_recordings))
+            Scheduler.upcoming_recordings = list(set(sorted_recordings))
+#            for idx, upcoming_rec in enumerate(Scheduler.upcoming_recordings):
+#                if upcoming_rec not in sorted_recordings:
+#                    del(Scheduler.upcoming_recordings[upcoming_rec])
+#
+#            for rec in sorted_recordings:
+#                if rec.expired():
+#                    logger().info(u"Upcoming recording idx: '{}' has expired and will not be added to the queue".format(rec.show_name))
+#                else:
+#                    if rec not in Scheduler.upcoming_recordings:
+#                        Scheduler.upcoming_recordings.append(rec)
+#                    else:
+#                        logger().debug(u"{} is already in upcoming recordings, ignoring".format(rec))
+
+        logger().info(u"Schedule updated - {} recordings in list".format(len(Scheduler.upcoming_recordings)))
 
         self.scheduled_programmes = self.programme_ids_from(Scheduler.upcoming_recordings)
         self.stop_current_recordings_not_relevant_anymore()
@@ -80,6 +89,16 @@ class Scheduler(threading.Thread):
         return programme.id in self.conflicting_programmes
 
     @synchronized(myLock)
+    def delete_schedule_from_upcoming_recordings(self, schedule):
+        if schedule and Scheduler.upcoming_recordings:
+            for idx, rec in enumerate(Scheduler.upcoming_recordings):
+                if rec.schedule.id == schedule.id:
+                    logger().info(u"Deleting recording '{}' from upcoming recordings since the Schedule backing the recording has been deleted".format(rec.show_name))
+                    del Scheduler.upcoming_recordings[idx]
+                elif rec.show_name == schedule.title:
+                    logger().warn(u"Recording {} is not an instance of Schedule {}".format(rec, schedule))
+
+    @synchronized(myLock)
     def status_text(self):
         if not self._is_recording():
             return 'Idle'
@@ -88,10 +107,10 @@ class Scheduler(threading.Thread):
         status_texts = []
         for recording in self.current_recordings:
             if recording is not None:
-                status_texts.append("Tuner {} is recording '{}' on channel '{}'".format(count, recording.show_name, recording.channel.name))
+                status_texts.append(u"Tuner {} is recording '{}' on channel '{}'".format(count, recording.show_name, recording.channel.name))
             count = count + 1
 
-        return 'Recording ' + ", ".join(status_texts)
+        return u'Recording ' + u", ".join(status_texts)
 
     def get_upcoming_recordings(self):
         return Scheduler.upcoming_recordings

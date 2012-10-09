@@ -98,6 +98,10 @@ def add_schedule():
 @app.route('/api/schedules/<int:sched_id>', methods=['DELETE'])
 def delete_schedule(sched_id):
     from .master_import import Schedule
+    from .pvr_initializer import scheduler
+
+    schedule_to_delete = Schedule.query.get(sched_id)
+    scheduler().delete_schedule_from_upcoming_recordings(schedule_to_delete)
 
     Schedule.query.filter(Schedule.id == sched_id).delete()
 
@@ -111,6 +115,8 @@ def delete_schedule(sched_id):
 @app.route('/api/upcoming_recordings', methods=['GET'])
 def upcoming_recordings():
     from .pvr_initializer import scheduler
+
+    reload_schedules()
 
     recordings = []
     upcoming_recordings = scheduler().get_upcoming_recordings()
@@ -126,6 +132,7 @@ def upcoming_recordings():
             'programme_id': recording.programme.id,
             'show_name': recording.show_name,
             'start_time': recording.start_time.replace(tzinfo=tzlocal()).isoformat(),
+            'stop_time': recording.stop_time.replace(tzinfo=tzlocal()).isoformat(),
             'channel': { 'id': recording.channel.id, 'name': recording.channel.name, 'icon_url': recording.channel.icon_url },
             'subtitle': subtitle,
             'description': description,
@@ -309,10 +316,10 @@ def record_single_programme(programme_id):
     reload_schedules()
     return json.dumps(programme_hash(programme))
 
-@app.route('/api/programmes/<int:id>/exclude', methods=['POST'])
-def exclude_programme():
+@app.route('/api/programmes/<int:prg_id>/exclude', methods=['POST'])
+def exclude_programme(prg_id):
     from .master_import import Programme, Schedule
-    programme = Programme.query.get(id)
+    programme = Programme.query.get(prg_id)
     if not programme:
         return Response(status=404)
 

@@ -1,6 +1,8 @@
 from datetime import timedelta
 
 class RecordingPlanner:
+    MINUTES_START_BEFORE=2
+    MINUTES_CONTINUE_AFTER=3
 
     def __init__(self):
          self._recordings = []
@@ -8,10 +10,14 @@ class RecordingPlanner:
     def read(self):
         from .master_import import Schedule, Programme
         from datetime import datetime
+        from sqlalchemy import or_
 
         self._recordings = []
-        specifications = Schedule.query.filter(Schedule.type == 'specification').filter(Schedule.stop_time >= datetime.now() ).all()
-        exceptions = Schedule.query.filter(Schedule.type == 'exception').filter(Schedule.stop_time >= datetime.now() ).all()
+
+        clauses = [Schedule.stop_time == None, Schedule.stop_time >= datetime.now()]
+
+        specifications = Schedule.query.filter(Schedule.type == 'specification').filter( or_(*clauses) ).all()
+        exceptions = Schedule.query.filter(Schedule.type == 'exception').filter( or_(*clauses) ).all()
         for specification in specifications:
             title = specification.title
             if specification.channel and specification.start_time:
@@ -22,7 +28,7 @@ class RecordingPlanner:
                 programmes = Programme.with_title(specification.title)
 
             programmes_with_exceptions_removed = programmes ## TODO filter exception programmes
-            self._add_programmes(title, programmes_with_exceptions_removed)
+            self._add_programmes(title, programmes_with_exceptions_removed, specification)
 
         if self._recordings:
             from .pvr_initializer import scheduler
@@ -41,13 +47,13 @@ class RecordingPlanner:
                 return True
         return False
 
-    def _add_programmes(self, title, programmes):
+    def _add_programmes(self, title, programmes, schedule):
         for programme in programmes:
-            start_time = programme.start_time - timedelta(minutes = 2)
-            stop_time = programme.stop_time + timedelta(minutes = 3)
+            start_time = programme.start_time - timedelta(minutes = RecordingPlanner.MINUTES_START_BEFORE)
+            stop_time = programme.stop_time + timedelta(minutes = RecordingPlanner.MINUTES_CONTINUE_AFTER)
             duration = (stop_time-start_time).total_seconds()
-            self._add_recording(title, programme.channel, start_time, stop_time, duration, programme)
+            self._add_recording(title, programme.channel, start_time, stop_time, duration, programme, schedule)
 
-    def _add_recording(self, title, channel, start_time, stop_time, duration, programme=None):
+    def _add_recording(self, title, channel, start_time, stop_time, duration, programme=None, schedule=None):
         from .master_import import Recording
-        self._recordings.append(Recording(channel=channel, show_name=title, start_time=start_time, stop_time=stop_time, duration=duration, programme=programme))
+        self._recordings.append(Recording(channel=channel, show_name=title, start_time=start_time, stop_time=stop_time, duration=duration, programme=programme, schedule=schedule))

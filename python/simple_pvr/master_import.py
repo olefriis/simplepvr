@@ -31,6 +31,13 @@ def safe_value(x):
             print("safe_value unable to handle " + x)
             return "TODO - fix encoding!!!"
 
+def to_utf8(myStr):
+    if isinstance(myStr, basestring):
+        ## myStr is either str or unicode
+        if isinstance(myStr, str):
+            return myStr.decode('utf-8', errors='replace')
+        else:
+            return myStr
 
 def json_friendly_tuple(x):
     from collections import namedtuple
