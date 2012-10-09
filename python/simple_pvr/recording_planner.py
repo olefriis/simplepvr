@@ -44,9 +44,10 @@ class RecordingPlanner:
     def _add_programmes(self, title, programmes):
         for programme in programmes:
             start_time = programme.start_time - timedelta(minutes = 2)
-            duration = programme.duration + timedelta(minutes = 7).seconds
-            self._add_recording(title, programme.channel, start_time, duration, programme)
+            stop_time = programme.stop_time + timedelta(minutes = 3)
+            duration = (stop_time-start_time).total_seconds()
+            self._add_recording(title, programme.channel, start_time, stop_time, duration, programme)
 
-    def _add_recording(self, title, channel, start_time, duration, programme=None):
+    def _add_recording(self, title, channel, start_time, stop_time, duration, programme=None):
         from .master_import import Recording
-        self._recordings.append(Recording(channel, title, start_time, duration, programme))
+        self._recordings.append(Recording(channel=channel, show_name=title, start_time=start_time, stop_time=stop_time, duration=duration, programme=programme))
