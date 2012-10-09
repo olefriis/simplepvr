@@ -9,8 +9,8 @@ import codecs
 import re
 
 from threading import Timer
-from subprocess import PIPE, call, check_call
-import psutil
+from subprocess import PIPE, call, check_call, check_output
+from psutil import Popen
 
 from .pvr_logger import logger
 
@@ -21,6 +21,8 @@ def call_os(cmd, check=True):
     else:
         return call(cmd, shell=True)
 
+def check_cmd_output(cmd):
+    return check_output(cmd, shell=True)
 
 def terminate_process(psutil_proc):
     if psutil_proc:
@@ -31,13 +33,16 @@ def terminate_process(psutil_proc):
 def system(cmd, timeout = 60):
     global proc
     logger().info("Executing command '{}'".format(cmd))
-    proc = psutil.Popen(cmd, shell=True)
+    proc = Popen(cmd, shell=True, stdout=PIPE)
     logger().info("PID is {} for command '{}'".format(proc.pid, cmd))
+    for line in proc.stdout:
+        logger().info("Process output: {}".format(line))
     ## Kill process after timeout seconds.
     _timer = Timer(timeout, terminate_process, [proc])
     _timer.start()
-    proc.wait(timeout=3) ## Wait for process to complete, increase timeout parameter if default 60 seconds is not enough
+    proc.wait(timeout=3) ## Wait for process to complete, increase timeout parameter if default 3 seconds is not enough
     _timer.cancel()
+    return proc
 
 def device_online():
     return call_os(HDHomeRun.HDHR_CONFIG + " discover", check=False) == 0
@@ -93,12 +98,21 @@ class HDHomeRun:
                 logger().error("Exception: ",str(sys.exc_info()))
 
     def _discover(self):
-        return "ffffffff" ## If only one HDHomerun on network, ffffffff will work as deviceid
-        #IO.popen('hdhomerun_config discover') do |pipe|
-        #output = pipe.read
-        #return $1 if output =~ /^hdhomerun device (.*) found at .*$/
+        import re
 
-        #raise Exception, "No device found: #{output}"
+        hdhr_id = None
+        try:
+            result = check_cmd_output(HDHomeRun.HDHR_CONFIG + " discover")
+            re_match = re.match(r'hdhomerun device (.*) found at .*$', result, re.M)
+            hdhr_id = re_match.group(1).strip()
+        except Exception, err:
+            logger().error(err)
+
+        if hdhr_id:
+            return hdhr_id
+        else:
+            return "ffffffff"   ## If only one HDHomerun on network, ffffffff will work as deviceid
+
 
     def _scan_channels_with_tuner(self, file_name):
         system(self._hdhr_config_prefix() + " scan /tuner0 {0}".format(file_name), timeout=600)
@@ -134,14 +148,14 @@ class HDHomeRun:
     def _spawn_recorder_process(self, tuner, directory):
         save_cmd = self._hdhr_config_prefix() + " save /tuner/" + str(tuner) + " " + os.path.join(directory, 'stream.ts') + " > " + os.path.join(directory, 'hdhomerun_save.log')
 
-        return psutil.Popen(save_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return Popen(save_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def _spawn_recorder_process_using_bash_script(self, tuner, directory):
         open(self._tuner_control_file(tuner), "a") ## Touch file
 
         command =  "{}/hdhomerun_save.sh {} {} {} {} {}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
 
-        my_hdhr_process = psutil.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        my_hdhr_process = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return my_hdhr_process #os.path.dirname(__file__) + "/" + str(tuner)
 
     def _reset_tuner_frequency(self, tuner):
