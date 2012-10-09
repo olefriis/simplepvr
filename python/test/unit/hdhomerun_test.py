@@ -72,3 +72,13 @@ class HDHomerunTestCase(unittest.TestCase):
         terminate_process(process)
 
         self.assertFalse(process.is_running())
+
+    def test_stuff(self):
+        import re
+        start = datetime.now()
+
+        discover_cmd = "hdhomerun_config discover"
+        output = check_cmd_output(discover_cmd)
+        re_match = re.match(r'hdhomerun device (.*) found at .*$', output, re.M)
+        print "HDHomerun id: ", re_match.group(1).strip()
+
