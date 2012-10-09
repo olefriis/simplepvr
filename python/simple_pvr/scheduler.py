@@ -54,18 +54,22 @@ class Scheduler(threading.Thread):
 
     @synchronized(myLock)
     def recordings(self,recordings):
-        
-        Scheduler.upcoming_recordings = sorted(recordings, key=lambda rec: rec.start_time)
-        for upcoming in Scheduler.upcoming_recordings:
-            if upcoming.expired():
-               recordings_index = Scheduler.upcoming_recordings.index(upcoming)
-               logger().info("Upcoming recording idx: {}".format(recordings_index))
-               del(Scheduler.upcoming_recordings[recordings_index])
-        logger().info("Scheduling upcoming recordings: {0}".format(Scheduler.upcoming_recordings))
+        if recordings:
+            sorted_recordings = sorted(recordings, key=lambda rec: rec.start_time)
+            for rec in sorted_recordings:
+                if rec.expired():
+                    logger().info("Upcoming recording idx: '{}' has expired and will not be added to the queue".format(rec.show_name))
+                else:
+                    if rec not in Scheduler.upcoming_recordings:
+                        Scheduler.upcoming_recordings.append(rec)
+                    else:
+                        logger().debug("{} is already in upcoming recordings, ignoring".format(rec))
+
+        logger().info("Schedule updated with new recordings: {0}".format(Scheduler.upcoming_recordings))
 
         self.scheduled_programmes = self.programme_ids_from(Scheduler.upcoming_recordings)
         self.stop_current_recordings_not_relevant_anymore()
-        Scheduler.upcoming_recordings = self.remove_current_recordings(Scheduler.upcoming_recordings)
+        self.remove_current_recordings_from_upcoming() ##Overskriver upcoming recordings
         self._mark_conflicting_recordings(Scheduler.upcoming_recordings)
         self.conflicting_programmes = []#self.programme_ids_from() # TODO: find conflicting programmes
 
@@ -95,6 +99,7 @@ class Scheduler(threading.Thread):
     @synchronized(myLock)
     def process(self):
         logger().debug("Scheduler '{}' doing processing of recordings queue".format(self.name))
+
         self.check_expiration_of_current_recordings()
         self.check_start_of_coming_recordings()
 
@@ -126,18 +131,19 @@ class Scheduler(threading.Thread):
                 result[recording.programme.id] = True
         return result
 
-    def remove_current_recordings(self, recordings):
+    def remove_current_recordings_from_upcoming(self):
         newUpcomingRecordings = []
-        for recording in recordings:
-            if recording not in self.current_recordings:
-                newUpcomingRecordings.append(recording)
-        return newUpcomingRecordings
+        for recording in Scheduler.upcoming_recordings:
+            idx = Scheduler.upcoming_recordings.index(recording)
+            if recording in self.current_recordings:
+                del(Scheduler.upcoming_recordings[idx])
+        logger().info("Done removing current recordings from upcoming recordings list")
 
     def stop_current_recordings_not_relevant_anymore(self):
         for recording in self.current_recordings:
-            if recording and recording not in Scheduler.upcoming_recordings:
-                logger().info("Stopping recording '{}' no longer in upcoming recordings".format(recording.show_name))
-                self.stop_recording(recording)
+            if recording and recording not in Scheduler.upcoming_recordings and recording not in self.current_recordings:
+                logger().info("Recording '{}' is neither in current_recordings or upcoming_recordings. Will be stopped immediately.".format(recording.show_name))
+                self.stop_recording(recording) # TODO: bug - this can cause an active recording to be stopped, and then restarted - disabling feature for now
 
 
     def check_expiration_of_current_recordings(self):
