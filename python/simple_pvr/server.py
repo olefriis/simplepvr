@@ -22,6 +22,7 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, DATABASE)
 from contextlib import closing
 from flask import Flask, request, json, jsonify, session, g, redirect, url_for, abort, render_template, flash, send_file, send_from_directory, after_this_request, make_response, Response
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import or_, and_, desc
 
 app = Flask(__name__, static_folder= os.path.join(basedir, '../public/static'), template_folder= os.path.join(basedir, '../public/templates') )
 app.config.from_object(__name__)
@@ -61,7 +62,10 @@ def favicon():
 @app.route('/api/schedules', methods=['GET'])
 def show_schedules():
     from .master_import import Schedule
-    schedules = Schedule.query.all()
+
+    clauses = [Schedule.stop_time == None, Schedule.stop_time >= datetime.now()]
+
+    schedules = Schedule.query.filter(or_(*clauses)).all()
     if schedules is None or len(schedules) == 0:
         logger().info("No schedules in database")
         return json.dumps([])
@@ -130,7 +134,7 @@ def upcoming_recordings():
         })
     return json.dumps(recordings)
 
-@app.route('/api/schedules/reload', methods=['POST'])
+@app.route('/api/schedules/reload', methods=['GET','POST'])
 def schedules_reload():
     reload_schedules()
     return ""
@@ -301,9 +305,22 @@ def record_single_programme(programme_id):
     if not programme:
         return Response(status=404)
 
-    Schedule.add_specification(title= programme.title, start_time=programme.start_time, channel=programme.channel)
+    Schedule.add_specification(title= programme.title, start_time=programme.start_time, stop_time=programme.stop_time, channel=programme.channel)
     reload_schedules()
     return json.dumps(programme_hash(programme))
+
+@app.route('/api/programmes/<int:id>/exclude', methods=['POST'])
+def exclude_programme():
+    from .master_import import Programme, Schedule
+    programme = Programme.query.get(id)
+    if not programme:
+        return Response(status=404)
+
+    Schedule(title=programme.title, type='exception', channel=programme.channel, start_time=programme.start_time, stop_time=programme.stop_time).add(True)
+
+    reload_schedules()
+    return json.dumps(programme_hash(programme))
+
 
 @app.route('/api/shows', methods=['GET'])
 def get_shows():
