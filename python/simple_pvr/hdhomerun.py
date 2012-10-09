@@ -33,7 +33,7 @@ def terminate_process(psutil_proc):
 def system(cmd, timeout = 60):
     global proc
     logger().info("Executing command '{}'".format(cmd))
-    proc = Popen(cmd, shell=True, stdout=PIPE)
+    proc = Popen(cmd, close_fds=True, shell=True, stdout=PIPE)
     logger().info("PID is {} for command '{}'".format(proc.pid, cmd))
     for line in proc.stdout:
         logger().info("Process output: {}".format(line))
@@ -148,14 +148,14 @@ class HDHomeRun:
     def _spawn_recorder_process(self, tuner, directory):
         save_cmd = self._hdhr_config_prefix() + " save /tuner/" + str(tuner) + " " + os.path.join(directory, 'stream.ts') + " > " + os.path.join(directory, 'hdhomerun_save.log')
 
-        return Popen(save_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return Popen(save_cmd, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def _spawn_recorder_process_using_bash_script(self, tuner, directory):
         open(self._tuner_control_file(tuner), "a") ## Touch file
 
         command =  "{}/hdhomerun_save.sh {} {} {} {} {}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
 
-        my_hdhr_process = Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        my_hdhr_process = Popen(command, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return my_hdhr_process #os.path.dirname(__file__) + "/" + str(tuner)
 
     def _reset_tuner_frequency(self, tuner):
