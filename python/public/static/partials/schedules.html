@@ -3,7 +3,7 @@
 		<h1>Existing schedules</h1>
 		<div class="row" ng-repeat="schedule in schedules">
 			<div class="span6">
-				<p>{{schedule.title}}
+				<p><span ng-show="schedule.is_exception">Exception:</span> {{schedule.title}}
 					<span ng-show="schedule.channel">on {{schedule.channel.name}}</span>
 					<span ng-show="schedule.start_time">{{schedule.start_time | date:'fullDate'}} at {{schedule.start_time | date:'HH:mm'}}</span></p>
 				<p><a ng-click="deleteSchedule(schedule)" class="btn">Delete</a></p>
@@ -29,7 +29,7 @@
 		<h1>Upcoming recordings</h1>
 		<div class="row" ng-repeat="recording in upcomingRecordings">
 	    	<div class="span6">
-		    	<h2>{{recording.show_name}}</h2>
+		    	<h2>{{recording.show_name}}<span ng-show="recording.is_conflicting" style="color: red"> (Conflicting)</span> <a ng-click="excludeRecording(recording)"title="Do not record this specific show"><i class="icon-remove"></i></a></h2>
 				<p>{{recording.start_time | date:'fullDate'}} at {{recording.start_time | date:'HH:mm'}} on {{recording.channel.name}}</p>
 				<p ng-show="recording.subtitle">{{recording.subtitle}}</p>
 				<p><a ng-href="/programmes/{{recording.programme_id}}">View details</a></p>

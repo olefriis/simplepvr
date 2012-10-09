@@ -24,10 +24,10 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-show="channel.current_programme">
+				<tr ng-show="channel.current_programme" ng-class="classForProgrammeLine(channel.current_programme)">
 					<td class="span1">{{channel.current_programme.start_time | date:'HH:mm'}}</td>
 					<td><a ng-href="/programmes/{{channel.current_programme.id}}">{{channel.current_programme.title}}</td></tr>
-				<tr ng-repeat="upcomingProgramme in channel.upcoming_programmes">
+				<tr ng-repeat="upcomingProgramme in channel.upcoming_programmes" ng-class="classForProgrammeLine(upcomingProgramme)">
 					<td class="span1">{{upcomingProgramme.start_time | date:'HH:mm'}}</td>
 					<td><a ng-href="/programmes/{{upcomingProgramme.id}}">{{upcomingProgramme.title}}</a></td></tr>
 				<tr>
