@@ -7,10 +7,11 @@ class RecordingPlanner:
 
     def read(self):
         from .master_import import Schedule, Programme
+        from datetime import datetime
 
         self._recordings = []
-        specifications = Schedule.query.filter(Schedule.type == 'specification').all()
-        exceptions = Schedule.query.filter(Schedule.type == 'exception').all()
+        specifications = Schedule.query.filter(Schedule.type == 'specification').filter(Schedule.stop_time >= datetime.now() ).all()
+        exceptions = Schedule.query.filter(Schedule.type == 'exception').filter(Schedule.stop_time >= datetime.now() ).all()
         for specification in specifications:
             title = specification.title
             if specification.channel and specification.start_time:
@@ -23,6 +24,7 @@ class RecordingPlanner:
             programmes_with_exceptions_removed = programmes ## TODO filter exception programmes
             self._add_programmes(title, programmes_with_exceptions_removed)
 
+        if self._recordings:
             from .pvr_initializer import scheduler
             scheduler().recordings(self._recordings)
 
