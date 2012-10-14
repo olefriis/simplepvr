@@ -23,6 +23,10 @@ module SimplePvr
       @scheduler
     end
     
+    def self.rack_maps_file
+      File.read(File.dirname(__FILE__) + '/server/rack_maps.rb')
+    end
+    
     def self.sleep_forever
       forever = 6000.days
       sleep forever

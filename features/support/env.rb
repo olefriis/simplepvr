@@ -4,12 +4,11 @@ require 'capybara/cucumber'
 require 'rspec'
 
 require File.join(File.dirname(__FILE__), '../../lib/simple_pvr')
-require File.join(File.dirname(__FILE__), '../../lib/simple_pvr/server')
 
 SimplePvr::PvrInitializer.setup_for_integration_test
 SimplePvr::RecordingPlanner.read
 
-Capybara.app = SimplePvr::Server
+Capybara.app = eval "Rack::Builder.new {( " + SimplePvr::PvrInitializer.rack_maps_file + ")}"
 Capybara.default_driver = :selenium
 Capybara.default_wait_time = 5
 

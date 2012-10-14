@@ -47,14 +47,15 @@ Starting the server
 ===================
 Run
 
-        bundle exec ruby pvr_server.rb
+        bundle exec rackup
 
-...and go to [http://localhost:4567](http://localhost:4567). If you want to expose this URL to the outside
+...and go to [http://localhost:9292](http://localhost:9292). If you want to expose this URL to the outside
 world, you'd better supply a username and password:
 
-        username=me password=secret bundle exec ruby pvr_server.rb
+        username=me password=secret bundle exec rackup
 
-This will secure the application with Basic HTTP Authentication.
+This will secure the application with Basic HTTP Authentication. You can also supply a `-p` argument to
+run the server on another port than 9292.
 
 XMLTV
 =====
