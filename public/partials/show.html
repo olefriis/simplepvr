@@ -3,7 +3,7 @@
 		<h1>Recordings of {{show.name}}</h1>
 	</div>
 </div>
-<div class="row" ng-repeat="recordingChunk in recordings | chunk:2">
+<div class="row" ng-repeat="recordingChunk in recordings | orderBy:'start_time' | chunk:2">
 	<div class="span6" ng-repeat="recording in recordingChunk">
    		<h2>{{recording.episode}}</h2>
 		<img ng-show="recording.has_thumbnail" class="thumbnail" ng-src="/api/shows/{{show.name}}/recordings/{{recording.episode}}/thumbnail.png">
