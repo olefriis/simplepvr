@@ -16,3 +16,4 @@ python/recordings
 build-bundle
 *.sqlite.bak*
 epg_data
+python/tst

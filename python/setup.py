@@ -26,7 +26,7 @@ setup(
     url = "http://packages.python.org/an_example_pypi_project",
     packages=find_packages(),
     scripts = ['pvr_server.py', 'read_xmltv.py'],
-    install_requires = readlines('requirements.txt'),
+    install_requires = [ readlines('requirements.txt') ],
     test_suite = 'test/functional/simplepvr_tests.py',
     long_description=read('README.md'),
     classifiers=[
