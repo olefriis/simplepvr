@@ -1,0 +1,4 @@
+#!/bin/sh
+PATH=/bin:/usr/bin
+. `dirname $0`/installer
+`basename $0` > $SYNOPKG_TEMP_LOGFILE
