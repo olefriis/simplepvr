@@ -42,6 +42,7 @@ module SimplePvr
       end
 
       def recording_hash(show_id, recording)
+        path = PvrInitializer.recording_manager.directory_for_show_and_episode(show_id, recording.episode)
         {
           id: recording.episode,
           show_id: show_id,
@@ -51,7 +52,8 @@ module SimplePvr
           start_time: recording.start_time,
           channel_name: recording.channel,
           has_thumbnail: recording.has_thumbnail,
-          has_webm: recording.has_webm
+          has_webm: recording.has_webm,
+          local_file_url: 'file://' + File.join(path, 'stream.ts')
         }
       end
 
