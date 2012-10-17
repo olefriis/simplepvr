@@ -4,11 +4,14 @@ A really, really simple PVR (Personal Video Recorder) system which only supports
 [HDHomeRun network tuners](http://www.silicondust.com/). It's written in Ruby and is highly hackable. If
 you don't want to hack it, but just want a solid PVR system, no worries: It's dead-simple to use.
 
+SimplePVR does not contain its own player, but currently provides an XBMC plug-in and some half-hearted
+browser playback. Apart from that, all recordings are stored in a simple directory structure (see below
+for an explanation), so that you can just point your favorite player to the recordings.
+
 Why?
 ====
 MythTV stopped working for me and my HDHomeRun box in the 0.25 release. And even though MythTV has loads
 of merits, I just have no idea what to do when it stops working - I am not in control of my media center.
-
 
 During the last couple of years, I have spent a substantial amount of time on bugs that suddenly appeared
 in MythTV and suddenly went away. I really don't like using systems this brittle.
@@ -100,6 +103,24 @@ Inside the numbered directories are these files:
 
 ...and a few other files (thumbnails, transcoded version of the recording, etc.).
 
+XBMC Plug-In
+============
+There's a very simple XBMC plug-in, which resides in the `plugins/xbmc` folder. Copy the
+`plugins.video.simplepvr` folder and its contents to the `Contents/Resources/XBMC/addons` folder
+in your XBMC installation. (You can also ZIP the folder and install it in a more official way
+through XBMC's settings page.)
+
+Remember to look through the plug-in's settings page in XBMC after you have installed the plug-in.
+Here, you set up the server URL and username / password, in case you have secured your server as
+described above.
+
+The plug-in allows you to browse your recordings, watch them, and delete them. To delete, press
+the "C" key, or right-click your mouse on a show or a recording. Then you can choose "Delete" from
+the context menu.
+
+Please note: XBMC currently has to run on the same machine as the SimplePVR backend. This may change
+in the future, but currently the backend is not fast enough at streaming files through HTTP.
+
 Future?
 =======
 This projects needs to be a nice, readable, hackable, tested system. No pull requests are
@@ -114,9 +135,7 @@ are the only means you have for speeding things up. This includes:
   * Some better overview pages, e.g. "all children programmes", "all movies this week".
   * Possibility to set up schedules defined by a channel, a start time, and a duration (and a name,
     probably), so that the web GUI is usable even without XMLTV.
-* Exclude specific programmes from "all with this title".
 * Duplication detection.
-* Visualize conflicts in upcoming recordings.
 * XMLTV import:
   * Let SimplePVR itself fetch XMLTV URLs at specified times of day.
   * Set-up of matching XMLTV IDs to channels could make good use of a GUI.
