@@ -1,14 +1,14 @@
 require 'simple_pvr'
 
 describe SimplePvr::Model::Programme do
-  include SimplePvr::Model
+  Channel, Programme = SimplePvr::Model::Channel, SimplePvr::Model::Programme
   
   before :all do
-    DatabaseInitializer.prepare_for_test
+    SimplePvr::Model::DatabaseInitializer.prepare_for_test
   end
   
   before :each do
-    DatabaseInitializer.clear
+    SimplePvr::Model::DatabaseInitializer.clear
   end
 
   before do

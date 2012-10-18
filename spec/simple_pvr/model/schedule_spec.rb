@@ -1,14 +1,14 @@
 require 'simple_pvr'
 
 describe SimplePvr::Model::Schedule do
-  include SimplePvr::Model
+  Channel, Schedule = SimplePvr::Model::Channel, SimplePvr::Model::Schedule
   
   before :all do
-    DatabaseInitializer.prepare_for_test
+    SimplePvr::Model::DatabaseInitializer.prepare_for_test
   end
   
   before :each do
-    DatabaseInitializer.clear
+    SimplePvr::Model::DatabaseInitializer.clear
     @dr_1 = Channel.add('DR 1', 23000000, 1098)
   end
   

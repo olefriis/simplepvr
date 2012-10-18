@@ -30,8 +30,7 @@ Installation
 First of all, you need a computer and an HDHomeRun tuner box. On your computer, you need to have the
 "hdhomerun_config" tool on the path.
 
-You need Ruby 1.9.2 (or newer - 1.9.0 or newer is probably enough). Running the tests are not supported 
-on Ruby 1.9.3, so for now, stick with 1.9.2.
+You need Ruby 1.9.2 or newer (1.9.0 or newer is probably enough).
 
 Dump this source somewhere, and run
 
