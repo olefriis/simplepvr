@@ -194,7 +194,7 @@ class SimplePVRTestCase(unittest.TestCase):
         title = p_test.title
 
         # Create an extra programme with the same title as programme2 - but scheduled on a different channel
-        Programme(c2, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).total_seconds(), "1/4", True).add(True)
+        Programme(c2, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).seconds, "1/4", True).add(True)
 
         rec_url = "/api/programmes/{0}/record_on_any_channel".format(programme_id)
         rv = self.app.post(rec_url)
@@ -222,7 +222,7 @@ class SimplePVRTestCase(unittest.TestCase):
         title = p_test.title
 
         # Create an extra programme with the same title as programme2 - but scheduled on a different channel
-        Programme(c2, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).total_seconds(), "1/4", True).add(True)
+        Programme(c2, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).seconds, "1/4", True).add(True)
 
         rec_url = "/api/programmes/{0}/record_on_this_channel".format(programme_id)
         rv = self.app.post(rec_url)
@@ -249,7 +249,7 @@ class SimplePVRTestCase(unittest.TestCase):
         title = p_test.title
 
         # Create an extra programme with the same title as programme2 - scheduled on the same channel
-        Programme(p_test.channel, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).total_seconds(), "3/4", True).add(True)
+        Programme(p_test.channel, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).seconds, "3/4", True).add(True)
 
         rec_url = "/api/programmes/{0}/record_just_this_programme".format(programme_id)
         rv = self.app.post(rec_url)
@@ -448,9 +448,9 @@ class SimplePVRTestCase(unittest.TestCase):
             stop = start + timedelta(minutes=60)
             start_tomorrow = now + timedelta(days = 1)
             end_tomorrow = now + timedelta(days = 1, minutes = 30)
-            Programme(Channel.query.get(1), "Testudsendelse", "sub", "desc", now, stop_now, (stop_now-now).total_seconds()).add(True)
-            Programme(Channel.query.get(1), "Testudsendelse i morgen", "sub", "desc", start_tomorrow, end_tomorrow, (end_tomorrow-start_tomorrow).total_seconds()).add(True)
-            Programme(Channel.query.get(3), "Testudsendelse 3", "sub", "desc", start, stop, (stop-start).total_seconds() ).add(True)
+            Programme(Channel.query.get(1), "Testudsendelse", "sub", "desc", now, stop_now, (stop_now-now).seconds).add(True)
+            Programme(Channel.query.get(1), "Testudsendelse i morgen", "sub", "desc", start_tomorrow, end_tomorrow, (end_tomorrow-start_tomorrow).seconds).add(True)
+            Programme(Channel.query.get(3), "Testudsendelse 3", "sub", "desc", start, stop, (stop-start).seconds ).add(True)
 
     def _create_test_data(self):
         self._create_channels()

@@ -41,7 +41,7 @@ class Recording:
             return 0
         if other is None:
             return 1
-        return (self.start_time - other.start_time).total_seconds()
+        return (self.start_time - other.start_time).seconds
 
     def __hash__(self):
         return hash((self.show_name, self.start_time, self.stop_time, self.programme))

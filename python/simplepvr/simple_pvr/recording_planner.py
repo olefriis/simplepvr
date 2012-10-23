@@ -51,7 +51,7 @@ class RecordingPlanner:
         for programme in programmes:
             start_time = programme.start_time - timedelta(minutes = RecordingPlanner.MINUTES_START_BEFORE)
             stop_time = programme.stop_time + timedelta(minutes = RecordingPlanner.MINUTES_CONTINUE_AFTER)
-            duration = (stop_time-start_time).total_seconds()
+            duration = (stop_time-start_time).seconds
             self._add_recording(title, programme.channel, start_time, stop_time, duration, programme, schedule)
 
     def _add_recording(self, title, channel, start_time, stop_time, duration, programme=None, schedule=None):

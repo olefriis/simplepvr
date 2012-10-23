@@ -25,7 +25,7 @@ class HDHomerunTestCase(unittest.TestCase):
         start = datetime.now()
         self.assertEqual(0, call_os(self.cmd))
         stop = datetime.now()
-        duration = (stop-start).total_seconds()
+        duration = (stop-start).seconds
         self.assertLessEqual(self.sleep_time, duration)
 
     def test_timeout_kill_long_running_command(self):
@@ -33,14 +33,14 @@ class HDHomerunTestCase(unittest.TestCase):
         timeout = 1
         system(self.cmd, timeout=timeout)
         stop = datetime.now()
-        duration = (stop-start).total_seconds()
+        duration = (stop-start).seconds
         self.assertEqual(timeout, duration//timeout)
 
     def test_spawn_recorder_using_shell_script(self):
         start = datetime.now()
         process = self.hdhomerun._spawn_recorder_process_using_bash_script(0, os.getcwd())
         stop = datetime.now()
-        duration = (stop-start).total_seconds()
+        duration = (stop-start).seconds
         print "Duration: ", duration, " seconds"
         print "Process: ", process
 
@@ -61,7 +61,7 @@ class HDHomerunTestCase(unittest.TestCase):
         start = datetime.now()
         process = self.hdhomerun._spawn_recorder_process(0, os.getcwd())
         stop = datetime.now()
-        duration = (stop-start).total_seconds()
+        duration = (stop-start).seconds
 
         self.assertLess(duration, self.sleep_time)
 
