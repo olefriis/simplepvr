@@ -159,7 +159,7 @@ class HDHomeRun:
     def _spawn_recorder_process(self, tuner, directory):
         save_cmd = u'{0} save /tuner{1} "{2}" > "{3}"'.format(self._hdhr_config_prefix(), str(tuner), os.path.join(directory, 'stream.ts'), os.path.join(directory, 'hdhomerun_save.log'))
 
-        logger().info(u"Executing command '{}'".format(save_cmd))
+        logger().info(u"Executing command '{0}'".format(save_cmd))
         return Popen(save_cmd, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def _spawn_recorder_process_using_bash_script(self, tuner, directory):
@@ -167,7 +167,7 @@ class HDHomeRun:
 
         command =  u"{0}/hdhomerun_save.sh {1} {2} {3} {4} {5}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + u"/hdhomerun_save.log", self._tuner_control_file(tuner))
 
-        logger().info(u"Executing command '{}'".format(command))
+        logger().info(u"Executing command '{0}'".format(command))
         my_hdhr_process = Popen(command, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return my_hdhr_process #os.path.dirname(__file__) + "/" + str(tuner)
 
