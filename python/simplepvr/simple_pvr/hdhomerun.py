@@ -9,7 +9,7 @@ import codecs
 import re
 
 from threading import Timer
-from subprocess import PIPE, call, check_call, check_output
+from subprocess import PIPE, call, check_call#, check_output # check_output is Python 2.7 only (Synology DSM 4 comes with 2.6)
 from psutil import Popen
 
 from .pvr_logger import logger
@@ -22,7 +22,13 @@ def call_os(cmd, check=True):
         return call(cmd, shell=True)
 
 def check_cmd_output(cmd):
-    return check_output(cmd, shell=True)
+    import time
+    proc = Popen(cmd, stdout=PIPE, shell=True)
+    exit_code = proc.wait(timeout=5)
+    if exit_code != 0:
+        raise ValueError("No HDHR device found")
+    return proc.stdout
+#    return check_output(cmd, shell=True)
 
 def terminate_process(psutil_proc):
     if psutil_proc:
@@ -103,8 +109,9 @@ class HDHomeRun:
         hdhr_id = None
         try:
             result = check_cmd_output(HDHomeRun.HDHR_CONFIG + " discover")
-            re_match = re.match(r'hdhomerun device (.*) found at .*$', result, re.M)
-            hdhr_id = re_match.group(1).strip()
+            if len(result) == 1:
+                re_match = re.match(r'hdhomerun device (.*) found at .*$', result[0], re.M)
+                hdhr_id = re_match.group(1).strip()
         except Exception, err:
             logger().error(err)
 
