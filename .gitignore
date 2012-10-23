@@ -17,3 +17,6 @@ build-bundle
 *.sqlite.bak*
 epg_data
 python/tst
+python/scripts/syno_package
+channels.txt
+ontv_epg.xml

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 __author__ = 'frj'
 
 import os
@@ -14,7 +16,7 @@ def readlines(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).readlines()
 
 setup(
-    name = "SimplePVR Python",
+    name = "SimplePVR",
     version = "0.0.1",
     author = "Flemming Joensson",
     author_email = "flemming@joensson.org",
@@ -25,9 +27,9 @@ setup(
     keywords = "rest hdhomerun pvr",
     url = "http://packages.python.org/an_example_pypi_project",
     packages=find_packages(),
-    scripts = ['pvr_server.py', 'read_xmltv.py'],
+    #scripts = ['pvr_server.py', 'read_xmltv.py'],
     install_requires = [ readlines('requirements.txt') ],
-    test_suite = 'test/functional/simplepvr_tests.py',
+    test_suite = 'simple_pvr.test.functional.SimplePVRTestCase',
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",

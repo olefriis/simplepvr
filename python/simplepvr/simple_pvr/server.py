@@ -19,6 +19,7 @@ PASSWORD = 'default'
 RECORDINGS_PATH = os.path.join(os.getcwd(), "recordings")
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, DATABASE)
 
+
 from contextlib import closing
 from flask import Flask, request, json, jsonify, session, g, redirect, url_for, abort, render_template, flash, send_file, send_from_directory, after_this_request, make_response, Response
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -28,6 +29,8 @@ app = Flask(__name__, static_folder= os.path.join(basedir, '../public/static'), 
 app.config.from_object(__name__)
 
 db = SQLAlchemy(app)
+
+print "Database URI: ", app.config['SQLALCHEMY_DATABASE_URI']
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])

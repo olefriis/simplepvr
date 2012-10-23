@@ -17,6 +17,10 @@ from .category import Category
 from .programme import Programme
 from .schedule import Schedule
 
+from .pvr_initializer import setup
+
+from .database_initializer import *
+
 def safe_value(x):
     """ Do not die on bad input """
     try:
