@@ -10,7 +10,8 @@ RecordingMetadata = namedtuple('RecordingMetadata', ['show_name', 'episode', 'ch
 
 class RecordingManager:
     def __init__(self, recordings_directory=None):
-        self.recordings_directory = recordings_directory if recordings_directory is not None else os.curdir + "/recordings"
+        logger().info(recordings_directory)
+        self.recordings_directory = recordings_directory if recordings_directory is not None else os.path.join(os.getcwd(), "recordings")
         logger().info("Recordings will be saved to '{}'".format(self.recordings_directory))
 
     def recordings_dir(self):

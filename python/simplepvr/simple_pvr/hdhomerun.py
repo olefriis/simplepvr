@@ -22,7 +22,6 @@ def call_os(cmd, check=True):
         return call(cmd, shell=True)
 
 def check_cmd_output(cmd):
-    import time
     proc = Popen(cmd, stdout=PIPE, shell=True)
     exit_code = proc.wait(timeout=5)
     if exit_code != 0:
@@ -108,10 +107,11 @@ class HDHomeRun:
 
         hdhr_id = None
         try:
-            result = check_cmd_output(HDHomeRun.HDHR_CONFIG + " discover")
+            result = check_cmd_output(HDHomeRun.HDHR_CONFIG + " discover").readlines()
             if len(result) == 1:
                 re_match = re.match(r'hdhomerun device (.*) found at .*$', result[0], re.M)
                 hdhr_id = re_match.group(1).strip()
+                logger().info("HDHomerun device id '{}' found".format(hdhr_id))
         except Exception, err:
             logger().error(err)
 
