@@ -28,7 +28,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import or_, and_, desc
 
 app = Flask(__name__, static_folder= os.path.join(basedir, '../public/static'), template_folder= os.path.join(basedir, '../public/templates') )
-app.config.from_object(__name__)
+
+app.config.from_object(__name__) # Set the Flask config defaults from the uppercase vars in this file
+app.config.from_envvar(variable_name="CONF", silent=True) ## Override the defaults by specifying the path to a file in the CONF environment variable
 
 db = SQLAlchemy(app)
 
