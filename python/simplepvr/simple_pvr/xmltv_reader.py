@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 import codecs, sys
 from datetime import datetime
 import xml.etree.ElementTree as xml
@@ -121,7 +123,7 @@ class XmltvReader:
             if str_channel_id in self.mapping_to_channels:
                 channelName = self.mapping_to_channels[str(channel_id)]
             else:
-                logger().error("Channel id '{0}' is not in mappings file - channel data can not be imported till a mapping for {1} is added to 'channel_mappings.yaml'".format(str_channel_id, str_channel_id))
+                logger().error(u"Channel id '{0}' is not in mappings file - channel data can not be imported till a mapping for {1} is added to 'channel_mappings.yaml'".format(str_channel_id, str_channel_id))
                 continue
 
             channel = Channel.with_name(channelName)
@@ -147,7 +149,7 @@ class XmltvReader:
                 unmapped_channel_ids.append(str(channel_id))
                 sys.stdout.write("\n")
                 sys.stdout.flush()
-                logger().warn("mapping_to_channels does not contain xmltv-id {0}. All programmes on this channel will be skipped".format(str(channel_id)))
+                logger().warn(u"mapping_to_channels does not contain xmltv-id {0}. All programmes on this channel will be skipped".format(str(channel_id)))
 
     def _add_programme(self, channelName, programmeNode, doCommit=False):
         title_node = None
@@ -188,5 +190,5 @@ class XmltvReader:
     def _channel_from_name(self, channel_name):
         channel = self.channel_from_name[safe_value(channel_name)]
         if not channel:
-          raise Exception, "Unknown channel: #{channel_name}"
+          raise Exception, u"Unknown channel: #{channel_name}"
         return channel

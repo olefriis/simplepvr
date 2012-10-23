@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 import codecs
 from collections import namedtuple
 import os
@@ -12,7 +14,7 @@ class RecordingManager:
     def __init__(self, recordings_directory=None):
         logger().info(recordings_directory)
         self.recordings_directory = os.path.abspath(recordings_directory if recordings_directory is not None else os.path.join(os.getcwd(), "recordings"))
-        logger().info("Recordings will be saved to '{0}'".format(self.recordings_directory))
+        logger().info(u"Recordings will be saved to '{0}'".format(self.recordings_directory))
 
     def recordings_dir(self):
         return self.recordings_directory
@@ -38,7 +40,7 @@ class RecordingManager:
 
     def delete_show_episode(self, show_name, episode):
         import shutil
-        logger().info("Fjerner {0}/{1}/{2}".format(self.recordings_directory, show_name, episode))
+        logger().info(u"Fjerner {0}/{1}/{2}".format(self.recordings_directory, show_name, episode))
         show_path = os.path.join(self.recordings_directory, show_name)
         episode_path = os.path.join(show_path, episode)
         shutil.rmtree(episode_path, ignore_errors=True)

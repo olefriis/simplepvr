@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 from sqlalchemy import Column
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.types import Integer, String, Text, DateTime, Boolean

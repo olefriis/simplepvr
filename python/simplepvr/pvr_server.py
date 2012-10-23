@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 import sys
 from simple_pvr.pvr_initializer import setup
 from simple_pvr import RecordingPlanner

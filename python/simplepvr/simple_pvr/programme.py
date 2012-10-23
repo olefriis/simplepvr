@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 from datetime import datetime, timedelta
 from sqlalchemy import Column, MetaData
 from sqlalchemy.schema import UniqueConstraint

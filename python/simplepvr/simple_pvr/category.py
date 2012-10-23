@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 from datetime import datetime
 from sqlalchemy import Column, UniqueConstraint
 from sqlalchemy.orm import sessionmaker, relationship, backref
@@ -35,7 +37,7 @@ class Category(db.Model):
             cat_obj = Category.query.filter(Category.name == name).first()
             if cat_obj:
                 cachedCategories[name] = cat_obj
-                print "Added new element {0} to cache - new size {1}".format(cat_obj, len(cachedCategories))
+                print u"Added new element {0} to cache - new size {1}".format(cat_obj, len(cachedCategories))
                 return cat_obj
             else:
                 return None

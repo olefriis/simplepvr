@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 #
 # Encapsulates all the HDHomeRun-specific functionality. Do not initialize HDHomeRun objects yourself,
 # but get the current instance through PvrInitializer.
@@ -15,7 +17,7 @@ from psutil import Popen
 from .pvr_logger import logger
 
 def call_os(cmd, check=True):
-    logger().info("Executing '{0}'".format(cmd))
+    logger().info(u"Executing '{0}'".format(cmd))
     if check:
         return check_call(cmd, shell=True)
     else:
@@ -25,23 +27,23 @@ def check_cmd_output(cmd):
     proc = Popen(cmd, stdout=PIPE, shell=True)
     exit_code = proc.wait(timeout=5)
     if exit_code != 0:
-        raise ValueError("No HDHR device found")
+        raise ValueError(u"No HDHR device found")
     return proc.stdout
 #    return check_output(cmd, shell=True)
 
 def terminate_process(psutil_proc):
     if psutil_proc:
-        logger().info("Killing process id {0}".format(psutil_proc.pid))
+        logger().info(u"Killing process id {0}".format(psutil_proc.pid))
         psutil_proc.kill()
         psutil_proc.wait(timeout=1)
 
 def system(cmd, timeout = 60):
     global proc
-    logger().info("Executing command '{0}'".format(cmd))
+    logger().info(u"Executing command '{0}'".format(cmd))
     proc = Popen(cmd, close_fds=True, shell=True, stdout=PIPE)
-    logger().info("PID is {0} for command '{1}'".format(proc.pid, cmd))
+    logger().info(u"PID is {0} for command '{1}'".format(proc.pid, cmd))
     for line in proc.stdout:
-        logger().info("Process output: {0}".format(line))
+        logger().info(u"Process output: {0}".format(line))
     ## Kill process after timeout seconds.
     _timer = Timer(timeout, terminate_process, [proc])
     _timer.start()
@@ -76,7 +78,7 @@ class HDHomeRun:
         if not os.path.isfile(file_path):
             self._scan_channels_with_tuner(file_name)
         else:
-            logger().info("Using existing file for reading channels. To force a new scan on the device, delete the '{0}' file".format(file_path))
+            logger().info(u"Using existing file for reading channels. To force a new scan on the device, delete the '{0}' file".format(file_path))
         Channel.query.delete()
         self._read_channels_file(file_name)
 
@@ -84,12 +86,12 @@ class HDHomeRun:
         self._set_tuner_to_frequency(tuner, frequency)
         self._set_tuner_to_program(tuner, program_id)
         self.tuner_pids[tuner] = self._spawn_recorder_process_using_bash_script(tuner, directory)
-        logger().info("Process ID for recording on tuner {0}: {1}".format(tuner, self.tuner_pids[tuner].pid))
+        logger().info(u"Process ID for recording on tuner {0}: {1}".format(tuner, self.tuner_pids[tuner].pid))
 
     def stop_recording(self, tuner):
         psutil_process = self.tuner_pids[tuner]
         if psutil_process and psutil_process.is_running():
-            logger().info("Stopping process {0} for tuner {1}".format(psutil_process.pid, tuner))
+            logger().info(u"Stopping process {0} for tuner {1}".format(psutil_process.pid, tuner))
             terminate_process(psutil_process)
         self._reset_tuner_frequency(tuner)
         self.tuner_pids[tuner] = None
@@ -100,7 +102,7 @@ class HDHomeRun:
             try:
                 os.remove(file)
             except:
-                logger().error("Exception: ",str(sys.exc_info()))
+                logger().error(u"Exception: ",str(sys.exc_info()))
 
     def _discover(self):
         import re
@@ -111,13 +113,14 @@ class HDHomeRun:
             if len(result) == 1:
                 re_match = re.match(r'hdhomerun device (.*) found at .*$', result[0], re.M)
                 hdhr_id = re_match.group(1).strip()
-                logger().info("HDHomerun device id '{0}' found".format(hdhr_id))
+                logger().info(u"HDHomerun device id '{0}' found".format(hdhr_id))
         except Exception, err:
             logger().error(err)
 
         if hdhr_id:
             return hdhr_id
         else:
+            logger().info(u"HDHR discover failed, falling back to device id 'ffffffff' - which should work fine as long as there is only one hdhr device on the network")
             return "ffffffff"   ## If only one HDHomerun on network, ffffffff will work as deviceid
 
 
@@ -140,7 +143,7 @@ class HDHomeRun:
                 if channel_name.find('encrypted') != -1 or \
                     channel_name.find("[$]") != -1 or \
                     channel_name.find("DR P") != -1:
-                    logger().debug("Channel name containing keyword matching auto hide list - hiding channel '{0}'".format(channel_name))
+                    logger().debug(u"Channel name containing keyword matching auto hide list - hiding channel '{0}'".format(channel_name))
                     hidden = True
                 channel = Channel(channel_name, channel_frequency, channel_id, hidden=hidden)
                 channel.add(commit=True)

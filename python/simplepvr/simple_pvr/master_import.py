@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 #from .database_schedule_reader import DatabaseScheduleReader
 
 from string import maketrans
@@ -32,7 +34,7 @@ def safe_value(x):
         try:
             return x.encode("utf-8")
         except UnicodeError:
-            print("safe_value unable to handle " + x)
+            print(u"safe_value unable to handle " + x)
             return "TODO - fix encoding!!!"
 
 def to_utf8(myStr):

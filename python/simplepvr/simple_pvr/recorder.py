@@ -1,3 +1,5 @@
+# -*- coding: <utf-8> -*-
+
 from .pvr_logger import logger
 
 class Recorder(object):
@@ -11,13 +13,13 @@ class Recorder(object):
         directory = recording_manager().create_directory_for_recording(self.recording)
         hdhomerun().start_recording(self.tuner, self.recording.channel.frequency, self.recording.channel.channel_id, directory)
 
-        logger().info("Started recording {0} in {1}".format(self.recording.show_name, directory))
+        logger().info(u"Started recording {0} in {1}".format(self.recording.show_name, directory))
 
     def stop(self):
         from .pvr_initializer import hdhomerun
         hdhomerun().stop_recording(self.tuner)
 
-        logger().info("Stopped recording {0}".format(self.recording.show_name))
+        logger().info(u"Stopped recording {0}".format(self.recording.show_name))
 
     def __hash__(self):
         return hash((self.tuner, self.recording))
