@@ -85,7 +85,8 @@ class HDHomeRun:
     def start_recording(self, tuner, frequency, program_id, directory):
         self._set_tuner_to_frequency(tuner, frequency)
         self._set_tuner_to_program(tuner, program_id)
-        self.tuner_pids[tuner] = self._spawn_recorder_process_using_bash_script(tuner, directory)
+        #self.tuner_pids[tuner] = self._spawn_recorder_process_using_bash_script(tuner, directory)
+        self.tuner_pids[tuner] = self._spawn_recorder_process(tuner, directory)
         logger().info(u"Process ID for recording on tuner {0}: {1}".format(tuner, self.tuner_pids[tuner].pid))
 
     def stop_recording(self, tuner):
@@ -156,15 +157,17 @@ class HDHomeRun:
         return call_os(self._hdhr_config_prefix() + " set /tuner{0}/program {1}".format(tuner, program_id))
 
     def _spawn_recorder_process(self, tuner, directory):
-        save_cmd = self._hdhr_config_prefix() + " save /tuner/" + str(tuner) + " " + os.path.join(directory, 'stream.ts') + " > " + os.path.join(directory, 'hdhomerun_save.log')
+        save_cmd = u'{0} save /tuner{1} "{2}" > "{3}"'.format(self._hdhr_config_prefix(), str(tuner), os.path.join(directory, 'stream.ts'), os.path.join(directory, 'hdhomerun_save.log'))
 
+        logger().info(u"Executing command '{}'".format(save_cmd))
         return Popen(save_cmd, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def _spawn_recorder_process_using_bash_script(self, tuner, directory):
         open(self._tuner_control_file(tuner), "a") ## Touch file
 
-        command =  "{0}/hdhomerun_save.sh {1} {2} {3} {4} {5}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
+        command =  u"{0}/hdhomerun_save.sh {1} {2} {3} {4} {5}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + u"/hdhomerun_save.log", self._tuner_control_file(tuner))
 
+        logger().info(u"Executing command '{}'".format(command))
         my_hdhr_process = Popen(command, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return my_hdhr_process #os.path.dirname(__file__) + "/" + str(tuner)
 
