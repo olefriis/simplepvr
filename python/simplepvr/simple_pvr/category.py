@@ -35,7 +35,7 @@ class Category(db.Model):
             cat_obj = Category.query.filter(Category.name == name).first()
             if cat_obj:
                 cachedCategories[name] = cat_obj
-                print "Added new element {} to cache - new size {}".format(cat_obj, len(cachedCategories))
+                print "Added new element {0} to cache - new size {1}".format(cat_obj, len(cachedCategories))
                 return cat_obj
             else:
                 return None

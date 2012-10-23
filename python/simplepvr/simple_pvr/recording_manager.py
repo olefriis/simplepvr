@@ -12,7 +12,7 @@ class RecordingManager:
     def __init__(self, recordings_directory=None):
         logger().info(recordings_directory)
         self.recordings_directory = os.path.abspath(recordings_directory if recordings_directory is not None else os.path.join(os.getcwd(), "recordings"))
-        logger().info("Recordings will be saved to '{}'".format(self.recordings_directory))
+        logger().info("Recordings will be saved to '{0}'".format(self.recordings_directory))
 
     def recordings_dir(self):
         return self.recordings_directory
@@ -38,7 +38,7 @@ class RecordingManager:
 
     def delete_show_episode(self, show_name, episode):
         import shutil
-        logger().info("Fjerner {}/{}/{}".format(self.recordings_directory, show_name, episode))
+        logger().info("Fjerner {0}/{1}/{2}".format(self.recordings_directory, show_name, episode))
         show_path = os.path.join(self.recordings_directory, show_name)
         episode_path = os.path.join(show_path, episode)
         shutil.rmtree(episode_path, ignore_errors=True)
@@ -48,7 +48,7 @@ class RecordingManager:
         self._ensure_directory_exists(show_directory)
 
         new_sequence_number = self._next_sequence_number_for(show_directory)
-        recording_directory = "{}/{}".format(show_directory, new_sequence_number)
+        recording_directory = "{0}/{1}".format(show_directory, new_sequence_number)
         self._ensure_directory_exists(recording_directory)
 
         self._create_metadata(recording_directory, recording)

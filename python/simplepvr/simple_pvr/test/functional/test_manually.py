@@ -29,18 +29,18 @@ get_urls = [
 def do_test(endpoint):
     import time
     for url in get_urls:
-        print("Testing {}\n".format(url))
+        print("Testing {0}\n".format(url))
 
         start = time.time()
         r = requests.get(endpoint + url)
         stop = time.time()
 
-        print("Request handled in: {} seconds - returned content type: {}\n".format((stop-start), r.headers['content-type']))
+        print("Request handled in: {0} seconds - returned content type: {1}\n".format((stop-start), r.headers['content-type']))
 
         try:
             r.raise_for_status()
         except Exception as exception:
-            print("ERROR ----> HTTPError occurred: {}\n".format(exception) )
+            print("ERROR ----> HTTPError occurred: {0}\n".format(exception) )
 
         print "---------------------------"
         if isinstance(r.json, list):

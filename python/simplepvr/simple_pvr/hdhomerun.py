@@ -15,7 +15,7 @@ from psutil import Popen
 from .pvr_logger import logger
 
 def call_os(cmd, check=True):
-    logger().info("Executing '{}'".format(cmd))
+    logger().info("Executing '{0}'".format(cmd))
     if check:
         return check_call(cmd, shell=True)
     else:
@@ -31,17 +31,17 @@ def check_cmd_output(cmd):
 
 def terminate_process(psutil_proc):
     if psutil_proc:
-        logger().info("Killing process id {}".format(psutil_proc.pid))
+        logger().info("Killing process id {0}".format(psutil_proc.pid))
         psutil_proc.kill()
         psutil_proc.wait(timeout=1)
 
 def system(cmd, timeout = 60):
     global proc
-    logger().info("Executing command '{}'".format(cmd))
+    logger().info("Executing command '{0}'".format(cmd))
     proc = Popen(cmd, close_fds=True, shell=True, stdout=PIPE)
-    logger().info("PID is {} for command '{}'".format(proc.pid, cmd))
+    logger().info("PID is {0} for command '{1}'".format(proc.pid, cmd))
     for line in proc.stdout:
-        logger().info("Process output: {}".format(line))
+        logger().info("Process output: {0}".format(line))
     ## Kill process after timeout seconds.
     _timer = Timer(timeout, terminate_process, [proc])
     _timer.start()
@@ -76,7 +76,7 @@ class HDHomeRun:
         if not os.path.isfile(file_path):
             self._scan_channels_with_tuner(file_name)
         else:
-            logger().info("Using existing file for reading channels. To force a new scan on the device, delete the '{}' file".format(file_path))
+            logger().info("Using existing file for reading channels. To force a new scan on the device, delete the '{0}' file".format(file_path))
         Channel.query.delete()
         self._read_channels_file(file_name)
 
@@ -111,7 +111,7 @@ class HDHomeRun:
             if len(result) == 1:
                 re_match = re.match(r'hdhomerun device (.*) found at .*$', result[0], re.M)
                 hdhr_id = re_match.group(1).strip()
-                logger().info("HDHomerun device id '{}' found".format(hdhr_id))
+                logger().info("HDHomerun device id '{0}' found".format(hdhr_id))
         except Exception, err:
             logger().error(err)
 
@@ -140,17 +140,17 @@ class HDHomeRun:
                 if channel_name.find('encrypted') != -1 or \
                     channel_name.find("[$]") != -1 or \
                     channel_name.find("DR P") != -1:
-                    logger().debug("Channel name containing keyword matching auto hide list - hiding channel '{}'".format(channel_name))
+                    logger().debug("Channel name containing keyword matching auto hide list - hiding channel '{0}'".format(channel_name))
                     hidden = True
                 channel = Channel(channel_name, channel_frequency, channel_id, hidden=hidden)
                 channel.add(commit=True)
 
     def _set_tuner_to_frequency(self, tuner, frequency):
         return call_os(
-            self._hdhr_config_prefix() + " set /tuner{}/channel auto:{}".format(tuner, frequency))
+            self._hdhr_config_prefix() + " set /tuner{0}/channel auto:{1}".format(tuner, frequency))
 
     def _set_tuner_to_program(self, tuner, program_id):
-        return call_os(self._hdhr_config_prefix() + " set /tuner{}/program {}".format(tuner, program_id))
+        return call_os(self._hdhr_config_prefix() + " set /tuner{0}/program {1}".format(tuner, program_id))
 
     def _spawn_recorder_process(self, tuner, directory):
         save_cmd = self._hdhr_config_prefix() + " save /tuner/" + str(tuner) + " " + os.path.join(directory, 'stream.ts') + " > " + os.path.join(directory, 'hdhomerun_save.log')
@@ -160,7 +160,7 @@ class HDHomeRun:
     def _spawn_recorder_process_using_bash_script(self, tuner, directory):
         open(self._tuner_control_file(tuner), "a") ## Touch file
 
-        command =  "{}/hdhomerun_save.sh {} {} {} {} {}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
+        command =  "{0}/hdhomerun_save.sh {1} {2} {3} {4} {5}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + '/hdhomerun_save.log', self._tuner_control_file(tuner))
 
         my_hdhr_process = Popen(command, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return my_hdhr_process #os.path.dirname(__file__) + "/" + str(tuner)

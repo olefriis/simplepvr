@@ -196,7 +196,7 @@ class SimplePVRTestCase(unittest.TestCase):
         # Create an extra programme with the same title as programme2 - but scheduled on a different channel
         Programme(c2, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).total_seconds(), "1/4", True).add(True)
 
-        rec_url = "/api/programmes/{}/record_on_any_channel".format(programme_id)
+        rec_url = "/api/programmes/{0}/record_on_any_channel".format(programme_id)
         rv = self.app.post(rec_url)
         assert rv.status_code == 200
         json_response = json.loads(rv.data)
@@ -208,7 +208,7 @@ class SimplePVRTestCase(unittest.TestCase):
         json_response = self._get_for_json('/api/upcoming_recordings')
         expected_length = 2
         actual_length = len(json_response)
-        assert actual_length == expected_length, "Length of response ({}) is not {}".format(actual_length, expected_length)
+        assert actual_length == expected_length, "Length of response ({0}) is not {1}".format(actual_length, expected_length)
 
 
     def test_programmes_record_on_this_channel(self):
@@ -224,7 +224,7 @@ class SimplePVRTestCase(unittest.TestCase):
         # Create an extra programme with the same title as programme2 - but scheduled on a different channel
         Programme(c2, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).total_seconds(), "1/4", True).add(True)
 
-        rec_url = "/api/programmes/{}/record_on_this_channel".format(programme_id)
+        rec_url = "/api/programmes/{0}/record_on_this_channel".format(programme_id)
         rv = self.app.post(rec_url)
         assert rv.status_code == 200
         json_response = json.loads(rv.data)
@@ -236,7 +236,7 @@ class SimplePVRTestCase(unittest.TestCase):
         json_response = self._get_for_json('/api/upcoming_recordings')
         expected_length = 1 ## Only one show on this channel with this title
         actual_length = len(json_response)
-        assert actual_length == expected_length, "Length of response ({}) is not {}".format(actual_length, expected_length)
+        assert actual_length == expected_length, "Length of response ({0}) is not {1}".format(actual_length, expected_length)
 
     def test_programmes_record_just_this_programme(self):
 
@@ -251,7 +251,7 @@ class SimplePVRTestCase(unittest.TestCase):
         # Create an extra programme with the same title as programme2 - scheduled on the same channel
         Programme(p_test.channel, title, "sub2", "desc2", start_time, stop_time, (stop_time-start_time).total_seconds(), "3/4", True).add(True)
 
-        rec_url = "/api/programmes/{}/record_just_this_programme".format(programme_id)
+        rec_url = "/api/programmes/{0}/record_just_this_programme".format(programme_id)
         rv = self.app.post(rec_url)
         assert rv.status_code == 200
         json_response = json.loads(rv.data)
@@ -263,7 +263,7 @@ class SimplePVRTestCase(unittest.TestCase):
         json_response = self._get_for_json('/api/upcoming_recordings')
         expected_length = 1 ## Only one show on this channel with this title and start time
         actual_length = len(json_response)
-        assert actual_length == expected_length, "Length of response ({}) is not {}".format(actual_length, expected_length)
+        assert actual_length == expected_length, "Length of response ({0}) is not {1}".format(actual_length, expected_length)
 
 
     def test_shows(self):
@@ -301,7 +301,7 @@ class SimplePVRTestCase(unittest.TestCase):
         recording_number = "1"
 
         recordings_dir = os.curdir + "/recordings"
-        episode_dir = recordings_dir + "/{}/{}".format(show_name, recording_number)
+        episode_dir = recordings_dir + "/{0}/{1}".format(show_name, recording_number)
 
         ## clear any files that might reside in the test recordings dir
         shutil.rmtree(recordings_dir, ignore_errors=True)
@@ -333,7 +333,7 @@ class SimplePVRTestCase(unittest.TestCase):
         recording_number = "1"
 
         recordings_dir = os.curdir + "/recordings"
-        episode_dir = recordings_dir + "/{}/{}".format(show_name, recording_number)
+        episode_dir = recordings_dir + "/{0}/{1}".format(show_name, recording_number)
 
         ## clear any files that might reside in the test recordings dir
         shutil.rmtree(recordings_dir, ignore_errors=True)
@@ -373,7 +373,7 @@ class SimplePVRTestCase(unittest.TestCase):
         recording_number = "1"
 
         recordings_dir = pvr.app.config['RECORDINGS_PATH'] #os.curdir + "/recordings"
-        episode_dir = recordings_dir + "/{}/{}".format(show_name, recording_number)
+        episode_dir = recordings_dir + "/{0}/{1}".format(show_name, recording_number)
 
         ## clear any files that might reside in the test recordings dir
         shutil.rmtree(recordings_dir, ignore_errors=True)

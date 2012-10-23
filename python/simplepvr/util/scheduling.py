@@ -17,7 +17,7 @@ class Controller(threading.Thread):
             #grabs host from queue
             task = self.queue.get()
 
-            print "Thread {} handling {}".format(self.name, task())
+            print "Thread {0} handling {1}".format(self.name, task())
 
             #signals to queue job is done
             self.queue.task_done()
@@ -33,7 +33,7 @@ class Task():
         return "",5*5, " --> ", self
 
     def __repr__(self):
-        return "<Task some_time: '{}' >".format(self.some_time)
+        return "<Task some_time: '{0}' >".format(self.some_time)
 
 queue = Queue.Queue()
 start = time.time()

@@ -7,7 +7,7 @@ class HDHomerunTestCase(unittest.TestCase):
 
     def setUp(self):
         self.sleep_time = 3
-        self.cmd = "sleep {}".format(self.sleep_time)
+        self.cmd = "sleep {0}".format(self.sleep_time)
 
         self.hdhomerun = HDHomeRun()
 

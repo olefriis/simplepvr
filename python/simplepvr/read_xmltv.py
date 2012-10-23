@@ -28,8 +28,8 @@ try:
     reader.read(xmltv_file)
     end_time = time.time()
 
-    print "Imported EPG in {} seconds".format((end_time-start_time))
+    print "Imported EPG in {0} seconds".format((end_time-start_time))
     sys.exit(0)
 except Exception, err:
-    logger().error("Failed importing EPG data - reason {}".format(str(err)))
+    logger().error("Failed importing EPG data - reason {0}".format(str(err)))
     sys.exit(1)

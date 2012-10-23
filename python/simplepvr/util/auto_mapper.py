@@ -31,15 +31,15 @@ def read_channels_file(fname):
             if not "encrypted" in channel_name and not "$" in channel_name:
                 data.append({'HDHomeRun Channel' : {'id': count, 'freq' : channel_frequency, 'program': channel_id, 'name':channel_name}})
                 hdhr_names.append( channel_name )
-                logger.debug("Program[id: {}]: [ freq: {}, program: {}, name: {} ]".format(count, channel_frequency, channel_id, channel_name))
+                logger.debug("Program[id: {0}]: [ freq: {1}, program: {2}, name: {3} ]".format(count, channel_frequency, channel_id, channel_name))
                 count += 1
 
 
 def getSafeLogString(maxIdx, maxValue, name__text):
     try:
-        return "Using hdhr_ref {} ({}) for XMLTV channel {} - score of {}".format(maxIdx, hdhr_names[maxIdx], name__text,maxValue)
+        return "Using hdhr_ref {0} ({1}) for XMLTV channel {2} - score of {3}".format(maxIdx, hdhr_names[maxIdx], name__text,maxValue)
     except UnicodeError:
-        return "Using hdhr_ref {} for XMLTV channel"
+        return "Using hdhr_ref {0} for XMLTV channel".format(maxIdx)
 
 
 def read_xmltv(fname):
@@ -64,12 +64,12 @@ def read_xmltv(fname):
             except UnicodeEncodeError:
                 try:
                     safe_name_text = name__text if is_ascii(name__text) else name__text.decode(sys.stdout.encoding)
-                    logger.warn(u"Unable to do score for '{}' vs '{}'".format(safe_name_text, safe_hdhr_name))
+                    logger.warn(u"Unable to do score for '{0}' vs '{1}'".format(safe_name_text, safe_hdhr_name))
                 except UnicodeEncodeError:
                     ## Hvis vi heller ikke kan logge vores error pga. encoding, logger vi en ny error der er "sikker"
                     safe_hdhr_name = to_utf8(safe_hdhr_name)
                     safe_name_text = to_utf8(safe_name_text)
-                    logger.warn(u"Unable to do score calculation for {} - {} - console encoding: {}".format(safe_name_text, safe_hdhr_name, sys.stdout.encoding))
+                    logger.warn(u"Unable to do score calculation for {0} - {1} - console encoding: {2}".format(safe_name_text, safe_hdhr_name, sys.stdout.encoding))
 #                    logger.warn(name__text, " <-> ", hdhr_name, " isAscii: ", is_ascii(hdhr_name), " -- Safe version ", safe_name_text, " - ", safe_hdhr_name, " - sys encoding: ", sys.stdout.encoding)
 
             match_scores.append(score)
@@ -84,14 +84,14 @@ def read_xmltv(fname):
             logger.info(getSafeLogString(maxIdx, maxValue, name__text))
             xmltvId = channel.attrib['id']
             channelinfo = {'XMLTV Mapping' : {'id' : xmltvId, 'name' : name__text, 'icon': icon_url, 'hdhr_ref' :  maxIdx, 'hdhr_name': hdhrName}}
-            logger.debug("Data for maxIdx[{}]{}".format(maxIdx, data[maxIdx]['HDHomeRun Channel']))
+            logger.debug("Data for maxIdx[{0}]{1}".format(maxIdx, data[maxIdx]['HDHomeRun Channel']))
             channel_mappings.update({xmltvId : hdhrName})
             data.append(channelinfo)
             hdhr_names.remove(hdhrName)
         else:
             hdhrName = hdhr_names[maxIdx]
             try:
-                logger.debug("Score < {}. Ignoring result '{}' for '{}' - score ({})".format(JARO_WINKLER_THRESHOLD,
+                logger.debug("Score < {0}. Ignoring result '{1}' for '{2}' - score ({3})".format(JARO_WINKLER_THRESHOLD,
                                                                                              hdhrName, name__text, maxValue))
             except UnicodeError:
                 logger.debug(name__text + " vs " + hdhrName)
@@ -99,8 +99,8 @@ def read_xmltv(fname):
     ## Insert FIXME entries for the hdhr-names that were not automatically matched to an XMLTV channel id
     count = 0
     for name in hdhr_names:
-        logger.debug("No XMLTV id found for channel name '{}'".format(name))
-        channel_mappings.update({"[{}] FIXME: XMLTV ID HERE".format(count) : name})
+        logger.debug("No XMLTV id found for channel name '{0}'".format(name))
+        channel_mappings.update({"[{0}] FIXME: XMLTV ID HERE".format(count) : name})
         count = count + 1
     #Write HDHR channels, and XMLTV mappings to yaml file
     yaml.dump(data, yamlFile, default_flow_style=False, encoding='utf-8')
@@ -154,8 +154,8 @@ hdhr_names = []
 
 xmltv_file = sys.argv[1]
 channels_file = sys.argv[2]
-file_exists(xmltv_file, "XMLTV file '{}' does not exist".format(xmltv_file))
-file_exists(channels_file, "HDHR channels file '{}' does not exist".format(channels_file))
+file_exists(xmltv_file, "XMLTV file '{0}' does not exist".format(xmltv_file))
+file_exists(channels_file, "HDHR channels file '{0}' does not exist".format(channels_file))
 
 read_channels_file(channels_file)
 read_xmltv(xmltv_file)

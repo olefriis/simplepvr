@@ -47,7 +47,7 @@ class XmltvReader:
         start = time.time()
         tree = xml.parse(file_name)
         finish = time.time()
-        logger().info("Parsed EPG in {} seconds".format((finish-start)))
+        logger().info("Parsed EPG in {0} seconds".format((finish-start)))
 
         categories = tree.getroot().getiterator("category")
         self._process_categories(categories)
@@ -57,7 +57,7 @@ class XmltvReader:
 
         programmes = tree.getroot().findall("./programme")
         total = len(programmes)
-        logger().info("Building model from {} 'programme's...".format(total))
+        logger().info("Building model from {0} 'programme's...".format(total))
 
         current = 0
         doCommit = False
@@ -85,7 +85,7 @@ class XmltvReader:
                 return
 
             with t.location(0, t.height - 1):
-                sys.stdout.write('{}'.format(' '* (width + 7)))
+                sys.stdout.write('{0}'.format(' '* (width + 7)))
                 sys.stdout.flush()
 
     def _process_categories(self, categoryNodes):
@@ -95,7 +95,7 @@ class XmltvReader:
         for category in categoryNodes:
             categories.add(category.text)
         end_nodes = time.time()
-        print "Added all categories in {} seconds".format((end_nodes-start_nodes))
+        print "Added all categories in {0} seconds".format((end_nodes-start_nodes))
         last_elem = list(categories)[-1]
 
         print "Adding categories to database"
@@ -106,11 +106,11 @@ class XmltvReader:
                 start_commit = time.time()
                 cat.add(commit=True)
                 end_commit = time.time()
-                print "Committed categories to db in {} seconds".format((end_commit-start_commit))
+                print "Committed categories to db in {0} seconds".format((end_commit-start_commit))
             else:
                 cat.add(commit=False)
         end_cat_db = time.time()
-        print "Added categories to database in {} seconds".format((end_cat_db-start_cat_db))
+        print "Added categories to database in {0} seconds".format((end_cat_db-start_cat_db))
 
     def _process_channels(self, channels):
         for channelNode in channels:
@@ -121,7 +121,7 @@ class XmltvReader:
             if str_channel_id in self.mapping_to_channels:
                 channelName = self.mapping_to_channels[str(channel_id)]
             else:
-                logger().error("Channel id '{}' is not in mappings file - channel data can not be imported till a mapping for {} is added to 'channel_mappings.yaml'".format(str_channel_id, str_channel_id))
+                logger().error("Channel id '{0}' is not in mappings file - channel data can not be imported till a mapping for {1} is added to 'channel_mappings.yaml'".format(str_channel_id, str_channel_id))
                 continue
 
             channel = Channel.with_name(channelName)
@@ -147,7 +147,7 @@ class XmltvReader:
                 unmapped_channel_ids.append(str(channel_id))
                 sys.stdout.write("\n")
                 sys.stdout.flush()
-                logger().warn("mapping_to_channels does not contain xmltv-id {}. All programmes on this channel will be skipped".format(str(channel_id)))
+                logger().warn("mapping_to_channels does not contain xmltv-id {0}. All programmes on this channel will be skipped".format(str(channel_id)))
 
     def _add_programme(self, channelName, programmeNode, doCommit=False):
         title_node = None

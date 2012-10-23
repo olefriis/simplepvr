@@ -74,7 +74,7 @@ class Scheduler(threading.Thread):
 #                    else:
 #                        logger().debug(u"{} is already in upcoming recordings, ignoring".format(rec))
 
-        logger().info(u"Schedule updated - {} recordings in list".format(len(Scheduler.upcoming_recordings)))
+        logger().info(u"Schedule updated - {0} recordings in list".format(len(Scheduler.upcoming_recordings)))
 
         self.scheduled_programmes = self.programme_ids_from(Scheduler.upcoming_recordings)
         self.stop_current_recordings_not_relevant_anymore()
@@ -93,10 +93,10 @@ class Scheduler(threading.Thread):
         if schedule and Scheduler.upcoming_recordings:
             for idx, rec in enumerate(Scheduler.upcoming_recordings):
                 if rec.schedule.id == schedule.id:
-                    logger().info(u"Deleting recording '{}' from upcoming recordings since the Schedule backing the recording has been deleted".format(rec.show_name))
+                    logger().info(u"Deleting recording '{0}' from upcoming recordings since the Schedule backing the recording has been deleted".format(rec.show_name))
                     del Scheduler.upcoming_recordings[idx]
                 elif rec.show_name == schedule.title:
-                    logger().warn(u"Recording {} is not an instance of Schedule {}".format(rec, schedule))
+                    logger().warn(u"Recording {0} is not an instance of Schedule {1}".format(rec, schedule))
 
     @synchronized(myLock)
     def status_text(self):
@@ -107,7 +107,7 @@ class Scheduler(threading.Thread):
         status_texts = []
         for recording in self.current_recordings:
             if recording is not None:
-                status_texts.append(u"Tuner {} is recording '{}' on channel '{}'".format(count, recording.show_name, recording.channel.name))
+                status_texts.append(u"Tuner {0} is recording '{1}' on channel '{2}'".format(count, recording.show_name, recording.channel.name))
             count = count + 1
 
         return u'Recording ' + u", ".join(status_texts)
@@ -117,7 +117,7 @@ class Scheduler(threading.Thread):
 
     @synchronized(myLock)
     def process(self):
-        logger().debug("Scheduler '{}' doing processing of recordings queue".format(self.name))
+        logger().debug("Scheduler '{0}' doing processing of recordings queue".format(self.name))
 
         self.check_expiration_of_current_recordings()
         self.check_start_of_coming_recordings()
@@ -161,14 +161,14 @@ class Scheduler(threading.Thread):
     def stop_current_recordings_not_relevant_anymore(self):
         for recording in self.current_recordings:
             if recording and recording not in Scheduler.upcoming_recordings and recording not in self.current_recordings:
-                logger().info("Recording '{}' is neither in current_recordings or upcoming_recordings. Will be stopped immediately.".format(recording.show_name))
+                logger().info("Recording '{0}' is neither in current_recordings or upcoming_recordings. Will be stopped immediately.".format(recording.show_name))
                 self.stop_recording(recording) # TODO: bug - this can cause an active recording to be stopped, and then restarted - disabling feature for now
 
 
     def check_expiration_of_current_recordings(self):
         for recording in self.current_recordings:
             if recording and recording.expired():
-                logger().info("stop_time reached for '{}' - stopping recording".format(recording.show_name))
+                logger().info("stop_time reached for '{0}' - stopping recording".format(recording.show_name))
                 self.stop_recording(recording)
 
     def check_start_of_coming_recordings(self):
@@ -188,7 +188,7 @@ class Scheduler(threading.Thread):
                     return True
                 elif start_time < now:
                     (now - start_time).min
-                    logger().warn("Scheduled recording {} - recording was started after the show had begun.".format(next_recording) )
+                    logger().warn("Scheduled recording {0} - recording was started after the show had begun.".format(next_recording) )
                     return True
                     #del(Scheduler.upcoming_recordings[0]) ## upcoming recording expired
 
@@ -206,7 +206,7 @@ class Scheduler(threading.Thread):
 
             if None in self.current_recordings:
                 next_recording = Scheduler.upcoming_recordings.pop(0)
-                logger().info("Next recording {}".format(next_recording))
+                logger().info("Next recording {0}".format(next_recording))
 
                 available_slot = self.current_recordings.index(None)
                 recorder = Recorder(available_slot, next_recording)
