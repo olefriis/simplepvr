@@ -23,23 +23,24 @@
 # Activate the python virtual environment
 #    . /path_to_virtualenv/activate
 
+PYTHON_EXEC="/opt/bin/python2.6"
+SIMPLEPVR_DAEMON_SCRIPT="/volume1/@appstore/simplepvr/python/simplepvr/simplepvr_daemon.py"
+CONFIG_FILE="/volume1/@appstore/.simplepvr/simplepvr.cfg"
+
 case "$1" in
   start)
     echo "Starting server"
     # Start the daemon
-    CONF=/opt/etc/simplepvr.cfg /opt/bin/python2.6 /opt/share/simplepvr/python/simplepvr/util/simplepvr_daemon.py start
-    #python /usr/share/simplepvr/testdaemon.py start
+    CONF="${CONFIG_FILE}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" start
     ;;
   stop)
     echo "Stopping server"
     # Stop the daemon
-    CONF=/opt/etc/simplepvr.cfg /opt/bin/python2.6 /opt/share/simplepvr/python/simplepvr/util/simplepvr_daemon.py stop
-    #python /usr/share/testdaemon/testdaemon.py stop
+    CONF="${CONFIG_FILE}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" stop
     ;;
   restart)
     echo "Restarting server"
-    CONF=/opt/etc/simplepvr.cfg /opt/bin/python2.6 /opt/share/simplepvr/python/simplepvr/util/simplepvr_daemon.py restart
-    #python /usr/share/testdaemon/testdaemon.py restart
+    CONF="${CONFIG_FILE}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" restart
     ;;
   *)
     # Refuse to do other stuff
