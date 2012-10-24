@@ -1,6 +1,8 @@
 # Simplepvr python dependencies
 
 python-dateutil>=2.0
+python-daemon>=1.5.5
+lockfile>=0.8
 Flask>=0.8
 SQLAlchemy>=0.7
 Flask-SQLAlchemy>=0.16
