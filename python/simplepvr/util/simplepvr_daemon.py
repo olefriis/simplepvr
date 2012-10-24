@@ -18,8 +18,11 @@ class App():
         self.pidfile_timeout = 5
 
     def run(self):
+        from ..pvr_server import main
+        main()
         while True:
             #Main code goes here ...
+
             #Note that logger level needs to be set to logging.DEBUG before this shows up in the logs
             logger.debug("Debug message")
             logger.info("Info message")
