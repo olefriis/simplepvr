@@ -4,6 +4,8 @@
 #standard python libs
 import logging
 import time
+import os
+import subprocess
 
 #third party libs
 from daemon import runner
@@ -11,9 +13,9 @@ from daemon import runner
 class App():
 
     def __init__(self):
-        self.stdin_path = '/dev/null'
-        self.stdout_path = '/dev/tty'
-        self.stderr_path = '/dev/tty'
+        self.stdin_path = os.devnull# '/dev/null'
+        self.stdout_path = os.devnull# '/dev/tty'
+        self.stderr_path = os.devnull# '/dev/tty'
         self.pidfile_path =  '/var/run/simplepvr/simplepvr_daemon.pid'
         self.pidfile_timeout = 5
 
