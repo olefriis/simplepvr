@@ -18,7 +18,7 @@ class App():
         self.pidfile_timeout = 5
 
     def run(self):
-        from ..pvr_server import main
+        from pvr_server import main
         main()
         while True:
             #Main code goes here ...
