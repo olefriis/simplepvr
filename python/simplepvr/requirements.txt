@@ -6,6 +6,7 @@ lockfile>=0.8
 Flask>=0.8
 SQLAlchemy>=0.7
 Flask-SQLAlchemy>=0.16
+simplejson>=2.6.2
 requests>=0.14
 psutil>=0.6
 SQLAlchemy-migrate>=0.7.2

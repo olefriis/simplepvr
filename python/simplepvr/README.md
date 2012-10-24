@@ -32,10 +32,17 @@ This guide requires the NAS to be 'bootstrapped', see
 
     ipkg install git                            # Install git on your NAS (so the simplepvr repo can be cloned later on)
 
-    # In the following steps you can replace 26 with 27 to get Python 2.7 instead.
-    ipkg install python26	                    # Install Python 2.6 if it is not on your system
-    ipkg install py26-setuptools                # Installs setuptools and the pip command
-    pip-2.6 install distutils                   # Test that pip is working correctly
+    # In my experience the SimplePVR is much faster on Python 2.7 than 2.6 - so I install 2.7 on my bootstrapped NAS:
+    ipkg install python27	                    # Install Python 2.7 if it is not on your system
+    ipkg install py27-setuptools                # Installs setuptools
+    curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | python2.7   # Install pip
+
+
+    # Clone the SimplePVR repo:
+    git clone git://github.com/olefriis/simplepvr.git /volume1/@appstore/simplepvr
+
+    # Install the SimplePVR Python dependencies
+    pip-2.7 install -r /volume1/@appstore/simplepvr/python/simplepvr/requirements.txt
 
     # If pip install fails with an error like this:
     #    "/opt/local/lib/python2.5/site-packages (in --site-dirs) does not exist"
@@ -47,12 +54,6 @@ This guide requires the NAS to be 'bootstrapped', see
     #
     # When distutils.cfg is fixed, rerun 'pip-2.6 install distutils' - which should now complete without problems.
 
-
-    # Clone the Git repo:
-    git clone git://github.com/olefriis/simplepvr.git /volume1/@appstore/simplepvr
-
-    # Install the SimplePVR Python dependencies
-    pip-2.6 install -r /volume1/@appstore/simplepvr/python/simplepvr/requirements.txt
 
     # Create directory for the configuration
     mkdir /volume1/@appstore/.simplepvr
@@ -85,7 +86,7 @@ This guide requires the NAS to be 'bootstrapped', see
     # In order to read programme data from an XMLTV file, we need to create a mapping between the HDHomerun channel name
     # and the XMLTV channel id - please see the "Usage" section of this readme for an explanation of how to do this.
 
-    
+
 
 Usage
 =====
