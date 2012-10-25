@@ -51,27 +51,36 @@ class XmltvReader:
         finish = time.time()
         logger().info("Parsed EPG in {0} seconds".format((finish-start)))
 
+        start = finish
         categories = tree.getroot().getiterator("category")
         self._process_categories(categories)
+        finish = time.time()
+        logger().info("Categories processed in {0}".format((finish-start)))
 
+        start = finish
         channels = tree.getroot().findall("./channel")
         self._process_channels(channels)
+        finish = time.time()
+        logger().info("Channels processed in {0}".format((finish-start)))
 
+        start = finish
         programmes = tree.getroot().findall("./programme")
         total = len(programmes)
-        logger().info("Building model from {0} 'programme's...".format(total))
+        logger().info("Building model from {0} programmes".format(total))
 
         current = 0
         doCommit = False
         err = None
         try:
             progress_value = 0
+            commit_idx = total-1
             for programme in programmes:
-                if programme == programmes[-1]:
+                if current == commit_idx:
                     doCommit = True
 
                 self._process_programme(programme, doCommit)
                 current += 1
+
                 progress = (100 * current) / total
                 if ((progress - progress_value) > 0):
                     update_progress(progress)
@@ -82,6 +91,9 @@ class XmltvReader:
             #Clear the progress bar from the terminal when done
             if err:
                 raise err
+
+            finish = time.time()
+            logger().info("Programmes processed in {0} seconds".format((finish-start)))
 
             if t is None or t.height is None:
                 return
@@ -97,10 +109,10 @@ class XmltvReader:
         for category in categoryNodes:
             categories.add(category.text)
         end_nodes = time.time()
-        print "Added all categories in {0} seconds".format((end_nodes-start_nodes))
+        logger().info("Added categories in {0} seconds".format((end_nodes-start_nodes)))
         last_elem = list(categories)[-1]
 
-        print "Adding categories to database"
+        logger().debug("Adding categories to database")
         start_cat_db = time.time()
         for cat_txt in categories:
             cat = Category(cat_txt)
@@ -108,11 +120,11 @@ class XmltvReader:
                 start_commit = time.time()
                 cat.add(commit=True)
                 end_commit = time.time()
-                print "Committed categories to db in {0} seconds".format((end_commit-start_commit))
+                logger().info("Committed categories to db in {0} seconds".format((end_commit-start_commit)))
             else:
                 cat.add(commit=False)
         end_cat_db = time.time()
-        print "Added categories to database in {0} seconds".format((end_cat_db-start_cat_db))
+        logger().info("Added categories to database in {0} seconds".format((end_cat_db-start_cat_db)))
 
     def _process_channels(self, channels):
         for channelNode in channels:
