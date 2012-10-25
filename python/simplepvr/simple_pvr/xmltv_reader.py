@@ -107,7 +107,7 @@ class XmltvReader:
         categories = set()
         start_nodes = time.time()
         for category in categoryNodes:
-            categories.add(category.text)
+            categories.add(category.text.title())
         end_nodes = time.time()
         logger().info("Added categories in {0} seconds".format((end_nodes-start_nodes)))
         last_elem = list(categories)[-1]
@@ -176,11 +176,11 @@ class XmltvReader:
         serie = False
         categories = []
         for category in programmeNode.findall("./category"):
-            category_text = category.text
-            if category_text == 'serie':
+            category_text = category.text.title()
+            if category_text == 'serie'.title():
                 serie = True
             else:
-                ## Only add category when it is not 'serie' as serie is handled in a dedicated field
+                ## Only add category when it is not 'Serie' as serie is handled in a dedicated field
                 categories.append(category_text)
 
         title = title_node.text
