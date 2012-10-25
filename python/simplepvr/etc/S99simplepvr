@@ -25,26 +25,26 @@
 
 PYTHON_EXEC="/opt/bin/python2.7"
 SIMPLEPVR_DAEMON_SCRIPT="/volume1/@appstore/simplepvr/python/simplepvr/simplepvr_daemon.py"
-CONFIG_FILE="/volume1/@appstore/.simplepvr/simplepvr.cfg"
+CONFIG_DIR="/volume1/@appstore/.simplepvr"
 
 case "$1" in
   start)
     echo "Starting server"
     # Start the daemon
-    CONF="${CONFIG_FILE}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" start
+    CONFIG_DIR="${CONFIG_DIR}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" start
     ;;
   stop)
     echo "Stopping server"
     # Stop the daemon
-    CONF="${CONFIG_FILE}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" stop
+    CONFIG_DIR="${CONFIG_DIR}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" stop
     ;;
   restart)
     echo "Restarting server"
-    CONF="${CONFIG_FILE}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" restart
+    CONFIG_DIR="${CONFIG_DIR}" "${PYTHON_EXEC}" "${SIMPLEPVR_DAEMON_SCRIPT}" restart
     ;;
   *)
     # Refuse to do other stuff
-    echo "Usage: $0 {start|stop|restart}"
+    echo "Usage: $0 {start|stop|restart} - optionally specify CONFIG_DIR=/some_dir - some_dir should contain simplepvr.ini"
     exit 1
     ;;
 esac
