@@ -6,7 +6,7 @@
 #
 # Please send feedback to bob@bob.com
 #
-# /etc/init.d/simplepvr
+# /etc/init.d/S99simplepvr
 #
 ### BEGIN INIT INFO
 # Provides: simplepvrdaemon
@@ -23,7 +23,7 @@
 # Activate the python virtual environment
 #    . /path_to_virtualenv/activate
 
-PYTHON_EXEC="/opt/bin/python2.6"
+PYTHON_EXEC="/opt/bin/python2.7"
 SIMPLEPVR_DAEMON_SCRIPT="/volume1/@appstore/simplepvr/python/simplepvr/simplepvr_daemon.py"
 CONFIG_FILE="/volume1/@appstore/.simplepvr/simplepvr.cfg"
 
