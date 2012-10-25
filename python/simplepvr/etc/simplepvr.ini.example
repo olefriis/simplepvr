@@ -1,5 +1,6 @@
 [SimplePVR]
 recordings_path = /volume1/public/Recordings
+http_port = 8000
 
 [Logger]
 level = INFO
