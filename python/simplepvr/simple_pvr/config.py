@@ -48,6 +48,9 @@ def getOptionWithDefault(section_name, option_name, default=None):
 def getSimplePvrOption(name, default=None):
     return getOptionWithDefault(section_name_simplepvr, name, default)
 
+def getSimplePvrInt(name, default=0):
+    return config.getint(section_name_simplepvr, name) if config.has_option(section_name_simplepvr, name) else default
+
 def getLoggerOption(name, default=None):
     return getOptionWithDefault(section_name_logger, name, default)
 

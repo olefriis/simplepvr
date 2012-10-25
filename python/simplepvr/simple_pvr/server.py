@@ -498,7 +498,8 @@ def programme_summary_hash(programme):
 
 
 def startServer():
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    from .config import getSimplePvrInt
+    app.run(host='0.0.0.0', port=getSimplePvrInt("http_port", 8000), debug=True)
 
 if __name__ == "__main__":
     startServer()
