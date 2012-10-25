@@ -12,7 +12,7 @@ from .config import config_dir, getSimplePvrOption
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 ## Upper case constants used by from_object - will be put in app.config map
-DATABASE = 'simplepvr.sqlite'
+#DATABASE = 'simplepvr.sqlite'
 #TEMPLATES = 'public/templates'
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -27,9 +27,8 @@ from sqlalchemy import or_, and_, desc
 
 app = Flask(__name__, static_folder= os.path.join(basedir, '../public/static'), template_folder= os.path.join(basedir, '../public/templates') )
 
-sqlite_uri_prefix = 'sqlite:///'
-SQLALCHEMY_DATABASE_URI = getSimplePvrOption("sqlite_url", sqlite_uri_prefix + os.path.join(config_dir, DATABASE))
-simplepvr_sqlite_path = SQLALCHEMY_DATABASE_URI[len(sqlite_uri_prefix):]
+SQLALCHEMY_DATABASE_URI = getSimplePvrOption("sqlite_uri", "file::memory:")
+simplepvr_sqlite_path = getSimplePvrOption("sqlite_database")
 
 app.config.from_object(__name__) # Set the Flask config defaults from the uppercase vars in this file
 app.config.from_envvar(variable_name="CONF", silent=True) ## Override the defaults by specifying the path to a file in the CONF environment variable

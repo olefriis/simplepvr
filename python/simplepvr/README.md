@@ -59,21 +59,20 @@ This guide requires the NAS to be 'bootstrapped', see
     mkdir /volume1/@appstore/.simplepvr
     cp /volume1/@appstore/simplepvr/python/simplepvr/etc/simplepvr.ini.example /volume1/@appstore/.simplepvr/simplepvr.ini
 
-    # Copy the simplepvr.ini example file from  a config file 'simplepvr.ini' and make the RECORDINGS_PATH setting point to the location on your Synology
-    # where the recordings will be stored.
+    # Edit /volume1/@appstore/.simplepvr/simplepvr.ini and set a proper path for 'recordings_path' setting.
+    # This setting controls where recorded programmes will be stored on your system.
     # The path should only be used for SimplePVR recordings. Either create a new share in the Synology Web interface,
     # or use a subfolder in an existing share.
+    # Also verify that the folder for storing the log file exists, if not, create it or edit the 'file' setting so it
+    # points to an existing folder
     #
-    echo "CONFIG_DIR=\"/volume1/@appstore/.simplepvr\"" > /volume1/@appstore/.simplepvr/simplepvr.cfg
-    echo "RECORDINGS_PATH=\"/volume1/MyRecordings\"" >> /volume1/@appstore/.simplepvr/simplepvr.cfg
-
 
 
     # Copy the startup script into place
-    cp /volume1/@appstore/simplepvr/python/simplepvr/etc/S99simplepvr /usr/local/etc/rc.d/S99simplepvr
-    chmod u+x /usr/local/etc/rc.d/S99simplepvr
+    cp /volume1/@appstore/simplepvr/python/simplepvr/etc/S99simplepvr /opt/etc/init.d/S99simplepvr
+    chmod u+x /opt/etc/init.d/S99simplepvr
 
-    # NOTE: S99simplepvr defaults to python2.7 - if you only have 2.6 you need to update the PYTHON_EXEC variable in
+    # NOTE: S99simplepvr defaults to python2.7 - if you have 2.6 you need to update the PYTHON_EXEC variable in
     # the script.
 
     # Start the daemon - this can take several minutes the first time as it will ask the HDHomerun to scan for channels.
@@ -85,6 +84,27 @@ This guide requires the NAS to be 'bootstrapped', see
     http://<url_to_nas>:8000/
 
     # Next step is to add programme data to the system.
+    # I use timefor.tv as xmltv provider, so I use a cronjob to download a new EPG once a day
+
+    # Create dir for scripts
+    mkdir /volume1/@appstore/scripts
+    cp /volume1/@appstore/simplepvr/python/simplepvr/etc/fetch_xmltv.sh /volume1/@appstore/scripts
+    chmod u+x /volume1/@appstore/scripts/fetch_xmltv.sh
+
+    # Edit the script and fix the URL_XMLTV_DATA variable
+
+    # Add an entry to /etc/crontab (there must be one TAB between the columns)
+    0       4       *       *       *       root    /usr/syno/bin/curl -L "http://some_url_where_I_download_xmltv_data_from" > /opt/tmp/epg.xml
+
+
+    #/opt/bin/python2.7 /volume1/@appstore/simplepvr/python/simplepvr/read_xmltv.py /opt/tmp/epg.xml /volume1/@appstore/.simplepvr/channel_mappings.yaml
+    # Import the downloaded data into the database
+
+
+    # Restart the cron deamon
+    /usr/syno/etc/rc.d/S04crond.sh stop && /usr/syno/etc/rc.d/S04crond.sh start
+
+
 
     # In order to read programme data from an XMLTV file, we need to create a mapping between the HDHomerun channel name
     # and the XMLTV channel id - please see the "Usage" section of this readme for an explanation of how to do this.
