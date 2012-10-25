@@ -1,5 +1,7 @@
 # -*- coding: <utf-8> -*-
 
+from .config import config
+
 from datetime import timedelta
 import os
 from time import sleep
@@ -10,8 +12,10 @@ from .master_import import Scheduler
 
 from .server import app
 
+_config_recordings_path = config.get('SimplePVR', 'recordings_path')
+
 __hdhomerun = HDHomeRun()
-recordings_path = app.config['RECORDINGS_PATH'] if 'RECORDINGS_PATH' in app.config else None
+recordings_path = _config_recordings_path
 __recording_manager = RecordingManager(recordings_directory=recordings_path)
 __scheduler = Scheduler()
 

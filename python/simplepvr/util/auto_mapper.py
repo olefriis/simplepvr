@@ -22,6 +22,7 @@ def read_channels_file(fname):
     channel_frequency = None
     file = codecs.open(file_path, "r")
     count = 0
+
     for line in file:
         scanning_entry = re.search(r'^SCANNING: (\d*) .*$', line)
         program_entry = re.search(r'^PROGRAM (\d*): \d* (.*)$', line)

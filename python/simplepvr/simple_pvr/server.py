@@ -7,20 +7,18 @@ from dateutil.parser import parse
 from dateutil.tz import tzlocal
 
 from .pvr_logger import logger
+from .config import config_dir, getSimplePvrOption
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-
 ## Upper case constants used by from_object - will be put in app.config map
-DATABASE = 'database.sqlite'
+DATABASE = 'simplepvr.sqlite'
 #TEMPLATES = 'public/templates'
-DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
-RECORDINGS_PATH = os.path.join(os.getcwd(), "recordings")
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, DATABASE)
 
+DEBUG = True
 
 from contextlib import closing
 from flask import Flask, request, json, jsonify, session, g, redirect, url_for, abort, render_template, flash, send_file, send_from_directory, after_this_request, make_response, Response
@@ -29,15 +27,20 @@ from sqlalchemy import or_, and_, desc
 
 app = Flask(__name__, static_folder= os.path.join(basedir, '../public/static'), template_folder= os.path.join(basedir, '../public/templates') )
 
+sqlite_uri_prefix = 'sqlite:///'
+SQLALCHEMY_DATABASE_URI = getSimplePvrOption("sqlite_url", sqlite_uri_prefix + os.path.join(config_dir, DATABASE))
+simplepvr_sqlite_path = SQLALCHEMY_DATABASE_URI[len(sqlite_uri_prefix):]
+
 app.config.from_object(__name__) # Set the Flask config defaults from the uppercase vars in this file
 app.config.from_envvar(variable_name="CONF", silent=True) ## Override the defaults by specifying the path to a file in the CONF environment variable
+
 
 db = SQLAlchemy(app)
 
 print "Database URI: ", app.config['SQLALCHEMY_DATABASE_URI']
 
 def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
+    return sqlite3.connect(simplepvr_sqlite_path)
 
 def init_db():
     """Creates the database tables."""

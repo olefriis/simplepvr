@@ -62,21 +62,23 @@ This guide requires the NAS to be 'bootstrapped', see
     # recordings will be stored.
     # The path should only be used for SimplePVR recordings. Either create a new share in the Synology Web interface,
     # or use a subfolder in an existing share.
-    # E.g.:
-    echo "RECORDINGS_PATH=/volume1/MyRecordings" > /volume1/@appstore/.simplepvr/simplepvr.cfg
+    #
+    echo "CONFIG_DIR=\"/volume1/@appstore/.simplepvr\"" > /volume1/@appstore/.simplepvr/simplepvr.cfg
+    echo "RECORDINGS_PATH=\"/volume1/MyRecordings\"" >> /volume1/@appstore/.simplepvr/simplepvr.cfg
+
 
 
     # Copy the startup script into place
-    cp /volume1/@appstore/simplepvr/python/simplepvr/etc/S99simplepvr.sh /usr/local/etc/rc.d/S99simplepvr.sh
-    chmod u+x /usr/local/etc/rc.d/S99simplepvr.sh
+    cp /volume1/@appstore/simplepvr/python/simplepvr/etc/S99simplepvr /usr/local/etc/rc.d/S99simplepvr
+    chmod u+x /usr/local/etc/rc.d/S99simplepvr
 
-    # NOTE: S99simplepvr.sh defaults to python2.6 - if you installed 2.7 you need to update the PYTHON_EXEC variable in
+    # NOTE: S99simplepvr defaults to python2.7 - if you only have 2.6 you need to update the PYTHON_EXEC variable in
     # the script.
 
     # Start the daemon - this can take several minutes the first time as it will ask the HDHomerun to scan for channels.
     # If you already have the output from a previous scan you would like to use put a 'channels.txt' file in the
     # /volume1/@appstore/.simplepvr folder with the contents of the scan from earlier.
-    /usr/local/etc/rc.d/S99simplepvr.sh start
+    /usr/local/etc/rc.d/S99simplepvr start
 
     # When the system is done scanning (or done parsing the channels.txt) - the Web gui can be accessed:
     http://<url_to_nas>:8000/

@@ -23,6 +23,10 @@ from .pvr_initializer import setup
 
 from .database_initializer import *
 
+def get_config_dir():
+    from .server import app
+    return os.path.abspath(app.config['CONFIG_DIR'])
+
 def safe_value(x):
     """ Do not die on bad input """
     try:

@@ -51,7 +51,7 @@ class Scheduler(threading.Thread):
         super(Scheduler, self).run()
         while True:
             self.process()
-            time.sleep(10)
+            time.sleep(2)
 
 
     @synchronized(myLock)

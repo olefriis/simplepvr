@@ -67,20 +67,26 @@ class HDHomeRun:
     SYMBOL_RATE = 6900
 
     def __init__(self):
+        from .config import getSimplePvrOption
+        if getSimplePvrOption("hdhomerun_config"):
+            HDHomeRun.HDHR_CONFIG = getSimplePvrOption("hdhomerun_config")
+
         self.device_id = self._discover()
         self.tuner_pids = [None, None]
         self._deleteFileIfExists(self._tuner_control_file(0))
         self._deleteFileIfExists(self._tuner_control_file(1))
 
     def scan_for_channels(self, file_name = 'channels.txt'):
+        from .config import config_dir, getSimplePvrOption
         from .master_import import Channel
-        file_path = os.path.join(os.path.curdir, file_name)
+
+        file_path = os.path.join(config_dir, file_name)
         if not os.path.isfile(file_path):
-            self._scan_channels_with_tuner(file_name)
+            self._scan_channels_with_tuner(file_path)
         else:
             logger().info(u"Using existing file for reading channels. To force a new scan on the device, delete the '{0}' file".format(file_path))
         Channel.query.delete()
-        self._read_channels_file(file_name)
+        self._read_channels_file(file_path)
 
     def start_recording(self, tuner, frequency, program_id, directory):
         self._set_tuner_to_frequency(tuner, frequency)
@@ -169,7 +175,7 @@ class HDHomeRun:
 
         logger().info(u"Executing command '{0}'".format(command))
         my_hdhr_process = Popen(command, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return my_hdhr_process #os.path.dirname(__file__) + "/" + str(tuner)
+        return my_hdhr_process
 
     def _reset_tuner_frequency(self, tuner):
         return call_os(self._hdhr_config_prefix() + " set /tuner{0}/channel none".format(tuner))
@@ -180,7 +186,8 @@ class HDHomeRun:
         os.waitpid(pid, os.WNOHANG)
 
     def _tuner_control_file(self, tuner):
-        return os.curdir + "/tuner{0}.lock".format(tuner)
+        from .config import config_dir
+        return os.path.join(config_dir, "tuner{0}.lock".format(tuner))
 
     def _hdhr_config_prefix(self):
         return "{0} {1}".format(HDHomeRun.HDHR_CONFIG, self.device_id)

@@ -3,12 +3,16 @@
 import logging
 
 def logger():
+    from .config import getLoggerOption
+
+    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO, filename=getLoggerOption("file"))
+
     return PvrLogger()
 
 class PvrLogger:
-    logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-    def __init__(self):
+
+    def __init__(self, file=None):
         self.logger = logging.getLogger('PvrLogger')
 
     def info(self, message):
