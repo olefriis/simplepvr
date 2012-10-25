@@ -1,7 +1,7 @@
 [SimplePVR]
-recordings_path = /Volumes/DATA/Recordings
+recordings_path = /volume1/public/Recordings
 
 [Logger]
 level = INFO
-file = simplepvr.log
+file = /var/log/simplepvr/simplepvr.log
 
