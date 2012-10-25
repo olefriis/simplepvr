@@ -57,9 +57,10 @@ This guide requires the NAS to be 'bootstrapped', see
 
     # Create directory for the configuration
     mkdir /volume1/@appstore/.simplepvr
+    cp /volume1/@appstore/simplepvr/python/simplepvr/etc/simplepvr.ini.example /volume1/@appstore/.simplepvr/simplepvr.ini
 
-    # Create the config file and make the RECORDINGS_PATH setting point to the location on your Synology where the
-    # recordings will be stored.
+    # Copy the simplepvr.ini example file from  a config file 'simplepvr.ini' and make the RECORDINGS_PATH setting point to the location on your Synology
+    # where the recordings will be stored.
     # The path should only be used for SimplePVR recordings. Either create a new share in the Synology Web interface,
     # or use a subfolder in an existing share.
     #

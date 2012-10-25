@@ -1,0 +1,7 @@
+[SimplePVR]
+recordings_path = /Volumes/DATA/Recordings
+
+[Logger]
+level = INFO
+file = simplepvr.log
+
