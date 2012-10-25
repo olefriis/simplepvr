@@ -94,16 +94,11 @@ This guide requires the NAS to be 'bootstrapped', see
     # Edit the script and fix the URL_XMLTV_DATA variable
 
     # Add an entry to /etc/crontab (there must be one TAB between the columns)
-    0       4       *       *       *       root    /usr/syno/bin/curl -L "http://some_url_where_I_download_xmltv_data_from" > /opt/tmp/epg.xml
-
-
-    #/opt/bin/python2.7 /volume1/@appstore/simplepvr/python/simplepvr/read_xmltv.py /opt/tmp/epg.xml /volume1/@appstore/.simplepvr/channel_mappings.yaml
-    # Import the downloaded data into the database
+    38	3	*	*	1,3,5,6	root	/opt/bin/bash /volume1/@appstore/scripts/fetch_xmltv.sh &> /var/log/simplepvr/fetch_xmltv.log
 
 
     # Restart the cron deamon
     /usr/syno/etc/rc.d/S04crond.sh stop && /usr/syno/etc/rc.d/S04crond.sh start
-
 
 
     # In order to read programme data from an XMLTV file, we need to create a mapping between the HDHomerun channel name
