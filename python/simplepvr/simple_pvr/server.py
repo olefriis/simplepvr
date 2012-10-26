@@ -419,8 +419,14 @@ def get_recording_stream_webm(show_name, recording_id):
 @app.route('/api/status', methods=['GET'])
 def status( ):
     from .pvr_initializer import scheduler
+    from .config import df_h
+    import psutil
+    cpu_pct = psutil.cpu_percent(interval=0, percpu=True)
+
     return json.dumps({
-        'status_text': scheduler().status_text()
+        'status_text': scheduler().status_text(),
+        'disk_free': df_h(),
+        'sys_load': ''.join( str(x)+"% " for x in psutil.cpu_percent(interval=0.5, percpu=True))
     })
 
 
