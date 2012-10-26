@@ -2,8 +2,7 @@
 
 if [ $# != 1 ]; then
 	echo "Usage: 
-		$0 epg.xml 
-	Result is stored in channel_mappings.yaml file in current dir"
+		$0 epg.xml "
  	exit 0
 fi
 
@@ -23,8 +22,9 @@ if [ -f "$1" ]; then
 #" > "${OUTFILE}"
 
 	xmllint --xpath "//channel/@id | //channel/display-name/text() " "$1" | awk '{gsub("id=","\nid=");printf"%s",$0}' | sed '/^$/d' | sed 's|id="\([a-zA-Z0-9/\.]*\)"\([\w]*\)|\1: \2|' >> "${OUTFILE}"
-	echo "Done  -  Result available in channel_mappings.yaml"
-	echo "   - Next step is to fix the channel names in the file, see the inlined comments describing how to do it."
+	echo "Done"
+  	echo "     Result available in channel_mappings.yaml"
+#	echo "     Next step is to fix the channel names in the file, see the inlined comments describing how to do it."
 else
 	echo "File '$1' not found - fix the path and try again"
 	exit 1
