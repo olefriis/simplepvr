@@ -89,8 +89,9 @@ class Programme(db.Model):
         return Programme.query.\
             filter(Programme.channel == channel).\
             filter(Programme.title == title).\
-            filter(Programme.start_time.between((start_time - timedelta(minutes=1)), (start_time + timedelta(minutes=1))))\
-            .all()
+            filter(Programme.start_time.between((start_time - timedelta(minutes=1)), (start_time + timedelta(minutes=1)))).\
+            order_by(Programme.start_time).\
+            all()
 
     @staticmethod
     def titles_containing(text):

@@ -148,7 +148,8 @@ def upcoming_recordings():
             'is_conflicting': scheduler().is_conflicting(recording.programme)
 
         })
-    return json.dumps(recordings)
+
+    return json.dumps(sorted(recordings, key=lambda rec: rec["start_time"]))
 
 @app.route('/api/schedules/reload', methods=['GET','POST'])
 def schedules_reload():
@@ -421,7 +422,6 @@ def status( ):
     from .pvr_initializer import scheduler
     from .config import df_h
     import psutil
-    cpu_pct = psutil.cpu_percent(interval=0, percpu=True)
 
     return json.dumps({
         'status_text': scheduler().status_text(),

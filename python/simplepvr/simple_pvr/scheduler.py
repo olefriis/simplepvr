@@ -57,24 +57,8 @@ class Scheduler(threading.Thread):
     @synchronized(myLock)
     def recordings(self,recordings):
         if recordings:
-            sorted_recordings = list(set(sorted(recordings, key=lambda rec: rec.start_time)))
-            #for idx, rec in enumerate(Scheduler.upcoming_recordings):
-            #    if rec not in sorted_recordings:
-            #        del Scheduler.upcoming_recordings[idx]
-
-            Scheduler.upcoming_recordings = list(set(sorted_recordings))
-#            for idx, upcoming_rec in enumerate(Scheduler.upcoming_recordings):
-#                if upcoming_rec not in sorted_recordings:
-#                    del(Scheduler.upcoming_recordings[upcoming_rec])
-#
-#            for rec in sorted_recordings:
-#                if rec.expired():
-#                    logger().info(u"Upcoming recording idx: '{}' has expired and will not be added to the queue".format(rec.show_name))
-#                else:
-#                    if rec not in Scheduler.upcoming_recordings:
-#                        Scheduler.upcoming_recordings.append(rec)
-#                    else:
-#                        logger().debug(u"{} is already in upcoming recordings, ignoring".format(rec))
+#            sorted_recordings = list(set(sorted(recordings, key=lambda rec: rec.start_time)))
+            Scheduler.upcoming_recordings = recordings
 
         logger().info(u"Schedule updated - {0} recordings in list".format(len(Scheduler.upcoming_recordings)))
 
