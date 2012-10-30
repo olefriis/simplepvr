@@ -153,3 +153,15 @@ To start the server
 
 Next open your favourite browser and go to
     http://localhost:8000
+
+
+
+Transcoding
+===========
+If you want to have a try at transcoding the recorded MPEG-TS, have a look at the etc/transcode_*.sh files. They are
+built for iPad2+, and iPhone4+ - but should also work on most newer Android devices.
+
+The scripts require you to have ffmpeg installed - and that you have placed the ffmpeg presets in ~/.ffmpeg.
+If you did not compile ffmpeg yourself, the ffmpeg presets can be acquired from Github from this project:
+ https://github.com/joeyblake/FFmpeg-Presets
+
