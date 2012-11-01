@@ -161,6 +161,13 @@ Transcoding
 If you want to have a try at transcoding the recorded MPEG-TS, have a look at the etc/transcode_*.sh files. They are
 built for iPad2+, and iPhone4+ - but should also work on most newer Android devices.
 
+If running on the Synology - you need to fix the ptread library symlink:
+    rm /opt/arm-none-linux-gnueabi/lib/libpthread.so.0
+    ln -s /lib/libpthread.so.0 /opt/arm-none-linux-gnueabi/lib/
+   (Fix found here: http://blog.thomas-lauria.de/archives/19-unison-auf-Synology-DS211.html)
+
+   ipkg install yasm lame x264
+
 The scripts require you to have ffmpeg installed - and that you have placed the ffmpeg presets in ~/.ffmpeg.
 If you did not compile ffmpeg yourself, the ffmpeg presets can be acquired from Github from this project:
  https://github.com/joeyblake/FFmpeg-Presets
