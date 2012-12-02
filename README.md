@@ -117,6 +117,8 @@ The plug-in allows you to browse your recordings, watch them, and delete them. T
 the "C" key, or right-click your mouse on a show or a recording. Then you can choose "Delete" from
 the context menu.
 
+To get information on a given recording, press the "I" key when a recording is selected.
+
 Please note: XBMC currently has to run on the same machine as the SimplePVR backend. This may change
 in the future, but currently the backend is not fast enough at streaming files through HTTP.
 
