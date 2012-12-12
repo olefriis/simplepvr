@@ -65,7 +65,7 @@ Then /I should not see the schedule "(.*)"/ do |text|
   end
 end
 
-Then /there should be (\d*) upcoming recordings/ do |upcoming_recordings|
+Then /there should be (\d*) upcoming recordings?/ do |upcoming_recordings|
   page.wait_until { find('#upcoming_recordings').all('h2').length == upcoming_recordings.to_i }
 end
 

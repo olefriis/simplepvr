@@ -24,6 +24,24 @@ function SchedulesCtrl($scope, $http, Schedule, UpcomingRecording, Channel) {
 	}
 }
 
+function ScheduleCtrl($scope, $routeParams, $location, Schedule, Channel) {
+	$scope.channels = Channel.query(function() {
+		$scope.schedule = Schedule.get({id: $routeParams.scheduleId}, function() {
+			for (var i=0; i<$scope.channels.length; i++) {
+				var channel = $scope.channels[i]
+				if ($scope.schedule.channel && channel.id === $scope.schedule.channel.id) {
+					$scope.channel = channel;
+				}
+			}
+		});
+	});
+	
+	$scope.update = function() {
+		$scope.schedule.channel = $scope.channel;
+		$scope.schedule.$save(function() { $location.path('/schedules'); });
+	}
+}
+
 function ChannelsCtrl($scope, $http, Channel) {
 	$scope.channels = Channel.query();
 	$scope.showHiddenChannels = false;

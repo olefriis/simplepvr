@@ -10,6 +10,14 @@ module SimplePvr
       # If specified (and channel is specified too), this schedule is for a specific
       # programme at a specific channel at a specific time
       property :start_time, DateTime
+      property :filter_by_weekday, Boolean
+      property :monday, Boolean
+      property :tuesday, Boolean
+      property :wednesday, Boolean
+      property :thursday, Boolean
+      property :friday, Boolean
+      property :saturday, Boolean
+      property :sunday, Boolean
 
       belongs_to :channel, required: false
     

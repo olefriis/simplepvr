@@ -88,3 +88,13 @@ Scenario: Removing a specific recording from a schedule
   When I follow "Do not record this specific show"
   Then there should be 2 upcoming recordings
   And I should see "Exception: Bonderøven"
+
+Scenario: Editing a schedule
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I press "Record on any channel"
+  And I am on the schedules page
+  And I follow "Edit"
+  And I fill in "Name of show" with "Noddy"
+  And I press "Update"
+  Then there should be 1 upcoming recording
+  And I should not see "Bonderøven"

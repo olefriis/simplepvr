@@ -73,6 +73,10 @@ config(function($routeProvider, $locationProvider) {
 		templateUrl: '/app/partials/schedules.html',
 		controller: SchedulesCtrl
 	}).
+	when('/schedules/:scheduleId', {
+		templateUrl: '/app/partials/schedule.html',
+		controller: ScheduleCtrl
+	}).
 	when('/channels', {
 		templateUrl: '/app/partials/channels.html',
 		controller: ChannelsCtrl

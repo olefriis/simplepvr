@@ -25,7 +25,8 @@ module SimplePvr
         end
         
         programmes_with_exceptions_removed = programmes.find_all {|programme| !matches_exception(programme, exceptions) }
-        add_programmes(title, programmes_with_exceptions_removed)
+        programmes_filtered_by_weekdays = programmes_with_exceptions_removed.find_all {|programme| on_allowed_weekday(programme, specification) }
+        add_programmes(title, programmes_filtered_by_weekdays)
       end
 
       PvrInitializer.scheduler.recordings = @recordings
@@ -37,6 +38,22 @@ module SimplePvr
         programme.title == exception.title &&
         programme.channel == exception.channel &&
         programme.start_time == exception.start_time
+      end
+    end
+    
+    def on_allowed_weekday(programme, specification)
+      return true unless specification.filter_by_weekday
+      
+      date = programme.start_time
+      case true
+      when date.monday? then specification.monday
+      when date.tuesday? then specification.tuesday
+      when date.wednesday? then specification.wednesday
+      when date.thursday? then specification.thursday
+      when date.friday? then specification.friday
+      when date.saturday? then specification.saturday
+      when date.sunday? then specification.sunday
+      else false
       end
     end
     
