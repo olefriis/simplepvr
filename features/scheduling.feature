@@ -98,3 +98,15 @@ Scenario: Editing a schedule
   And I press "Update"
   Then there should be 1 upcoming recording
   And I should not see "Bonderøven"
+
+Scenario: Editing a schedule so that only some weekdays are allowed
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I press "Record on any channel"
+  And I am on the schedules page
+  And I follow "Edit"
+  And I check "Filter by weekday"
+  And I check "Record Mondays"
+  And I check "Record Wednesdays"
+  And I check "Record Sundays"
+  And I press "Update"
+  Then I should see "(Mondays, Wednesdays, and Sundays)"

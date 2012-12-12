@@ -38,4 +38,60 @@ describe('filters', function() {
 			expect(angular.equals(output1, output2)).toBeFalsy();
 		}));
 	});
+	
+	describe('weekdayFilter', function() {
+		it('should be blank when there is no weekday filtering', inject(function(filteredWeekdaysFilter) {
+			var scheduleWithNoWeekdayFiltering = { filter_by_weekday: false };
+			expect(filteredWeekdaysFilter(scheduleWithNoWeekdayFiltering)).toEqual('');
+		}));
+		
+		it('should name a single weekday if only one is selected', inject(function(filteredWeekdaysFilter) {
+			var scheduleWithOneWeekdayFiltering = {
+				filter_by_weekday: true,
+				monday: false,
+				tuesday: false,
+				wednesday: true,
+				thursday: false,
+				friday: false,
+				saturday: false,
+				sunday: false
+			};
+			expect(filteredWeekdaysFilter(scheduleWithOneWeekdayFiltering)).toEqual('(Wednesdays)');
+		}));
+		
+		it('should name two weekdays if exactly two are selected', inject(function(filteredWeekdaysFilter) {
+			var scheduleWithTwoWeekdayFilterings = {
+				filter_by_weekday: true,
+				monday: true,
+				tuesday: false,
+				wednesday: true,
+				thursday: false,
+				friday: false,
+				saturday: false,
+				sunday: false
+			};
+			expect(filteredWeekdaysFilter(scheduleWithTwoWeekdayFilterings)).toEqual('(Mondays and Wednesdays)');
+		}));
+		
+		it('should list all weekdays for three and more allowed weekdays', inject(function(filteredWeekdaysFilter) {
+			var scheduleWithSeveralWeekdayFilterings = {
+				filter_by_weekday: true,
+				monday: true,
+				tuesday: false,
+				wednesday: true,
+				thursday: false,
+				friday: true,
+				saturday: false,
+				sunday: false
+			};
+			expect(filteredWeekdaysFilter(scheduleWithSeveralWeekdayFilterings)).toEqual('(Mondays, Wednesdays, and Fridays)');
+			scheduleWithSeveralWeekdayFilterings.saturday = true;
+			expect(filteredWeekdaysFilter(scheduleWithSeveralWeekdayFilterings)).toEqual('(Mondays, Wednesdays, Fridays, and Saturdays)');
+			scheduleWithSeveralWeekdayFilterings.tuesday = true;
+			scheduleWithSeveralWeekdayFilterings.thursday = true;
+			scheduleWithSeveralWeekdayFilterings.saturday = true;
+			scheduleWithSeveralWeekdayFilterings.sunday = true;
+			expect(filteredWeekdaysFilter(scheduleWithSeveralWeekdayFilterings)).toEqual('(Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays, and Sundays)')
+		}));
+	});
 });

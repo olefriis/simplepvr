@@ -65,6 +65,37 @@ filter('formatEpisode', function() {
         return episodeNum ? episodeNum.replace(' .', '').replace('. ', '') : "";
     }
 }).
+filter('filteredWeekdays', function() {
+	return function(schedule) {
+		if (!schedule.filter_by_weekday) {
+			return '';
+		}
+		
+		var selectedWeekdays = [];
+		if (schedule.monday) selectedWeekdays.push('Mondays');
+		if (schedule.tuesday) selectedWeekdays.push('Tuesdays');
+		if (schedule.wednesday) selectedWeekdays.push('Wednesdays');
+		if (schedule.thursday) selectedWeekdays.push('Thursdays');
+		if (schedule.friday) selectedWeekdays.push('Fridays');
+		if (schedule.saturday) selectedWeekdays.push('Saturdays');
+		if (schedule.sunday) selectedWeekdays.push('Sundays');
+
+		var days = '';
+		if (selectedWeekdays.length == 0) {
+			return ''
+		} else if (selectedWeekdays.length == 1) {
+			days = selectedWeekdays[0];
+		} else if (selectedWeekdays.length == 2) {
+			days = selectedWeekdays[0] + ' and ' + selectedWeekdays[1];
+		} else {
+			for (var i=0; i<selectedWeekdays.length - 1; i++) {
+				days += selectedWeekdays[i] + ', ';
+			}
+			days += 'and ' + selectedWeekdays[selectedWeekdays.length - 1];
+		}
+		return '(' + days + ')';
+	}
+}).
 config(function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix('');
 
