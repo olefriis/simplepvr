@@ -140,9 +140,8 @@ are the only means you have for speeding things up. This includes:
     programmes", ...
 * Setting up schedules defined by a channel, a start time, and a duration (and a name,
   probably), so that the web GUI is usable even without XMLTV.
-* Editing schedules, e.g.:
+* More schedule editing, e.g.:
   * "Start early" and "end late" (currently 2 and 5 minutes).
-  * Which days of the week the schedule should be active.
   * Which time of day the schedule should be active (e.g. only the afternoon, ignoring all the
     re-runs earlier in the day).
   * Showing which programmes match the edited schedule, to make it easier to create a schedule
