@@ -106,10 +106,14 @@ XBMC Plug-In
 ============
 There's a very simple XBMC plug-in, which resides in the `plugins/xbmc` folder. Copy the
 `plugins.video.simplepvr` folder and its contents to the `Contents/Resources/XBMC/addons` folder
-in your XBMC installation. (You can also ZIP the folder and install it in a more official way
-through XBMC's settings page.)
+in your XBMC installation. Alternatively, ZIP the plugin from the command-line (Mac users: Don't
+use Finder to compress the folder, as XBMC won't accept the resulting file!) like this, and install
+it through XBMC's settings page:
 
-Remember to look through the plug-in's settings page in XBMC after you have installed the plug-in.
+        cd plugins/xbmc
+        zip -r plugin.video.simplepvr.zip plugin.video.simplepvr
+
+After installing the plug-in, remember to look through the plug-in's settings page in XBMC.
 Here, you set up the server URL and username / password, in case you have secured your server as
 described above.
 
