@@ -131,10 +131,20 @@ Future?
 This projects needs to be a nice, readable, hackable, tested system. No pull requests are
 accepted that violate this.
 
-There are lots of stuff I'd like to do, but I have no deadline - which means that pull requests
-are the only means you have for speeding things up. This includes:
+For version 1 of SimplePVR, I'd like to finish the following:
 
 * "Gemify" the stuff, so installation becomes a breeze.
+* More schedule editing, e.g.:
+  * "Start early" and "end late" (currently 2 and 5 minutes).
+  * Which time of day the schedule should be active (e.g. only the afternoon, ignoring all the
+    re-runs earlier in the day).
+* Removal of outdated schedules (the "Record single programme" and "Don't record this specific
+  programme").
+* Rake tasks for creating gem, testing (unit, integration, JavaScript), packaging XBMC plug-in.
+
+There is lots of stuff I'd like to do after that, but I have no deadline - which means that pull
+requests are the only means you have for speeding things up. This includes:
+
 * Web interface:
   * "Dashboard" giving "the big picture" of the status of the system (next 5 upcoming recordings,
     last 5 recorded programmes, current status, last couple of errors, whether there are any
@@ -144,14 +154,8 @@ are the only means you have for speeding things up. This includes:
     programmes", ...
 * Setting up schedules defined by a channel, a start time, and a duration (and a name,
   probably), so that the web GUI is usable even without XMLTV.
-* More schedule editing, e.g.:
-  * "Start early" and "end late" (currently 2 and 5 minutes).
-  * Which time of day the schedule should be active (e.g. only the afternoon, ignoring all the
-    re-runs earlier in the day).
-  * Showing which programmes match the edited schedule, to make it easier to create a schedule
-    which exactly matches your needs.
-* Removal of outdated schedules (the "Record single programme" and "Don't record this specific
-  programme").
+* Schedule editing: Show which programmes match the edited schedule, to make it easier to create
+  a schedule which exactly matches your needs.
 * XMLTV import:
   * Let SimplePVR itself fetch XMLTV URLs at specified times of day.
   * Set-up of matching XMLTV IDs to channels could make good use of a GUI.
@@ -162,12 +166,15 @@ are the only means you have for speeding things up. This includes:
   [Bluepill](https://github.com/arya/bluepill) seems to do the job, but seems like too big a hammer...
 
 Some features would be cool to have, but I don't have a personal need for them, so they will only
-happen if *you* implement them and send me a pull request.
+happen if *you* implement them and send me a pull request. Besides, some of them I have no clue how
+to implement...
 
 * Some kind of live TV.
 * Create metadata for XBMC and Serviio.
 * Duplication detection.
 * Commercial detection.
+* Record multiple programmes on same multiplex, so we are not restricted to only recording two
+  programmes at once.
 
 Development
 ===========
