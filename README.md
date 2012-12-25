@@ -105,7 +105,8 @@ Inside the numbered directories are these files:
 XBMC Plug-In
 ============
 There's a very simple XBMC plug-in, which resides in the `plugins/xbmc` folder. Generate a ZIP file
-containing the plug-in and install it through XBMC's settings page:
+containing the plug-in and install it through XBMC's settings page (the ZIP file will be placed in
+the "output" folder):
 
         rake xbmc:package
 
@@ -136,7 +137,6 @@ For version 1 of SimplePVR, I'd like to finish the following:
     re-runs earlier in the day).
 * Removal of outdated schedules (the "Record single programme" and "Don't record this specific
   programme").
-* Rake tasks for creating gem, testing (unit, integration, JavaScript), packaging XBMC plug-in.
 
 There is lots of stuff I'd like to do after that, but I have no deadline - which means that pull
 requests are the only means you have for speeding things up. This includes:
@@ -174,9 +174,9 @@ to implement...
 
 Development
 ===========
-Run the specs like this:
+Run the specs and features like this:
 
-        bundle exec rspec
+        rake test
 
 Run the JavaScript tests by first calling
 
@@ -187,7 +187,3 @@ then opening a browser on the shown URL. Capture the browser in strict mode. Aft
         test/scripts/test.sh
 
 any number of times. However, the test-server needs to be restarted from time to time.
-
-Run the integration tests like this:
-
-        bundle exec cucumber

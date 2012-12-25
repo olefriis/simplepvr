@@ -7,7 +7,8 @@ gem 'dm-sqlite-adapter'
 
 gem 'sinatra'
 
-# For testing
+# For development
+gem 'rake'
 gem 'rspec'
 gem 'cucumber'
 gem 'capybara'
