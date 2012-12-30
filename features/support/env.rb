@@ -11,6 +11,7 @@ SimplePvr::RecordingPlanner.read
 Capybara.app = eval "Rack::Builder.new {( " + SimplePvr::PvrInitializer.rack_maps_file + ")}"
 Capybara.default_driver = :selenium
 Capybara.default_wait_time = 5
+Capybara.ignore_hidden_elements = true # AngularJS shows and hides elements all the time, so this is important
 
 class SimplePvrWorld
   include Capybara::DSL

@@ -99,7 +99,6 @@ def find_or_create_channel_with_name(name)
 end
 
 def choose_to_record(button_text)
-  sleep 0.1 # Not so cool, but there seems to be a delayed JavaScript binding...
   click_button(button_text)
   page.wait_until { page.text.include? 'This programme is being recorded' }
 end

@@ -1,5 +1,5 @@
 <div class="span6">
-	<div class="row">
+	<div class="row" ng-show="programme.id">
 		<h1>{{programme.title}}</h1>
 		<p>{{programme.start_time | date:'fullDate'}} at {{programme.start_time | date:'HH:mm'}} on channel {{programme.channel.name}}.</p>
 		<p>{{programme.subtitle}}</p>
