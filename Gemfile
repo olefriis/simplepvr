@@ -7,8 +7,9 @@ gem 'dm-sqlite-adapter'
 
 gem 'sinatra'
 
-# For development
-gem 'rake'
-gem 'rspec'
-gem 'cucumber'
-gem 'capybara'
+group :test do
+  gem 'rake'
+  gem 'rspec'
+  gem 'cucumber'
+  gem 'capybara'
+end
