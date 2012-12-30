@@ -28,6 +28,18 @@ Given /I have navigated to the programme page for "(.*)" on channel "(.*)"/ do |
   click_link(title)
 end
 
+Given /I choose to record just this programme/ do
+  choose_to_record('Record just this programme')
+end
+
+Given /I choose to record the programme on this channel/ do
+  choose_to_record('Record on this channel')
+end
+
+Given /I choose to record the programme on any channel/ do
+  choose_to_record('Record on any channel')
+end
+
 When /I enter "(.*)" in the programme search field/ do |query|
   fill_in('programme-search-query', :with => query)
 end
@@ -84,4 +96,10 @@ end
 def find_or_create_channel_with_name(name)
   channel = SimplePvr::Model::Channel.first(name: name)
   channel ? channel : SimplePvr::Model::Channel.add(name, 0, 0)
+end
+
+def choose_to_record(button_text)
+  sleep 0.1 # Not so cool, but there seems to be a delayed JavaScript binding...
+  click_button(button_text)
+  page.wait_until { page.text.include? 'This programme is being recorded' }
 end
