@@ -1,6 +1,11 @@
 module SimplePvr
   module Server
     class SchedulesController < BaseController
+      # Must come before the "post '/:id'" below, or it won't get hit :-)
+      post '/reload' do
+        reload_schedules
+      end
+
       get '/' do
         Model::Schedule.all.map {|schedule| schedule_map(schedule)}.to_json
       end
@@ -41,10 +46,6 @@ module SimplePvr
         Model::Schedule.get(id).destroy
         reload_schedules
         ''
-      end
-
-      post '/reload' do
-        reload_schedules
       end
       
       private
