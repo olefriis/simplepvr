@@ -32,7 +32,7 @@ First of all, you need a computer and an HDHomeRun tuner box. On your computer, 
 
 You need Ruby 1.9.2 or newer (1.9.0 or newer is probably enough).
 
-Dump this source somewhere, and run
+Dump this source somewhere, go to the ruby directory, and run
 
         gem install bundler
         bundle install
@@ -47,7 +47,7 @@ them directly in your browser), you need FFMPEG on the command-line. Install it 
 
 Starting the server
 ===================
-Run
+Run (from the ruby directory)
 
         bundle exec rackup
 
@@ -106,9 +106,9 @@ XBMC Plug-In
 ============
 There's a very simple XBMC plug-in, which resides in the `plugins/xbmc` folder. Generate a ZIP file
 containing the plug-in and install it through XBMC's settings page (the ZIP file will be placed in
-the "output" folder):
+the "output" folder) by running this in the plugins/xbmc folder:
 
-        rake xbmc:package
+        rake package
 
 After installing the plug-in, remember to look through the plug-in's settings page in XBMC.
 Here, you set up the server URL and username / password, in case you have secured your server as
