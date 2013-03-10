@@ -1,4 +1,3 @@
-require File.dirname(__FILE__) + '/lib/simple_pvr'
 SimplePvr::PvrInitializer.setup
 SimplePvr::RecordingPlanner.read
 

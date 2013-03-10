@@ -22,6 +22,10 @@ module SimplePvr
     def self.scheduler
       @scheduler
     end
+
+    def self.rackup_file_path
+      File.dirname(__FILE__) + '/server/config.ru'
+    end
     
     def self.rack_maps_file
       File.read(File.dirname(__FILE__) + '/server/rack_maps.rb')
