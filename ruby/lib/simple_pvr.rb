@@ -1,5 +1,6 @@
 require 'active_support/all'
 
+require File.dirname(__FILE__) + '/simple_pvr/version'
 require File.dirname(__FILE__) + '/simple_pvr/pvr_logger'
 require File.dirname(__FILE__) + '/simple_pvr/hdhomerun'
 require File.dirname(__FILE__) + '/simple_pvr/model/database_initializer'

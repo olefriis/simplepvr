@@ -1,4 +1,5 @@
 .idea
+*.gem
 .bundle
 channels.txt
 channel_mappings.yaml
