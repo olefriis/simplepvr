@@ -42,14 +42,14 @@ If you'd like thumbnails for the recorded shows and ability to transcode recordi
 them directly in your browser), you need FFMPEG on the command-line. Install it using MacPorts, Homebrew,
 "apt-get", or whatever.
 
-Starting the server
-===================
-Run
+Running the server
+==================
 
         pvr_server
 
-...and go to [http://localhost:4567](http://localhost:4567). If you want to expose this URL to the outside
-world, you'd better supply a username and password:
+First time the server is started, a channel scan on your HDHomeRun is executed, which can take several minutes.
+When the server is running, go to [http://localhost:4567](http://localhost:4567). If you want to expose this
+URL to the outside world, you'd better supply a username and password:
 
         username=me password=secret pvr_server
 
@@ -110,7 +110,6 @@ accepted that violate this.
 
 For version 1 of SimplePVR, I'd like to finish the following:
 
-* "Gemify" the stuff, so installation becomes a breeze.
 * More schedule editing, e.g.:
   * "Start early" and "end late" (currently 2 and 5 minutes).
   * Which time of day the schedule should be active (e.g. only the afternoon, ignoring all the
@@ -154,16 +153,24 @@ to implement...
 
 Development
 ===========
-Run the specs and features like this:
+Run all automatic tests like this:
 
         rake test
 
-Run the JavaScript tests by first calling
+This runs the Ruby specs and features along with the JavaScript unit tests.
 
-        test/scripts/test-server.sh
+For the JavaScript tests to run, first install [Testacular](http://testacular.github.com/0.6.0/index.html).
+If you want to keep Testacular running and let it execute whenever a file changes, just run this:
 
-then opening a browser on the shown URL. Capture the browser in strict mode. After this, you can run
+        testacular start test/testacular.conf.js
 
-        test/scripts/test.sh
+To create the gem, make sure that lib/simple_pvr/version.rb is up-to-date, commit everything and run:
 
-any number of times. However, the test-server needs to be restarted from time to time.
+        rake build
+
+Then "gem install" the generated gem in the pkg directory, see if everything seems to work (you already ran
+the automatic tests, right?), and execute
+
+        rake release
+
+...which will release the gem to rubygems.org.

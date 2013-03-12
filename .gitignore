@@ -11,6 +11,8 @@ recordings
 *.iml
 epg.xml
 
+ruby/pkg
+
 python/build
 build-bundle
 *.sqlite.bak*
