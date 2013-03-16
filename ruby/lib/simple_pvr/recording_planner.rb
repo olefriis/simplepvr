@@ -15,24 +15,27 @@ module SimplePvr
       exceptions = schedules.find_all {|s| s.type == :exception }
       
       specifications.each do |specification|
-        title = specification.title
-        if specification.channel && specification.start_time
-          programmes = Model::Programme.on_channel_with_title_and_start_time(specification.channel, specification.title, specification.start_time)
-        elsif specification.channel
-          programmes = Model::Programme.on_channel_with_title(specification.channel, specification.title)
-        else
-          programmes = Model::Programme.with_title(specification.title)
-        end
-        
+        programmes = programmes_matching(specification)
         programmes_with_exceptions_removed = programmes.find_all {|programme| !matches_exception(programme, exceptions) }
         programmes_filtered_by_weekdays = programmes_with_exceptions_removed.find_all {|programme| on_allowed_weekday(programme, specification) }
-        add_programmes(title, programmes_filtered_by_weekdays)
+
+        add_programmes(specification.title, programmes_filtered_by_weekdays)
       end
 
       PvrInitializer.scheduler.recordings = @recordings
     end
     
     private
+    def programmes_matching(specification)
+        if specification.channel && specification.start_time
+          Model::Programme.on_channel_with_title_and_start_time(specification.channel, specification.title, specification.start_time)
+        elsif specification.channel
+          Model::Programme.on_channel_with_title(specification.channel, specification.title)
+        else
+          Model::Programme.with_title(specification.title)
+        end
+    end
+
     def matches_exception(programme, exceptions)
       exceptions.any? do |exception|
         programme.title == exception.title &&
