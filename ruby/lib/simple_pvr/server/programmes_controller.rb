@@ -30,14 +30,14 @@ module SimplePvr
 
       post '/:id/record_just_this_programme' do |id|
         programme = Model::Programme.get(id.to_i)
-        Model::Schedule.add_specification(title: programme.title, channel: programme.channel, start_time: programme.start_time)
+        Model::Schedule.add_specification(title: programme.title, channel: programme.channel, start_time: programme.start_time, end_time: programme.end_time)
         reload_schedules
         programme_hash(programme).to_json
       end
 
       post '/:id/exclude' do |id|
         programme = Model::Programme.get(id.to_i)
-        Model::Schedule.create(type: :exception, title: programme.title, channel: programme.channel, start_time: programme.start_time)
+        Model::Schedule.create(type: :exception, title: programme.title, channel: programme.channel, start_time: programme.start_time, end_time: programme.end_time)
         reload_schedules
         programme_hash(programme).to_json
       end
