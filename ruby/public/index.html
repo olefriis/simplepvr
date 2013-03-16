@@ -40,10 +40,7 @@
               <navbar-item route="/shows">Recordings</navbar-item>
               <navbar-item route="/status">Status</navbar-item>
             </ul>
-			<form class="navbar-form pull-right" ng-controller="SearchProgrammesCtrl" ng-submit="search()">
-			  <input pvr-autocomplete class="span2" id="programme-search-query" type="text" placeholder="Search programmes...">
-			  <button type="submit" class="btn">Search</button>
-			</form>
+            <title-search></title-search>
           </div>
         </div>
       </div>

@@ -1,12 +1,19 @@
 'use strict';
 
 angular.module('simplePvr', ['simplePvrServices']).
-directive('pvrAutocomplete', function() {
-	return function(scope, element, attrs) {
-		element.typeahead({
-			source: scope.autocomplete
-		});
-	}
+directive('titleSearch', function() {
+	return {
+		templateUrl: '/app/templates/titleSearch.html',
+		restrict: 'E',
+		replace: true,
+		controller: SearchProgrammesCtrl,
+		link: function(scope, element, attributes, controller) {
+			element.find('input').typeahead({
+				source: scope.autocomplete,
+				updater: scope.updater
+			});
+		}
+	};
 }).
 directive('navbarItem', function($location) {
 	return {

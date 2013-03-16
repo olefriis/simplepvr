@@ -137,10 +137,16 @@ function SearchProgrammesCtrl($scope, $http, $location) {
 	$scope.autocomplete = function(query, process) {
 		$http.get('/api/programmes/title_search', {params: {query: query}}).success(process);
 	}
+
+	$scope.updater = function(item) {
+		$scope.$apply(function() {
+			$scope.title = item;
+		});
+		return item;
+	}
 	
 	$scope.search = function() {
-		var query = $("#programme-search-query").val();
-		$location.path('/search').search({query: query});
+		$location.path('/search').search({query: $scope.title});
 	}
 }
 
