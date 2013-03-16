@@ -14,6 +14,10 @@ module SimplePvr
 
       belongs_to :channel
 
+      def end_time
+        @start_time.advance(seconds: duration)
+      end
+
       def self.clear
         Programme.destroy
       end

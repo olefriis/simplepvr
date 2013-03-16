@@ -15,6 +15,12 @@ describe SimplePvr::Model::Programme do
     @dr_1 = Channel.add('DR 1', 23000000, 1098)
     @dr_2 = Channel.add('DR 2', 24000000, 1099)
   end
+
+  it 'knows its end time' do
+    programme = Programme.new(start_time: Time.local(2012, 7, 17, 20, 30), duration: 50.minutes)
+
+    programme.end_time.should == Time.local(2012, 7, 17, 21, 20)
+  end
   
   it 'can insert programmes' do
     3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes, ' .4/12. ') }
