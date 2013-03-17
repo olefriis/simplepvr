@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'data_mapper', '~> 1.2'
   gem.add_dependency 'dm-sqlite-adapter', '~> 1.2'
   gem.add_dependency 'sinatra', '~> 1.3'
+  gem.add_dependency 'puma', '~> 1.6'
 
   gem.add_development_dependency 'rake', '>= 10.0.0'
   gem.add_development_dependency 'rspec', '~> 2.11'
