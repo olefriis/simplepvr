@@ -114,8 +114,6 @@ For version 1 of SimplePVR, I'd like to finish the following:
   * "Start early" and "end late" (currently 2 and 5 minutes).
   * Which time of day the schedule should be active (e.g. only the afternoon, ignoring all the
     re-runs earlier in the day).
-* Removal of outdated schedules (the "Record single programme" and "Don't record this specific
-  programme").
 
 There is lots of stuff I'd like to do after that, but I have no deadline - which means that pull
 requests are the only means you have for speeding things up. This includes:
