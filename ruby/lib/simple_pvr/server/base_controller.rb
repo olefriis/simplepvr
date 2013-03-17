@@ -24,7 +24,7 @@ module SimplePvr
       end
 
       def reload_schedules
-        RecordingPlanner.read
+        RecordingPlanner.reload
       end
 
       def programme_hash(programme)

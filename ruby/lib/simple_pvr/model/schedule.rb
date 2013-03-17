@@ -24,6 +24,10 @@ module SimplePvr
 
       belongs_to :channel, required: false
     
+      def self.cleanup
+        Schedule.all(:end_time.lt => Time.now).each {|s| s.destroy }
+      end
+
       def self.add_specification(options)
         Schedule.create(
           type: :specification,

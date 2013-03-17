@@ -7,11 +7,21 @@ describe SimplePvr::RecordingPlanner do
     @dr_1 = SimplePvr::Model::Channel.create(name: 'DR 1')
     @dr_k = SimplePvr::Model::Channel.create(name: 'DR K')
     @start_time_1, @start_time_2 = Time.local(2012, 7, 10, 20, 50), Time.local(2012, 7, 17, 20, 50)
+    @old_start_time = Time.local(2012, 8, 10, 20, 50)
     @programme_title = 'Borgias'
     @programme_duration = 60.minutes.to_i
     
     @scheduler = double('Scheduler')
     SimplePvr::PvrInitializer.stub(scheduler: @scheduler)
+
+    Time.stub!(now: Time.local(2012, 7, 9, 20, 50))
+  end
+
+  it 'cleans up outdated schedules' do
+    SimplePvr::Model::Schedule.should_receive(:cleanup)
+    @scheduler.should_receive(:recordings=).with([])
+
+    SimplePvr::RecordingPlanner.reload
   end
   
   it 'resets the recordings when no schedules exist' do
@@ -22,7 +32,7 @@ describe SimplePvr::RecordingPlanner do
 
     @scheduler.should_receive(:recordings=).with([])
     
-    SimplePvr::RecordingPlanner.read
+    SimplePvr::RecordingPlanner.reload
   end
   
   it 'can set up schedules from channel and programme title' do
@@ -37,7 +47,7 @@ describe SimplePvr::RecordingPlanner do
       SimplePvr::Model::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
     ])
 
-    SimplePvr::RecordingPlanner.read
+    SimplePvr::RecordingPlanner.reload
   end
 
   it 'can set up schedules from channel, programme title, and start time' do
@@ -49,7 +59,7 @@ describe SimplePvr::RecordingPlanner do
          SimplePvr::Model::Recording.new(@dr_k, @programme_title, @start_time_2.advance(minutes: -2), 2.minutes + @programme_duration + 5.minutes, @programme_to_be_recorded)
     ])
 
-    SimplePvr::RecordingPlanner.read
+    SimplePvr::RecordingPlanner.reload
   end
 
   it 'can set up schedules from programme title only' do
@@ -63,7 +73,7 @@ describe SimplePvr::RecordingPlanner do
       SimplePvr::Model::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_2)
     ])
 
-    SimplePvr::RecordingPlanner.read
+    SimplePvr::RecordingPlanner.reload
   end
   
   it 'can set up schedules for specific days of the week' do
@@ -86,7 +96,7 @@ describe SimplePvr::RecordingPlanner do
       SimplePvr::Model::Recording.new(@dr_1, @programme_title, @sunday - 2.minutes, 67.minutes, @sunday_programme),
     ])
     
-    SimplePvr::RecordingPlanner.read
+    SimplePvr::RecordingPlanner.reload
   end
   
   it 'ignores programmes for which exceptions exist' do
@@ -99,6 +109,6 @@ describe SimplePvr::RecordingPlanner do
       SimplePvr::Model::Recording.new(@dr_k, 'Borgias', Time.local(2012, 7, 17, 20, 48), 67.minutes, @programme_to_be_recorded)
     ])
 
-    SimplePvr::RecordingPlanner.read
+    SimplePvr::RecordingPlanner.reload
   end
 end

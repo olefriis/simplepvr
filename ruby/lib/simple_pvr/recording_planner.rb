@@ -1,6 +1,8 @@
 module SimplePvr
   class RecordingPlanner
-    def self.read
+    def self.reload
+      Model::Schedule.cleanup
+
       planner = self.new
       planner.read
     end

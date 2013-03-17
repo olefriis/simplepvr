@@ -6,7 +6,7 @@ require 'rspec'
 require File.join(File.dirname(__FILE__), '../../lib/simple_pvr')
 
 SimplePvr::PvrInitializer.setup_for_integration_test
-SimplePvr::RecordingPlanner.read
+SimplePvr::RecordingPlanner.reload
 
 Capybara.app = eval "Rack::Builder.new {( " + SimplePvr::PvrInitializer.rack_maps_file + ")}"
 Capybara.default_driver = :selenium
