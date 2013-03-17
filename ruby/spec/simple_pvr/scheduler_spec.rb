@@ -124,8 +124,8 @@ describe SimplePvr::Scheduler do
     unscheduled_programme = double(id: 3)
 
     @scheduler.recordings = [SimplePvr::Model::Recording.new(@channel, 'Borgia', start_time, 60.minutes, scheduled_programme)]
-    @scheduler.is_scheduled?(scheduled_programme).should be_true
-    @scheduler.is_scheduled?(unscheduled_programme).should be_false
+    @scheduler.scheduled?(scheduled_programme).should be_true
+    @scheduler.scheduled?(unscheduled_programme).should be_false
   end
   
   it 'gives idle status when nothing is recording' do

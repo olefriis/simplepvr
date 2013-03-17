@@ -29,11 +29,11 @@ module SimplePvr
       end
     end
     
-    def is_scheduled?(programme)
+    def scheduled?(programme)
       @scheduled_programmes[programme.id] != nil
     end
     
-    def is_conflicting?(programme)
+    def conflicting?(programme)
       @conflicting_programmes[programme.id] != nil
     end
     

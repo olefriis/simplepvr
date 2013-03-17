@@ -28,6 +28,14 @@ Given /I have navigated to the programme page for "(.*)" on channel "(.*)"/ do |
   click_link(title)
 end
 
+Given /I have navigated to the programme page for yesterday's "(.*)" on channel "(.*)"/ do |title, channel|
+  visit path_to('the channel overview page')
+  fill_in('channel_filter', :with => channel)
+  click_link('...')
+  click_link('<<')
+  click_link(title)
+end
+
 Given /I choose to record just this programme/ do
   choose_to_record('Record just this programme')
 end
@@ -75,6 +83,10 @@ Then /I should not see the schedule "(.*)"/ do |text|
   within('#schedules') do
     page.wait_until { !(page.text.include? text) }
   end
+end
+
+Then /I should not see the button "(.*)"/ do |text|
+    page.wait_until { page.has_no_button?(text) }
 end
 
 Then /there should be (\d*) upcoming recordings?/ do |upcoming_recordings|

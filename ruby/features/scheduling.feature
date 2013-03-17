@@ -6,6 +6,7 @@ Feature: Scheduling
 Background:
   Given the following programmes:
     | title          | subtitle             | channel   | day |
+    | Old News       | Just the old news... | Channel 1 |  -1 |
     | News right now | Just the news...     | Channel 1 |   0 |
     | Bonderøven     | Danish documentary   | Channel 1 |   1 |
     | Bonderøven     | Danish documentary   | Channel 2 |   1 |
@@ -15,6 +16,10 @@ Background:
 Scenario: Nothing is scheduled by default
   Given I am on the schedules page
   Then there should be 0 upcoming recordings
+
+Scenario: I cannot record past programmes
+  Given I have navigated to the programme page for yesterday's "Old News" on channel "Channel 1"
+  Then I should not see the button "Record just this programme"
 
 Scenario: Schedule by title for a single channel
   Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"

@@ -18,6 +18,10 @@ module SimplePvr
         @start_time.advance(seconds: duration)
       end
 
+      def outdated?
+        end_time < Time.now
+      end
+
       def self.clear
         Programme.destroy
       end

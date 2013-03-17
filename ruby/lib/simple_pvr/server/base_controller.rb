@@ -28,7 +28,6 @@ module SimplePvr
       end
 
       def programme_hash(programme)
-        is_scheduled = PvrInitializer.scheduler.is_scheduled?(programme)
         {
           id: programme.id,
           channel: { id: programme.channel.id, name: programme.channel.name },
@@ -36,8 +35,9 @@ module SimplePvr
           subtitle: programme.subtitle,
           description: programme.description,
           start_time: programme.start_time,
-          is_scheduled: is_scheduled,
-          episode_num: programme.episode_num
+          is_scheduled: PvrInitializer.scheduler.scheduled?(programme),
+          episode_num: programme.episode_num,
+          is_outdated: programme.outdated?
         }
       end
 
@@ -85,8 +85,8 @@ module SimplePvr
           id: programme.id,
           title: programme.title,
           start_time: programme.start_time,
-          is_scheduled: PvrInitializer.scheduler.is_scheduled?(programme),
-          is_conflicting: PvrInitializer.scheduler.is_conflicting?(programme)
+          is_scheduled: PvrInitializer.scheduler.scheduled?(programme),
+          is_conflicting: PvrInitializer.scheduler.conflicting?(programme)
         }
       end
     end

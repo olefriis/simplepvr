@@ -21,6 +21,11 @@ describe SimplePvr::Model::Programme do
 
     programme.end_time.should == Time.local(2012, 7, 17, 21, 20)
   end
+
+  it 'knows when it is outdated' do
+    Programme.new(start_time: 10.minutes.ago, duration: 9.minutes).should be_outdated
+    Programme.new(start_time: 10.minutes.ago, duration: 11.minutes).should_not be_outdated
+  end
   
   it 'can insert programmes' do
     3.times { Programme.add(@dr_1, 'Title', 'Subtitle', 'Description', Time.local(2012, 7, 17, 20, 30), 50.minutes, ' .4/12. ') }
