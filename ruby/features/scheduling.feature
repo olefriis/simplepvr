@@ -115,3 +115,13 @@ Scenario: Editing a schedule so that only some weekdays are allowed
   And I check "Record Sundays"
   And I press "Update"
   Then I should see "(Mondays, Wednesdays, and Sundays)"
+
+Scenario: Setting "Start early" and "End late"
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I choose to record the programme on any channel
+  And I am on the schedules page
+  And I follow "Edit"
+  And I fill in "Start early" with "4"
+  And I fill in "End late" with "10"
+  And I press "Update"
+  Then I should see "(Starts 4 minutes early, ends 10 minutes late)"
