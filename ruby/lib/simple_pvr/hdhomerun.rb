@@ -97,7 +97,7 @@ module SimplePvr
     end
   
     def tuner_control_file(tuner)
-      File.dirname(__FILE__) + "/tuner#{tuner}.lock"
+      "tuner#{tuner}.lock"
     end
   end
 end
