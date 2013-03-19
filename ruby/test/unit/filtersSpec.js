@@ -117,5 +117,25 @@ describe('filters', function() {
 		}));
 	});
 
+	describe('timeOfDayFilter ', function() {
+		it('should be blank when there is no filtering on time of day', inject(function(timeOfDayFilter) {
+			var scheduleWithNoFilteringOnTimeOfDay = { filter_by_time_of_day: false };
+			expect(timeOfDayFilter(scheduleWithNoFilteringOnTimeOfDay)).toEqual('');
+		}));
 
+		it('should inform about start time', inject(function(timeOfDayFilter) {
+			var scheduleWithStartTime = { filter_by_time_of_day: true, from_time_of_day: '19:00' };
+			expect(timeOfDayFilter(scheduleWithStartTime)).toEqual('(after 19:00)');
+		}));
+
+		it('should inform about end time', inject(function(timeOfDayFilter) {
+			var scheduleWithEndTime = { filter_by_time_of_day: true, to_time_of_day: '9:00' };
+			expect(timeOfDayFilter(scheduleWithEndTime)).toEqual('(before 9:00)');
+		}));
+
+		it('should inform about start and end time', inject(function(timeOfDayFilter) {
+			var scheduleWithStartAndEndTime = { filter_by_time_of_day: true, from_time_of_day: '19:00', to_time_of_day: '22:00' };
+			expect(timeOfDayFilter(scheduleWithStartAndEndTime)).toEqual('(between 19:00 and 22:00)');
+		}));
+	});
 });

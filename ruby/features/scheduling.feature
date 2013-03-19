@@ -125,3 +125,45 @@ Scenario: Setting "Start early" and "End late"
   And I fill in "End late" with "10"
   And I press "Update"
   Then I should see "(starts 4 minutes early, ends 10 minutes late)"
+
+Scenario: Start and end times of day
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I choose to record the programme on any channel
+  And I am on the schedules page
+  And I follow "Edit"
+  And I check "Filter by time of day"
+  And I fill in "From" with "17:00"
+  And I fill in "To" with "19:00"
+  And I press "Update"
+  Then I should see "(between 17:00 and 19:00)"
+
+Scenario: Start and end times of day, crossing midnight
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I choose to record the programme on any channel
+  And I am on the schedules page
+  And I follow "Edit"
+  And I check "Filter by time of day"
+  And I fill in "From" with "19:00"
+  And I fill in "To" with "3:00"
+  And I press "Update"
+  Then I should see "(between 19:00 and 3:00)"
+
+Scenario: Start time of day
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I choose to record the programme on any channel
+  And I am on the schedules page
+  And I follow "Edit"
+  And I check "Filter by time of day"
+  And I fill in "From" with "17:00"
+  And I press "Update"
+  Then I should see "(after 17:00)"
+
+Scenario: End time of day
+  Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
+  And I choose to record the programme on any channel
+  And I am on the schedules page
+  And I follow "Edit"
+  And I check "Filter by time of day"
+  And I fill in "To" with "7:00"
+  And I press "Update"
+  Then I should see "(before 7:00)"

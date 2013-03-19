@@ -68,6 +68,22 @@ filter('filteredWeekdays', function() {
 		return '(' + days + ')';
 	}
 }).
+filter('timeOfDay', function() {
+	return function(schedule) {
+		if (!schedule.filter_by_time_of_day) {
+			return '';
+		}
+		if (schedule.from_time_of_day && schedule.to_time_of_day) {
+			return '(between ' + schedule.from_time_of_day + ' and ' + schedule.to_time_of_day + ')';
+		}
+		if (schedule.from_time_of_day) {
+			return '(after ' + schedule.from_time_of_day + ')';
+		}
+		if (schedule.to_time_of_day) {
+			return '(before ' + schedule.to_time_of_day + ')';
+		}
+	}
+}).
 filter('startEarlyEndLate', function() {
 	return function(schedule) {
 		var sentences = [];

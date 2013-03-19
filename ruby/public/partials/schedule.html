@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" ng-show="schedule">
 	<form class="form-horizontal" name="scheduleForm">
 		<div class="control-group">
 			<label class="control-label" for="showName">Name of show</label>
@@ -14,6 +14,7 @@
 				</select>
 			</div>
 		</div>
+
 		<div class="control-group" ng-class="{error: scheduleForm.startEarly.$invalid}">
 			<label class="control-label" for="startEarly">Start early</label>
 			<div class="controls">
@@ -32,59 +33,80 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="control-group">
+			<div class="controls">
+				<label class="checkbox" for="filterByTimeOfDay">
+					<input type="checkbox" id="filterByTimeOfDay" ng-model="schedule.filter_by_time_of_day">Filter by time of day
+				</label>
+			</div>
+		</div>
+		<div class="control-group" ng-show="schedule.filter_by_time_of_day" ng-class="{error: scheduleForm.startTime.$invalid}">
+			<label class="control-label" for="startTime">From</label>
+			<div class="controls">
+				<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.from_time_of_day" ng-pattern="/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/" name="startTime" id="startTime" placeholder="00:00">
+			</div>
+		</div>
+		<div class="control-group" ng-show="schedule.filter_by_time_of_day">
+			<label class="control-label" for="endTime">To</label>
+			<div class="controls">
+				<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.to_time_of_day" ng-pattern="/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/" id="endTime" placeholder="00:00">
+			</div>
+		</div>
+
 		<div class="control-group">
 			<div class="controls">
 				<label class="checkbox" for="filterByWeekday">
-					<input type="checkbox" ng-model="schedule.filter_by_weekday">Filter by weekday
+					<input type="checkbox" id="filterByWeekday" ng-model="schedule.filter_by_weekday">Filter by weekday
 				</label>
 			</div>
 		</div>
 		<div class="control-group" ng-show="schedule.filter_by_weekday">
 			<div class="controls">
 				<label class="checkbox" for="recordMondays">
-					<input type="checkbox" ng-model="schedule.monday">Record Mondays
+					<input type="checkbox" id="recordMondays" ng-model="schedule.monday">Record Mondays
 				</label>
 			</div>
 		</div>
 		<div class="control-group" ng-show="schedule.filter_by_weekday">
 			<div class="controls">
 				<label class="checkbox" for="recordTuesdays">
-					<input type="checkbox" ng-model="schedule.tuesday">Record Tuesdays
+					<input type="checkbox" id="recordTuesdays" ng-model="schedule.tuesday">Record Tuesdays
 				</label>
 			</div>
 		</div>
 		<div class="control-group" ng-show="schedule.filter_by_weekday">
 			<div class="controls">
 				<label class="checkbox" for="recordWednesdays">
-					<input type="checkbox" ng-model="schedule.wednesday">Record Wednesdays
+					<input type="checkbox" id="recordWednesdays" ng-model="schedule.wednesday">Record Wednesdays
 				</label>
 			</div>
 		</div>
 		<div class="control-group" ng-show="schedule.filter_by_weekday">
 			<div class="controls">
 				<label class="checkbox" for="recordThursdays">
-					<input type="checkbox" ng-model="schedule.thursday">Record Thursdays
+					<input type="checkbox" id="recordThursdays" ng-model="schedule.thursday">Record Thursdays
 				</label>
 			</div>
 		</div>
 		<div class="control-group" ng-show="schedule.filter_by_weekday">
 			<div class="controls">
 				<label class="checkbox" for="recordFridays">
-					<input type="checkbox" ng-model="schedule.friday">Record Fridays
+					<input type="checkbox" id="recordFridays" ng-model="schedule.friday">Record Fridays
 				</label>
 			</div>
 		</div>
 		<div class="control-group" ng-show="schedule.filter_by_weekday">
 			<div class="controls">
 				<label class="checkbox" for="recordSaturdays">
-					<input type="checkbox" ng-model="schedule.saturday">Record Saturdays
+					<input type="checkbox" id="recordSaturdays" ng-model="schedule.saturday">Record Saturdays
 				</label>
 			</div>
 		</div>
 		<div class="control-group" ng-show="schedule.filter_by_weekday">
 			<div class="controls">
 				<label class="checkbox" for="recordSundays">
-					<input type="checkbox" ng-model="schedule.sunday">Record Sundays
+					<input type="checkbox" id="recordSundays" ng-model="schedule.sunday">Record Sundays
 				</label>
 			</div>
 		</div>

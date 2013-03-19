@@ -19,7 +19,7 @@ module SimplePvr
       
       property :id, Serial
       property :type, Enum[:specification, :exception]
-      property :title, String, :length => 255
+      property :title, String, length: 255
 
       # If specified (and channel is specified too), this schedule is for a specific
       # programme at a specific channel at a specific time
@@ -28,6 +28,10 @@ module SimplePvr
 
       property :custom_start_early_minutes, Integer
       property :custom_end_late_minutes, Integer
+
+      property :filter_by_time_of_day, Boolean
+      property :from_time_of_day, String, length: 5
+      property :to_time_of_day, String, length: 5
 
       property :filter_by_weekday, Boolean
       property :monday, Boolean

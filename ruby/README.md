@@ -61,7 +61,7 @@ First you must specify in a YAML file how the channel IDs in your XMLTV file rel
 that the HDHomeRun has found for you. Create a file called e.g. "channel_mappings.yaml", with lines like this:
 
         www.ontv.dk/tv/1: DR 1
-		www.ontv.dk/tv/2: DR 2
+        www.ontv.dk/tv/2: DR 2
 
 Then read your XMLTV file and the mappings file:
 
@@ -110,10 +110,11 @@ accepted that violate this.
 
 For version 1 of SimplePVR, I'd like to finish the following:
 
-* More schedule editing, e.g.:
-  * "Start early" and "end late" (currently 2 and 5 minutes).
-  * Which time of day the schedule should be active (e.g. only the afternoon, ignoring all the
-    re-runs earlier in the day).
+* Updating dependencies:
+  * Twitter Bootstrap.
+  * AngularJS.
+  * JQuery (should be part of the project, instead of fetched through CDN).
+  * Testacular is now called Karma.
 
 There is lots of stuff I'd like to do after that, but I have no deadline - which means that pull
 requests are the only means you have for speeding things up. This includes:

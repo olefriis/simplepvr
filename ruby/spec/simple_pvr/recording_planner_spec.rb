@@ -109,6 +109,68 @@ describe SimplePvr::RecordingPlanner do
     SimplePvr::RecordingPlanner.reload
   end
 
+  it 'can set up schedules for programmes starting before specific time of day' do
+    @early_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 9, 30), duration: @programme_duration)
+    @late_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 17, 0), duration: @programme_duration)
+    @too_late_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 17, 01), duration: @programme_duration)
+
+    SimplePvr::Model::Schedule.create(type: :specification, title: 'Borgias', filter_by_time_of_day: true, to_time_of_day: '17:00')
+
+    @scheduler.should_receive(:recordings=).with([
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @early_programme.start_time - 2.minutes, 67.minutes, @early_programme),
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @late_programme.start_time - 2.minutes, 67.minutes, @late_programme)
+    ])
+
+    SimplePvr::RecordingPlanner.reload
+  end
+
+  it 'can set up schedules for programmes starting after a specific time of day' do
+    @too_early_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 16, 59), duration: @programme_duration)
+    @early_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 17, 0), duration: @programme_duration)
+    @late_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 19, 30), duration: @programme_duration)
+
+    SimplePvr::Model::Schedule.create(type: :specification, title: 'Borgias', filter_by_time_of_day: true, from_time_of_day: '17:00')
+
+    @scheduler.should_receive(:recordings=).with([
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @early_programme.start_time - 2.minutes, 67.minutes, @early_programme),
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @late_programme.start_time - 2.minutes, 67.minutes, @late_programme)
+    ])
+
+    SimplePvr::RecordingPlanner.reload
+  end
+
+  it 'can set up schedules for programmes starting in certain interval during day' do
+    @too_early_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 16, 59), duration: @programme_duration)
+    @early_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 17, 0), duration: @programme_duration)
+    @late_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 19, 0), duration: @programme_duration)
+    @too_late_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 19, 1), duration: @programme_duration)
+
+    SimplePvr::Model::Schedule.create(type: :specification, title: 'Borgias', filter_by_time_of_day: true, from_time_of_day: '17:00', to_time_of_day: '19:00')
+
+    @scheduler.should_receive(:recordings=).with([
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @early_programme.start_time - 2.minutes, 67.minutes, @early_programme),
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @late_programme.start_time - 2.minutes, 67.minutes, @late_programme)
+    ])
+
+    SimplePvr::RecordingPlanner.reload
+  end
+
+  it 'can set up schedules for programmes starting in certain intervals during day, stretching across midnight' do
+    @too_early_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 16, 59), duration: @programme_duration)
+    @early_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 12, 17, 0), duration: @programme_duration)
+    @late_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 13, 5, 0), duration: @programme_duration)
+    @too_late_programme = SimplePvr::Model::Programme.create(title: 'Borgias', channel: @dr_1, start_time: Time.local(2012, 12, 13, 5, 1), duration: @programme_duration)
+
+    SimplePvr::Model::Schedule.create(type: :specification, title: 'Borgias', filter_by_time_of_day: true, from_time_of_day: '17:00', to_time_of_day: '5:00')
+
+    @scheduler.should_receive(:recordings=).with([
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @early_programme.start_time - 2.minutes, 67.minutes, @early_programme),
+      SimplePvr::Model::Recording.new(@dr_1, 'Borgias', @late_programme.start_time - 2.minutes, 67.minutes, @late_programme)
+    ])
+
+    SimplePvr::RecordingPlanner.reload
+  end
+
   it 'ignores programmes for which exceptions exist' do
     SimplePvr::Model::Schedule.create(type: :specification, title: 'Borgias')
     SimplePvr::Model::Schedule.create(type: :exception, title: 'Borgias', channel: @dr_1, start_time: @start_time_1)
