@@ -1,0 +1,20 @@
+<div class="span6">
+	<div class="row" ng-show="programme.id">
+		<h1>{{programme.title}}</h1>
+		<p>{{programme.start_time | date:'fullDate'}} at {{programme.start_time | date:'HH:mm'}} on channel {{programme.channel.name}}.</p>
+		<p>{{programme.subtitle}}</p>
+		<p>{{programme.description}}</p>
+
+        <div ng-show="programme.episode_num">Episode {{programme.episode_num | formatEpisode}}</div>
+		<div ng-show="programme.is_scheduled">
+			<p>This programme is being recorded.</p>
+		</div>
+		<div ng-hide="programme.is_scheduled">
+			<p>
+				<button class="btn btn-primary" type="button" ng-click="recordOnThisChannel()">Record on this channel</button>
+				<button class="btn btn-primary" type="button" ng-click="recordOnAnyChannel()">Record on any channel</button>
+				<button ng-hide="programme.is_outdated" class="btn btn-primary" type="button" ng-click="recordJustThisProgramme()">Record just this programme</button>
+			</p>
+		</div>
+	</div>
+</div>

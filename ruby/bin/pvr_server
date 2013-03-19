@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'rack'
+require 'simple_pvr'
+
+Rack::Server.start(
+  :config => SimplePvr::PvrInitializer.rackup_file_path,
+  :Port => 4567,
+  :server => 'puma'
+)
