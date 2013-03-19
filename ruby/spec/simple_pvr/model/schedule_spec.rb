@@ -13,7 +13,7 @@ describe SimplePvr::Model::Schedule do
   end
   
   it 'can save a schedule with a title' do
-    Schedule.add_specification(:title => 'Sports')
+    Schedule.add_specification(title: 'Sports')
     
     schedules = Schedule.all
     schedules.length.should == 1
@@ -23,7 +23,7 @@ describe SimplePvr::Model::Schedule do
   end
   
   it 'can save a schedule with a title and a channel' do
-    Schedule.add_specification(:title => 'Sports', :channel => @dr_1)
+    Schedule.add_specification(title: 'Sports', channel: @dr_1)
     
     schedules = Schedule.all
     schedules.length.should == 1
@@ -42,6 +42,24 @@ describe SimplePvr::Model::Schedule do
     schedules[0].title.should == 'Sports'
     schedules[0].channel.name.should == 'DR 1'
     schedules[0].start_time.should == start_time
+  end
+
+  it 'starts 2 minutes early and 5 minutes late by default' do
+    schedule = Schedule.new
+
+    schedule.custom_start_early_minutes.should be_nil
+    schedule.custom_end_late_minutes.should be_nil
+    schedule.start_early_minutes.should == 2
+    schedule.end_late_minutes.should == 5
+  end
+
+  it 'can have custom start early and end late intervals' do
+    schedule = Schedule.new(custom_start_early_minutes: 5, custom_end_late_minutes: 10)
+
+    schedule.custom_start_early_minutes.should == 5
+    schedule.custom_end_late_minutes.should == 10
+    schedule.start_early_minutes.should == 5
+    schedule.end_late_minutes.should == 10
   end
 
   it 'can clean up schedules that are out of date' do

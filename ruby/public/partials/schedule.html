@@ -18,7 +18,7 @@
 			<label class="control-label" for="startEarly">Start early</label>
 			<div class="controls">
 				<div class="input-append">
-					<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.start_early" ng-pattern="/^[0-9]*$/" name="startEarly" id="startEarly" placeholder="2">
+					<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.custom_start_early_minutes" ng-pattern="/^[0-9]*$/" name="startEarly" id="startEarly" placeholder="2">
 					<span class="add-on">minutes</span>
 				</div>
 			</div>
@@ -27,7 +27,7 @@
 			<label class="control-label" for="endLate">End late</label>
 			<div class="controls">
 				<div class="input-append">
-					<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.end_late" ng-pattern="/^[0-9]*$/" name="endLate" id="endLate" placeholder="5">
+					<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.custom_end_late_minutes" ng-pattern="/^[0-9]*$/" name="endLate" id="endLate" placeholder="5">
 					<span class="add-on">minutes</span>
 				</div>
 			</div>
