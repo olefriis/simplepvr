@@ -29,7 +29,7 @@ class RecordingPlanner:
             else:
                 programmes = Programme.with_title(specification.title)
 
-            programmes_with_exceptions_removed = programmes ## TODO filter exception programmes
+            programmes_with_exceptions_removed = self.remove_excluded_programmes(programmes, exceptions) #programmes ## TODO filter exception programmes
             self._add_programmes(title, programmes_with_exceptions_removed, specification)
 
         if self._recordings:
@@ -39,6 +39,11 @@ class RecordingPlanner:
     def simple(self, title, channel, start_time, duration):
         self._add_recording(self, title, channel, start_time, duration)
 
+    def remove_excluded_programmes(self, programmes, exceptions):
+        for programme in programmes:
+            if self._matches_exception(programme, exceptions):
+                programmes.remove(programme)
+        return programmes
 
     #private
     def _matches_exception(self, programme, exceptions):
@@ -55,6 +60,7 @@ class RecordingPlanner:
             stop_time = programme.stop_time + timedelta(minutes = RecordingPlanner.MINUTES_CONTINUE_AFTER)
             duration = (stop_time-start_time).seconds
             self._add_recording(title, programme.channel, start_time, stop_time, duration, programme, schedule)
+        self._recordings.sort(key=lambda rec: rec.start_time)
 
     def _add_recording(self, title, channel, start_time, stop_time, duration, programme=None, schedule=None):
         from .master_import import Recording

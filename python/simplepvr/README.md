@@ -172,3 +172,94 @@ The scripts require you to have ffmpeg installed - and that you have placed the 
 If you did not compile ffmpeg yourself, the ffmpeg presets can be acquired from Github from this project:
  https://github.com/joeyblake/FFmpeg-Presets
 
+Cross-compile toolchain on OSx
+==============================
+This toolchain can be used to build binaries for the Synology.
+
+sudo port -f deactivate libunwind-headers
+sudo port clean arm-linux-gnueabi-gcc
+sudo port install arm-linux-gnueabi-gcc
+sudo port activate libunwind-headers
+
+## Cross-compiling for ARM
+===========================
+    # Faac (Mpeg4 audio coding)
+    wget http://downloads.sourceforge.net/faac/faac-1.28.tar.gz
+    tar xzf faac-1.28.tar.gz
+    ./configure --host=arm-linux-gnueabi -–with-mpeg4ip -–prefix=--prefix=../arm_build
+    make -j4
+    make install
+
+    #x264
+    wget ftp://ftp.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
+    tar xjf last_x264.tar.bz2
+    cd x264-snapshot*
+    ./configure --cross-prefix=arm-linux-gnueabi- --prefix=../arm_build --enable-pic --enable-static --disable-cli --disable-asm --host=arm-linux
+    make -j4
+    make install
+
+    # ffmpeg
+    wget http://ffmpeg.org/releases/ffmpeg-1.0.tar.gz
+    tar xzf ffmpeg-1.0.tar.gz
+    cd ffmpeg-1.0
+    ./configure --enable-cross-compile \
+        --arch=arm5te \
+        --enable-armv5te \
+        --target-os=linux \
+        --disable-stripping \
+        --cc=arm-linux-gnueabi-gcc \
+        --ld=arm-linux-gnueabi-gcc \
+        --prefix=../arm_build \
+        --enable-armv5te \
+        --disable-armv6 \
+        --disable-mmx \
+        --disable-neon \
+        --enable-version3 \
+        --disable-shared \
+        --enable-static \
+        --enable-gpl \
+        --enable-memalign-hack \
+        --extra-cflags="-fPIC -D__thumb__ -mthumb -Wfatal-errors -Wno-deprecated" \
+        --disable-everything \
+        --enable-decoder=h264 \
+        --enable-demuxer=mov \
+        --enable-muxer=mp4 \
+        --enable-encoder=libx264 \
+        --enable-libx264 \
+        --enable-protocol=file \
+        --enable-decoder=aac \
+        --enable-encoder=aac \
+        --disable-ffmpeg \
+        --disable-ffplay \
+        --disable-ffprobe \
+        --disable-ffserver \
+        --disable-network \
+        --enable-filter=buffer \
+        --enable-filter=buffersink \
+        --enable-filter=scale \
+        --disable-demuxer=v4l \
+        --disable-demuxer=v4l2 \
+        --disable-indev=v4l \
+        --disable-indev=v4l2 \
+        --extra-cflags="-I../x264" \
+        --extra-ldflags="-L../x264" \
+        --extra-libs="-lgcc"
+    make -j4
+    make install
+
+# Compile FFMPEG for your platform
+==================================
+    I use sffmpeg - https://github.com/pyke369/sffmpeg
+
+    sffmpeg can be run on the NAS directly, or you can install it on Windows, Linux or Mac and build a distributable
+    ffmpeg there.
+
+    ipkg update
+    ipkg install yasm gcc autoconf libtool pkgconfig
+
+    Install cmake from source and its dependencies from ipkg:
+    http://www.cmake.org/cmake/help/install.html
+
+    ./bootstrap --prefix=/opt/local
+    make
+    make install
