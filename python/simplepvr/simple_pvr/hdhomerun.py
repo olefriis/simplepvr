@@ -9,6 +9,7 @@ import subprocess
 import sys
 import codecs
 import re
+from .config import *
 
 from threading import Timer
 from subprocess import PIPE, call, check_call#, check_output # check_output is Python 2.7 only (Synology DSM 4 comes with 2.6)
@@ -67,9 +68,9 @@ class HDHomeRun:
     SYMBOL_RATE = 6900
 
     def __init__(self):
-        from .config import getSimplePvrOption
-        if getSimplePvrOption("hdhomerun_config"):
-            HDHomeRun.HDHR_CONFIG = getSimplePvrOption("hdhomerun_config")
+        if getHdhomerunConfigPath():
+            HDHomeRun.HDHR_CONFIG = getHdhomerunConfigPath()
+        logger().info(u"Using '{0}' to control HDHomerun device".format(HDHomeRun.HDHR_CONFIG))
 
         self.device_id = self._discover()
         self.tuner_pids = [None, None]
@@ -117,14 +118,14 @@ class HDHomeRun:
         hdhr_id = None
         try:
             result = check_cmd_output(HDHomeRun.HDHR_CONFIG + " discover").readlines()
-            if len(result) == 1:
+            if len(result) >= 1:
                 re_match = re.match(r'hdhomerun device (.*) found at .*$', result[0], re.M)
                 hdhr_id = re_match.group(1).strip()
-                logger().info(u"HDHomerun device id '{0}' found".format(hdhr_id))
         except Exception, err:
             logger().error(err)
 
         if hdhr_id:
+            logger().info(u"HDHomerun device id '{0}' found".format(hdhr_id))
             return hdhr_id
         else:
             logger().info(u"HDHR discover failed, falling back to device id 'ffffffff' - which should work fine as long as there is only one hdhr device on the network")
@@ -132,7 +133,7 @@ class HDHomeRun:
 
 
     def _scan_channels_with_tuner(self, file_name):
-    	logger().info(u"Scanning for channels using tuner0, storing results in file {0}".format(file_name))
+        logger().info(u"Scanning for channels using tuner0, storing results in file {0}".format(file_name))
         system(self._hdhr_config_prefix() + " scan /tuner0 {0}".format(file_name), timeout=600)
 
     def _read_channels_file(self, file_name):
