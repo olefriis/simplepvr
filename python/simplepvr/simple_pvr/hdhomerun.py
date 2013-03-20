@@ -43,7 +43,7 @@ def system(cmd, timeout = 60):
     proc = Popen(cmd, close_fds=True, shell=True, stdout=PIPE)
     logger().info(u"PID is {0} for command '{1}'".format(proc.pid, cmd))
     for line in proc.stdout:
-        logger().info(u"Process output: {0}".format(line))
+        logger().info(u"Process output: {0}".format(line.decode('latin1')))
     ## Kill process after timeout seconds.
     _timer = Timer(timeout, terminate_process, [proc])
     _timer.start()
@@ -132,6 +132,7 @@ class HDHomeRun:
 
 
     def _scan_channels_with_tuner(self, file_name):
+    	logger().info(u"Scanning for channels using tuner0, storing results in file {0}".format(file_name))
         system(self._hdhr_config_prefix() + " scan /tuner0 {0}".format(file_name), timeout=600)
 
     def _read_channels_file(self, file_name):
@@ -166,7 +167,8 @@ class HDHomeRun:
         save_cmd = u'{0} save /tuner{1} "{2}" > "{3}"'.format(self._hdhr_config_prefix(), str(tuner), os.path.join(directory, 'stream.ts'), os.path.join(directory, 'hdhomerun_save.log'))
 
         logger().info(u"Executing command '{0}'".format(save_cmd))
-        return Popen(save_cmd, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        recordingProcess = Popen(save_cmd, close_fds=True, shell=True, stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT)
+        return recordingProcess
 
     def _spawn_recorder_process_using_bash_script(self, tuner, directory):
         open(self._tuner_control_file(tuner), "a") ## Touch file
@@ -174,7 +176,7 @@ class HDHomeRun:
         command =  u"{0}/hdhomerun_save.sh {1} {2} {3} {4} {5}".format(os.path.dirname(__file__), self.device_id, str(tuner), directory + '/stream.ts' , directory + u"/hdhomerun_save.log", self._tuner_control_file(tuner))
 
         logger().info(u"Executing command '{0}'".format(command))
-        my_hdhr_process = Popen(command, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        my_hdhr_process = Popen(command, close_fds=True, shell=True, stdout=open('/dev/null', 'w'), stderr=subprocess.STDOUT)
         return my_hdhr_process
 
     def _reset_tuner_frequency(self, tuner):
