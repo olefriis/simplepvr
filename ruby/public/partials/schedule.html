@@ -1,5 +1,5 @@
 <div class="row">
-	<form class="form-horizontal">
+	<form class="form-horizontal" name="scheduleForm">
 		<div class="control-group">
 			<label class="control-label" for="showName">Name of show</label>
 			<div class="controls">
@@ -12,6 +12,24 @@
 				<select id="channel" ng-model="channel" ng-options="c.name for c in channels">
 					<option value="">-- Any channel --</option>
 				</select>
+			</div>
+		</div>
+		<div class="control-group" ng-class="{error: scheduleForm.startEarly.$invalid}">
+			<label class="control-label" for="startEarly">Start early</label>
+			<div class="controls">
+				<div class="input-append">
+					<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.custom_start_early_minutes" ng-pattern="/^[0-9]*$/" name="startEarly" id="startEarly" placeholder="2">
+					<span class="add-on">minutes</span>
+				</div>
+			</div>
+		</div>
+		<div class="control-group" ng-class="{error: scheduleForm.endLate.$invalid}">
+			<label class="control-label" for="endLate">End late</label>
+			<div class="controls">
+				<div class="input-append">
+					<input type="text" class="input-mini" style="text-align: right" ng-model="schedule.custom_end_late_minutes" ng-pattern="/^[0-9]*$/" name="endLate" id="endLate" placeholder="5">
+					<span class="add-on">minutes</span>
+				</div>
 			</div>
 		</div>
 		<div class="control-group">
@@ -72,7 +90,7 @@
 		</div>
 		<div class="control-group">
 			<div class="controls">
-				<button type="submit" class="btn btn-primary" ng-click="update()">Update</button>
+				<button type="submit" class="btn btn-primary" ng-class="{disabled: scheduleForm.$invalid}" ng-click="update()" ng-disabled="scheduleForm.$invalid">Update</button>
 				<a ng-href="/schedules" class="btn">Cancel</a>
 			</div>
 		</div>

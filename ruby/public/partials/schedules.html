@@ -6,7 +6,7 @@
 				<p><span ng-show="schedule.is_exception">Exception:</span> {{schedule.title}}
 					<span ng-show="schedule.channel">on {{schedule.channel.name}}</span>
 					<span ng-show="schedule.start_time">{{schedule.start_time | date:'fullDate'}} at {{schedule.start_time | date:'HH:mm'}}</span>
-					{{schedule | filteredWeekdays}}
+					{{schedule | filteredWeekdays}} {{schedule | startEarlyEndLate}}
 				</p>
 				<p>
 					<a ng-href="/schedules/{{schedule.id}}" class="btn">Edit</a>

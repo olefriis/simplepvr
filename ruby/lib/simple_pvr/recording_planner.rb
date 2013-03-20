@@ -21,7 +21,7 @@ module SimplePvr
         programmes_with_exceptions_removed = programmes.find_all {|programme| !matches_exception(programme, exceptions) }
         programmes_filtered_by_weekdays = programmes_with_exceptions_removed.find_all {|programme| on_allowed_weekday(programme, specification) }
 
-        add_programmes(specification.title, programmes_filtered_by_weekdays)
+        add_programmes(specification, programmes_filtered_by_weekdays)
       end
 
       PvrInitializer.scheduler.recordings = @recordings
@@ -62,11 +62,11 @@ module SimplePvr
       end
     end
     
-    def add_programmes(title, programmes)
+    def add_programmes(schedule, programmes)
       programmes.each do |programme|
-        start_time = programme.start_time.advance(minutes: -2)
-        duration = programme.duration + 7.minutes
-        add_recording(title, programme.channel, start_time, duration, programme)
+        start_time = programme.start_time.advance(minutes: -schedule.start_early_minutes)
+        duration = programme.duration + (schedule.start_early_minutes + schedule.end_late_minutes).minutes
+        add_recording(schedule.title, programme.channel, start_time, duration, programme)
       end
     end
     

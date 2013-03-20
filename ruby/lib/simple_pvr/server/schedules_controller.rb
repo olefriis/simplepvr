@@ -30,6 +30,8 @@ module SimplePvr
         schedule.title = parameters['title']
         schedule.channel = channel_id > 0 ? Model::Channel.get(channel_id) : nil
         schedule.filter_by_weekday = parameters['filter_by_weekday'] ? true : nil
+        schedule.custom_start_early_minutes = parameters['custom_start_early_minutes'].present? ? parameters['custom_start_early_minutes'].to_i : nil
+        schedule.custom_end_late_minutes = parameters['custom_end_late_minutes'].present? ? parameters['custom_end_late_minutes'].to_i : nil
         schedule.monday = parameters['monday']
         schedule.tuesday = parameters['tuesday']
         schedule.wednesday = parameters['wednesday']
@@ -56,6 +58,10 @@ module SimplePvr
           channel: schedule.channel ? { id: schedule.channel.id, name: schedule.channel.name } : nil,
           start_time: schedule.start_time,
           is_exception: schedule.type == :exception,
+          custom_start_early_minutes: schedule.custom_start_early_minutes,
+          custom_end_late_minutes: schedule.custom_end_late_minutes,
+          start_early_minutes: schedule.start_early_minutes,
+          end_late_minutes: schedule.end_late_minutes,
           filter_by_weekday: schedule.filter_by_weekday,
           monday: schedule.monday,
           tuesday: schedule.tuesday,

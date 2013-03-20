@@ -94,4 +94,28 @@ describe('filters', function() {
 			expect(filteredWeekdaysFilter(scheduleWithSeveralWeekdayFilterings)).toEqual('(Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays, and Sundays)')
 		}));
 	});
+
+	describe('startEarlyEndLateFilter ', function() {
+		it('should be blank when there is no special start early or end late', inject(function(startEarlyEndLateFilter) {
+			var scheduleWithNoStartEarlyOrEndLate = {  };
+			expect(startEarlyEndLateFilter(scheduleWithNoStartEarlyOrEndLate)).toEqual('');
+		}));
+
+		it('should inform about start early minutes', inject(function(startEarlyEndLateFilter) {
+			var scheduleWithStartEarly = { custom_start_early_minutes: 4 };
+			expect(startEarlyEndLateFilter(scheduleWithStartEarly)).toEqual('(starts 4 minutes early)');
+		}));
+
+		it('should inform about end late minutes', inject(function(startEarlyEndLateFilter) {
+			var scheduleWithEndLate = { custom_end_late_minutes: 9 };
+			expect(startEarlyEndLateFilter(scheduleWithEndLate)).toEqual('(ends 9 minutes late)');
+		}));
+
+		it('should inform about start early and end late minutes', inject(function(startEarlyEndLateFilter) {
+			var scheduleWithStartEarlyAndEndLate = { custom_start_early_minutes: 3, custom_end_late_minutes: 8 };
+			expect(startEarlyEndLateFilter(scheduleWithStartEarlyAndEndLate)).toEqual('(starts 3 minutes early, ends 8 minutes late)');
+		}));
+	});
+
+
 });
