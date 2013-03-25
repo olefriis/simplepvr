@@ -108,13 +108,16 @@ Future?
 This projects needs to be a nice, readable, hackable, tested system. No pull requests are
 accepted that violate this.
 
-For version 1 of SimplePVR, I'd like to finish the following:
+For version 1 of SimplePVR, there are no more features planned. Instead, there'll be a little clean-up:
 
 * Updating dependencies:
   * Twitter Bootstrap.
   * AngularJS.
   * JQuery (should be part of the project, instead of fetched through CDN).
   * Testacular is now called Karma.
+* Various code clean-ups (no grand plan).
+* Various GUI clean-ups (no grand plan).
+* Various bug fixes (no known issues at this point).
 
 There is lots of stuff I'd like to do after that, but I have no deadline - which means that pull
 requests are the only means you have for speeding things up. This includes:
