@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    simple_pvr (0.0.2)
+    simple_pvr (0.0.3)
       activesupport (~> 3.2)
       data_mapper (~> 1.2)
       dm-sqlite-adapter (~> 1.2)
