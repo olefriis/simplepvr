@@ -9,7 +9,7 @@
 					{{schedule | filteredWeekdays}} {{schedule | timeOfDay}} {{schedule | startEarlyEndLate}}
 				</p>
 				<p>
-					<a ng-href="/schedules/{{schedule.id}}" class="btn">Edit</a>
+					<a ng-href="/schedules/{{schedule.id}}" class="btn" ng-hide="schedule.is_exception">Edit</a>
 					<a ng-click="deleteSchedule(schedule)" class="btn btn-warning">Delete</a>
 				</p>
 			</div>
