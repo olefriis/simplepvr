@@ -9,7 +9,7 @@ namespace :test do
   RSpec::Core::RakeTask.new(:spec)
   Cucumber::Rake::Task.new(:features)
   task :javascript do
-  	sh 'testacular start test/testacular.conf.js --singleRun'
+  	sh 'karma start test/karma.conf.js --singleRun'
   end
 end
   

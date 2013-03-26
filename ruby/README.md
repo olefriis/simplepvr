@@ -114,7 +114,6 @@ For version 1 of SimplePVR, there are no more features planned. Instead, there'l
   * Twitter Bootstrap.
   * AngularJS.
   * JQuery (should be part of the project, instead of fetched through CDN).
-  * Testacular is now called Karma.
 * Various code clean-ups (no grand plan).
 * Various GUI clean-ups (no grand plan).
 * Various bug fixes (no known issues at this point).
@@ -161,10 +160,10 @@ Run all automatic tests like this:
 
 This runs the Ruby specs and features along with the JavaScript unit tests.
 
-For the JavaScript tests to run, first install [Testacular](http://testacular.github.com/0.6.0/index.html).
-If you want to keep Testacular running and let it execute whenever a file changes, just run this:
+For the JavaScript tests to run, first install [Karma](http://karma-runner.github.com/0.8/index.html).
+If you want to keep Karma running and let it execute whenever a file changes, just run this:
 
-        testacular start test/testacular.conf.js
+        karma start test/karma.conf.js
 
 To create the gem, make sure that lib/simple_pvr/version.rb is up-to-date, commit everything and run:
 
