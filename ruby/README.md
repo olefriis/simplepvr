@@ -154,6 +154,10 @@ to implement...
 
 Development
 ===========
+When you have checked out the sources, there's no apparent way to run pvr_server and pvr_xmltv. (If you know
+better than I, please let me know!) Therefore, the commands development_server and development_xmltv are
+included. Use them as you would pvr_server and pvr_xmltv (see above).
+
 Run all automatic tests like this:
 
         rake test

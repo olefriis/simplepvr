@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+require File.dirname(__FILE__) + '/lib/simple_pvr'
+require 'yaml'
+require 'open-uri'
+
+if ARGV.length != 2
+  puts "Requires two arguments: The XMLTV file name, and the channel mapping file name"
+  exit 1
+end
+
+SimplePvr::PvrInitializer.setup
+
+xmltv_file = File.new(ARGV[0])
+mapping_to_channels = YAML.load_file(ARGV[1])
+
+reader = SimplePvr::XmltvReader.new(mapping_to_channels)
+reader.read(xmltv_file)
