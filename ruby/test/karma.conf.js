@@ -3,7 +3,7 @@ basePath = '../';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  'http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js',
+  'public/js/jquery/jquery.min.js',
   'public/js/angular/angular.min.js',
   'public/js/angular/angular-*.js',
   'test/lib/angular/angular-mocks.js',

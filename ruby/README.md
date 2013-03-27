@@ -110,10 +110,7 @@ accepted that violate this.
 
 For version 1 of SimplePVR, there are no more features planned. Instead, there'll be a little clean-up:
 
-* Updating dependencies:
-  * Twitter Bootstrap.
-  * AngularJS.
-  * JQuery (should be part of the project, instead of fetched through CDN).
+* Update AngularJS (Capybara doesn't like 1.0.5... need to look into it...)
 * Various code clean-ups (no grand plan).
 * Various GUI clean-ups (no grand plan).
 * Various bug fixes (no known issues at this point).
@@ -136,7 +133,7 @@ requests are the only means you have for speeding things up. This includes:
   * Let SimplePVR itself fetch XMLTV URLs at specified times of day.
   * Set-up of matching XMLTV IDs to channels could make good use of a GUI.
   * Parse and make use of programme icons etc.
-* Searching for tuners and scanning for channels would be nice through a GUI.
+* Searching for tuners and scanning for channels would be nice through the web GUI.
 * Saving with the hdhomerun_config command is done through a shell script, so we can shut it down properly. I'd
   like a simpler solution, but haven't found anything that works both on OS X and Linux.
   [Bluepill](https://github.com/arya/bluepill) seems to do the job, but seems like too big a hammer...
