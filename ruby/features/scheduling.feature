@@ -64,7 +64,7 @@ Scenario: Remove schedule
   Given I have navigated to the programme page for "Bonderøven" on channel "Channel 1"
   And I choose to record the programme on this channel
   And I am on the schedules page
-  And I follow "Delete"
+  And I delete the first schedule
   Then I should not see the schedule "Bonderøven on Channel 1"
   And there should be 0 upcoming recordings
 
@@ -82,7 +82,7 @@ Scenario: Fixing conflicts by removing a schedule
   And I have navigated to the programme page for "Noddy" on channel "Channel 1"
   And I choose to record the programme on this channel
   When I am on the schedules page
-  And I follow "Delete"
+  And I delete the first schedule
   Then there should be no conflicts
 
 Scenario: Removing a specific recording from a schedule
@@ -90,7 +90,7 @@ Scenario: Removing a specific recording from a schedule
   And I choose to record the programme on any channel
   And I am on the schedules page
   Then there should be 3 upcoming recordings
-  When I follow "Do not record this specific show"
+  When I choose not to record the first scheduled show
   Then there should be 2 upcoming recordings
   And I should see "Exception: Bonderøven"
 

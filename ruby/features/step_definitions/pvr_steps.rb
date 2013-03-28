@@ -25,7 +25,8 @@ Given /I have navigated to the programme page for "(.*)" on channel "(.*)"/ do |
   visit path_to('the channel overview page')
   fill_in('channel_filter', :with => channel)
   click_link('...')
-  click_link(title)
+  page.should have_link(title)
+  first(:link, title).click
 end
 
 Given /I have navigated to the programme page for yesterday's "(.*)" on channel "(.*)"/ do |title, channel|
@@ -57,48 +58,58 @@ When /I search for programmes with title "(.*)"/ do |query|
   click_button('Search')
 end
 
+When /I delete the first schedule/ do
+  page.should have_link('Delete')
+  first(:link, 'Delete').click
+end
+
+When /I choose not to record the first scheduled show/ do
+  page.should have_link('Do not record this specific show')
+  first(:link, 'Do not record this specific show').click
+end
+
 Then /I should see the programme title suggestion "(.*)"/ do |suggestion|
-  page.wait_until { page.text.include? suggestion }
+  page.should have_text(text)
 end
 
 Then /I should see "(.*)" in the page contents/ do |text|
   within('#contents') do
-    page.wait_until { page.text.include? text }
+    page.should have_text(text)
   end
 end
 
 Then /I should see the schedule "(.*)"/ do |text|
   within('#schedules') do
-    page.wait_until { page.text.include? text }
+    page.should have_text(text)
   end
 end
 
 Then /I should see the timed schedule "(.*)"/ do |text|
   within('#schedules') do
-    page.wait_until { page.text =~ /#{text} .* \d+, \d{4} at \d?\d:\d\d/ }
+    page.should have_content(/#{text} .* \d+, \d{4} at \d?\d:\d\d/)
   end
 end
 
 Then /I should not see the schedule "(.*)"/ do |text|
   within('#schedules') do
-    page.wait_until { !(page.text.include? text) }
+    page.should_not have_text(text)
   end
 end
 
 Then /I should not see the button "(.*)"/ do |text|
-    page.wait_until { page.has_no_button?(text) }
+  page.should_not have_button(text)
 end
 
 Then /there should be (\d*) upcoming recordings?/ do |upcoming_recordings|
-  page.wait_until { find('#upcoming_recordings').all('h2').length == upcoming_recordings.to_i }
+  page.find('#upcoming_recordings').all('h2').length.should == upcoming_recordings.to_i
 end
 
 Then /^there should be a conflict$/ do
-  page.wait_until { page.text.include? '(Conflicting)' }
+  page.should have_text('(Conflicting)')
 end
 
 Then /^there should be no conflicts$/ do
-  page.wait_until { !(page.text.include? '(Conflicting)') }
+  page.should_not have_text('(Conflicting)')
 end
 
 Then /I wait (\d*) seconds/ do |seconds|
@@ -112,5 +123,5 @@ end
 
 def choose_to_record(button_text)
   click_button(button_text)
-  page.wait_until { page.text.include? 'This programme is being recorded' }
+  page.should have_text('This programme is being recorded')
 end
