@@ -25,8 +25,12 @@ It's based on the HDHomeRun command-line utility, which means it's:
 * really simple.
 * limited to supporting HDHomeRun tuners.
 
-There are back-end implementations in both Ruby and Python. Please look in the respective folders to see
-how to install and operate the two versions.
+There are back-end implementations in both Ruby and Python:
+
+* Ruby back-end: [https://github.com/olefriis/simplepvr-backend-ruby](https://github.com/olefriis/simplepvr-backend-ruby)
+* Python back-end: [https://github.com/olefriis/simplepvr/tree/master/python](https://github.com/olefriis/simplepvr/tree/master/python)
+
+Please look in the respective repositories to see how to install and operate the two versions.
 
 XBMC Plug-In
 ============
